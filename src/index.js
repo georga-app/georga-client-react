@@ -1,31 +1,31 @@
 import { createRoot } from 'react-dom/client';
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { ApolloClient, createHttpLink, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { gql } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import "@fontsource/roboto";
 
 import App from './App';
 
-// apollo
-const endpoint = process.env.REACT_APP_GRAPHQL_ENDPOINT;
+// apollo client
 const cache = new InMemoryCache();
+const httpLink = createHttpLink({
+  uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
+});
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('authToken');
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `JWT ${token}` : "",
+    }
+  }
+});
 const client = new ApolloClient({
-  uri: endpoint,
+  link: authLink.concat(httpLink),
   cache: cache,
-  fetchOptions: {
-    credentials: "include",
-  },
-  request: (operation) => {
-    const token = localStorage.getItem("authToken") || "";
-    if (token)
-      operation.setContext({
-        headers: {
-          Authorization: `JWT ${token}`,
-        },
-      });
-  },
 });
 
-// flags
+// local states
 const IS_LOGGED_IN = gql`
   query IsUserLoggedIn {
     isLoggedIn @client
@@ -38,7 +38,7 @@ cache.writeQuery({
   },
 });
 
-// render
+// root
 const container = document.getElementById('root');
 const root = createRoot(container);
 root.render(
