@@ -12,10 +12,20 @@ const IS_LOGGED_IN = gql`
   }
 `;
 
+function ScrollToTop({children}) {
+  const location = useLocation();
+  useLayoutEffect(() => {
+    document.documentElement.scrollTo(0, 0);
+  }, [location.pathname]);
+  return null;
+}
+
 function App() {
   const { data } = useQuery(IS_LOGGED_IN);
+
   return (
     <Router>
+      <ScrollToTop />
       {data.isLoggedIn ? <Backend /> : <Frontend />}
     </Router>
   )
