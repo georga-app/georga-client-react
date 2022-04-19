@@ -4,8 +4,8 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import Header from './Header'
-import Footer from './Footer'
+import Header from './Header';
+import Footer from './Footer';
 
 // theme
 const theme = createTheme({
@@ -31,7 +31,7 @@ function Theme(props) {
     <React.StrictMode>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Box sx={{ bgcolor: props.bgcolor || "white" }}>
+        <Box sx={{ bgcolor: props.bgcolor || "white", minHeight: window.innerHeight }}>
           <Header menus={props.menus} />
           <Box sx={{ paddingY: 2 }}>
             <Container maxWidth="lg" sx={{ paddingY: 4 }}>
