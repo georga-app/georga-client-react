@@ -1,3 +1,5 @@
+import { useLayoutEffect } from "react";
+import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import { gql, useQuery } from '@apollo/client';
 import "@fontsource/roboto";
 
@@ -13,9 +15,9 @@ const IS_LOGGED_IN = gql`
 function App() {
   const { data } = useQuery(IS_LOGGED_IN);
   return (
-    <>
+    <Router>
       {data.isLoggedIn ? <Backend /> : <Frontend />}
-    </>
+    </Router>
   )
 }
 
