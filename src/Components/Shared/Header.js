@@ -107,18 +107,16 @@ function Header(props) {
 
           {props.menus.user && (
             <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
-                <IconButton
-                  size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleOpenUserMenu}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-              </Tooltip>
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenUserMenu}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
               <Menu
                 sx={{ mt: '45px' }}
                 id="menu-appbar"
