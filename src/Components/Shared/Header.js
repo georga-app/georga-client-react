@@ -30,12 +30,12 @@ function Header(props) {
             key="home"
             component={Link}
             to="/"
-            sx={{ color: 'white', display: 'block' }}
+            sx={{ mr: 2, color: 'white', display: 'block' }}
           >
             <Typography
               variant="h6"
               noWrap
-              sx={{ mr: 2, display: { xs: 'none', md: 'flex' }, textTransform: 'none' }}
+              sx={{ display: { xs: 'none', md: 'flex' }, textTransform: 'none' }}
             >
               GeoRGA
             </Typography>
