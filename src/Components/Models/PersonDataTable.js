@@ -53,10 +53,7 @@ let headCells = [
 
 function PersonDataTable() {
   const [emailFilter, setEmailFilter] = useState("");
-  headCells.map((headCell) => {
-    if (headCell.id === 'email')
-      headCell.filter = setEmailFilter;
-  });
+  headCells[0].filter = setEmailFilter;
 
   const { data, loading } = useQuery(
     ALL_PERSONS, {
