@@ -7,10 +7,14 @@ const ACTIVATE_PERSON = gql`
     $token: String!
   ) {
     activatePerson(
-      token: $token
+      input: {
+        token: $token
+      }
     ) {
-      person {
-        username
+      email
+      errors {
+        field
+        messages
       }
     }
   }
@@ -26,11 +30,12 @@ function Activate() {
       onCompleted: data => {
         navigate('/login', {
           state: {
-            email: data.activatePerson.person.username
+            email: data.activatePerson.email
           }
         });
       },
       onError: error => {
+        console.log(error)
         navigate('/');
       }
     }

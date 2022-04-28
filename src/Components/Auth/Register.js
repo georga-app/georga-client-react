@@ -8,21 +8,18 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import FormControl from "@mui/material/FormControl";
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Gavel from "@mui/icons-material/Gavel";
 import VerifiedUserTwoTone from "@mui/icons-material/VerifiedUserTwoTone";
 
-import FormError from "../Shared/FormError";
-import FormFieldError from "../Shared/FormFieldError";
+import PersonForm from "../Models/PersonForm";
 
 const REGISTER_PERSON = gql`
   mutation RegisterPerson (
     $email: String!,
     $password: String!,
+    $title: String!,
     $firstName: String,
     $lastName: String,
     $mobilePhone: String
@@ -31,14 +28,13 @@ const REGISTER_PERSON = gql`
       input: {
         email: $email,
         password: $password,
+        title: $title,
         firstName: $firstName,
         lastName: $lastName,
         mobilePhone: $mobilePhone
       }
     ) {
-      person {
-        email
-      }
+      id
       errors {
         field
         messages
@@ -48,14 +44,9 @@ const REGISTER_PERSON = gql`
 `;
 
 function Register() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [mobilePhone, setMobilePhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [open, setOpen] = useState(false);
-  const [errors, setErrors] = useState({});
 
+  const [errors, setErrors] = useState({});
   const [registerPerson, { loading, reset }] = useMutation(
     REGISTER_PERSON, {
       onCompleted: data => {
@@ -76,21 +67,9 @@ function Register() {
     }
   );
 
-  const handleSubmit = event => {
-    event.preventDefault();
-    registerPerson({
-      variables: {
-        firstName: firstName,
-        lastName: lastName,
-        MobilePhone: mobilePhone,
-        email: email,
-        password: password,
-      }
-    });
-  }
-
   return (
     <>
+      {/* Form */}
       <Paper
         elevation={2}
         sx={{
@@ -116,68 +95,12 @@ function Register() {
           <Gavel />
         </Avatar>
         <Typography variant="headline">Register</Typography>
-
-        {/* Form */}
-        <form onSubmit={event => handleSubmit(event)}>
-          <FormError error={errors?.form}/>
-          <FormControl margin="normal" required fullWidth error={Boolean(errors.firstName)}>
-            <InputLabel htmlFor="firstName">First Name</InputLabel>
-            <Input
-              id="firstName"
-              onChange={event => setFirstName(event.target.value)}
-            />
-            <FormFieldError error={errors.firstName}/>
-          </FormControl>
-          <FormControl margin="normal" required fullWidth error={Boolean(errors.lastName)}>
-            <InputLabel htmlFor="lastName">Last Name</InputLabel>
-            <Input
-              id="lastName"
-              onChange={event => setLastName(event.target.value)}
-            />
-            <FormFieldError error={errors.lastName}/>
-          </FormControl>
-          <FormControl margin="normal" required fullWidth error={Boolean(errors.mobilePhone)}>
-            <InputLabel htmlFor="mobilePhone">Mobile Phone</InputLabel>
-            <Input
-              id="mobilePhone"
-              onChange={event => setMobilePhone(event.target.value)}
-            />
-            <FormFieldError error={errors.mobilePhone}/>
-          </FormControl>
-          <FormControl margin="normal" required fullWidth error={Boolean(errors.email)}>
-            <InputLabel htmlFor="email">Email</InputLabel>
-            <Input
-              id="email"
-              type="email"
-              onChange={event => setEmail(event.target.value)}
-            />
-            <FormFieldError error={errors.email}/>
-          </FormControl>
-          <FormControl margin="normal" required fullWidth error={Boolean(errors.password)}>
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input
-              id="password"
-              type="password"
-              onChange={event => setPassword(event.target.value)}
-            />
-            <FormFieldError error={errors.password}/>
-          </FormControl>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="secondary"
-            disabled={
-              loading ||
-              !email.trim() ||
-              !password.trim()
-            }
-            sx={{ marginTop: 1 }}
-          >
-            {loading ? "Registering..." : "Register"}
-          </Button>
-
-        </form>
+        <PersonForm
+          mutation={registerPerson}
+          loading={loading}
+          errors={errors}
+          buttonText={loading ? "Registering..." : "Register"}
+        />
       </Paper>
 
       {/* Success */}

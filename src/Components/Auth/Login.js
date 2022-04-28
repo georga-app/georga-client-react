@@ -19,10 +19,14 @@ const LOGIN = gql`
     $password: String!
   ) {
     tokenAuth(
-      email: $email,
-      password: $password
+      input: {
+        email: $email,
+        password: $password
+      }
     ) {
+      id
       token
+      refreshExpiresIn
     }
   }
 `;
@@ -44,6 +48,7 @@ function Login() {
   const [login, { loading, reset, client }] = useMutation(
     LOGIN, {
       onCompleted: data => {
+        localStorage.setItem("authId", data.tokenAuth.id);
         localStorage.setItem("authToken", data.tokenAuth.token);
         client.cache.writeQuery({
           query: IS_LOGGED_IN,
