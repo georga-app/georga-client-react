@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
 
-const ACTIVATE_PERSON = gql`
+const ACTIVATE_PERSON_MUTATION = gql`
   mutation ActivatePerson(
     $token: String!
   ) {
@@ -20,13 +20,13 @@ const ACTIVATE_PERSON = gql`
   }
 `;
 
-function Activate() {
+function PersonActivateFlow() {
   let navigate = useNavigate();
   let params = useParams();
   const [activated, setActivated] = useState(false);
 
   const [activatePerson] = useMutation(
-    ACTIVATE_PERSON, {
+    ACTIVATE_PERSON_MUTATION, {
       onCompleted: data => {
         navigate('/login', {
           state: {
@@ -50,4 +50,4 @@ function Activate() {
   }
 }
 
-export default Activate;
+export default PersonActivateFlow;

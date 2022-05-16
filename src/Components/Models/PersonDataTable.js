@@ -3,7 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 
 import DataTable from '../Shared/DataTable'
 
-const ALL_PERSONS = gql`
+const ALL_PERSONS_QUERY = gql`
   query AllPersons (
     $email: String
   ) {
@@ -56,7 +56,7 @@ function PersonDataTable() {
   headCells[0].filter = setEmailFilter;
 
   const { data, loading } = useQuery(
-    ALL_PERSONS, {
+    ALL_PERSONS_QUERY, {
       'variables': {
         'email': emailFilter,
       }

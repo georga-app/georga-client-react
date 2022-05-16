@@ -6,14 +6,13 @@ import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Lock from "@mui/icons-material/Lock";
 
 import FormFieldError from "../Shared/FormFieldError";
 import FormError from "../Shared/FormError";
 
-const LOGIN = gql`
+const TOKEN_AUTH_MUTATION = gql`
   mutation TokenAuth (
     $email: String!,
     $password: String!
@@ -37,7 +36,7 @@ const IS_LOGGED_IN = gql`
   }
 `;
 
-function Login() {
+function PersonLoginForm() {
   const { state } = useLocation();
   const navigate = useNavigate()
 
@@ -46,7 +45,7 @@ function Login() {
   const [errors, setErrors] = useState({});
 
   const [login, { loading, reset, client }] = useMutation(
-    LOGIN, {
+    TOKEN_AUTH_MUTATION, {
       onCompleted: data => {
         localStorage.setItem("authId", data.tokenAuth.id);
         localStorage.setItem("authToken", data.tokenAuth.token);
@@ -77,23 +76,7 @@ function Login() {
 
   return (
     <>
-      <Paper
-        elevation={2}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: 2,
-          marginX: {
-            xs: 1,
-            md: "auto"
-          },
-          width: {
-            xs: "auto",
-            md: 400
-          },
-        }}
-      >
+        {/* Header */}
         <Avatar sx={{
           margin: 1,
           backgroundColor: Object.keys(errors).length > 0 ? "error.main" : "secondary.main",
@@ -141,9 +124,8 @@ function Login() {
           </Button>
 
         </form>
-      </Paper>
     </>
   );
 }
 
-export default Login;
+export default PersonLoginForm;

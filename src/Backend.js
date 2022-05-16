@@ -8,7 +8,7 @@ import Notes from './Pages/Notes'
 
 import Account from './Pages/Account'
 import Help from './Pages/Help'
-import Logout from './Components/Auth/Logout'
+import PersonLogoutFlow from './Components/Models/PersonLogoutFlow'
 
 import Imprint from './Pages/Imprint'
 import Feedback from './Pages/Feedback'
@@ -35,7 +35,7 @@ function Backend() {
   return (
     <Routes>
       <Route exact path="/" element={ <Dashboard menus={menus} /> } />
-      <Route path="/logout" element={ <Logout menus={menus} /> } />
+      <Route path="/logout" element={ <PersonLogoutFlow menus={menus} /> } />
       <Route path="/actions" element={ <Actions menus={menus} /> } />
       <Route path="/instructions" element={ <Instructions menus={menus} /> } />
       <Route path="/tools" element={ <Tools menus={menus} /> } />

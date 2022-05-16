@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { gql, useMutation } from '@apollo/client';
+import React from "react";
 
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -9,86 +8,10 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import Theme from '../Components/Shared/Theme';
-import PersonForm from '../Components/Models/PersonForm';
-
-const GET_PERSON = gql`
-  query ReadPerson ($id: ID!) {
-    node(id: $id) {
-      ... on PersonType {
-        email
-        password
-        firstName
-        lastName
-        mobilePhone
-      }
-    }
-  }
-`;
-
-const UPDATE_PERSON = gql`
-  mutation UpdatePerson (
-    $email: String!,
-    $firstName: String,
-    $lastName: String,
-    $mobilePhone: String
-  ) {
-    registerPerson(
-      input: {
-        email: $email,
-        password: $password,
-        firstName: $firstName,
-        lastName: $lastName,
-        mobilePhone: $mobilePhone
-      }
-    ) {
-      person {
-        email
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`;
+import PersonUpdateForm from '../Components/Models/PersonUpdateForm';
 
 function Account(props) {
   const [expanded, setExpanded] = React.useState(false);
-  const [errors, setErrors] = useState({});
-
-  const { getLoading, getError, getData } = useQuery(GET_DOGS);
-  const [updatePerson, { updateLoading, updateReset }] = useMutation(
-    UPDATE_PERSON, {
-      onCompleted: data => {
-        if(data.registerPerson.errors.length === 0) {
-          // ?
-        } else {
-          var fieldErrors = {};
-          data.registerPerson.errors.forEach(error => {
-            fieldErrors[error.field] = error.messages
-          });
-          setErrors(fieldErrors);
-          updateReset();
-        }
-      },
-      onError: error => {
-        setErrors({form: error.message});
-      }
-    }
-  );
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    updatePerson({
-      variables: {
-        email: this.state.email,
-        password: this.state.password,
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        mobilePhone: this.state.mobilePhone,
-      }
-    });
-  }
 
   function handleChange(panel) {
     return (event, isExpanded) => {
@@ -112,11 +35,16 @@ function Account(props) {
             md: 700
           },
         }}>
-        <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+        <Accordion
+          expanded={expanded === 'panel1'}
+          onChange={handleChange('panel1')}
+          sx={{ width: '100%' }}
+        >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1bh-content"
             id="panel1bh-header"
+            sx={{ flexShrink: 0 }}
           >
             <Typography sx={{ width: '33%', flexShrink: 0 }}>Profile</Typography>
             <Typography sx={{ color: 'text.secondary' }}>
@@ -124,15 +52,14 @@ function Account(props) {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <PersonForm
-              handleSubmit={handleSubmit}
-              loading={updateLoading}
-              errors={errors}
-              buttonText={updateLoading ? "Saving..." : "Save"}
-            />
+            <PersonUpdateForm />
           </AccordionDetails>
         </Accordion>
-        <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+        <Accordion
+          expanded={expanded === 'panel2'}
+          onChange={handleChange('panel2')}
+          sx={{ width: '100%' }}
+        >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel2bh-content"
@@ -151,7 +78,11 @@ function Account(props) {
             </Typography>
           </AccordionDetails>
         </Accordion>
-        <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+        <Accordion
+          expanded={expanded === 'panel3'}
+          onChange={handleChange('panel3')}
+          sx={{ width: '100%' }}
+        >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel3bh-content"
