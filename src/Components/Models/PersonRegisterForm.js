@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { gql, useMutation } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client';
 
+import Autocomplete from '@mui/material/Autocomplete';
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
+import Checkbox from '@mui/material/Checkbox';
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -14,21 +16,39 @@ import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import TextField from '@mui/material/TextField';
 import Typography from "@mui/material/Typography";
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import Gavel from "@mui/icons-material/Gavel";
 import VerifiedUserTwoTone from "@mui/icons-material/VerifiedUserTwoTone";
 
 import FormFieldError from "../Shared/FormFieldError";
 import FormError from "../Shared/FormError";
 
+
+const ALL_QUALIFICATIONS_LANGUAGE_QUERY = gql`
+  query AllQualificationsLanguage {
+    allQualificationsLanguage {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 const REGISTER_PERSON_MUTATION = gql`
   mutation RegisterPerson (
-    $email: String!,
-    $password: String!,
-    $title: String!,
-    $firstName: String,
-    $lastName: String,
+    $email: String!
+    $password: String!
+    $title: String!
+    $firstName: String
+    $lastName: String
     $mobilePhone: String
+    $qualificationsLanguage: [ID]
   ) {
     registerPerson(
       input: {
@@ -38,6 +58,7 @@ const REGISTER_PERSON_MUTATION = gql`
         firstName: $firstName
         lastName: $lastName
         mobilePhone: $mobilePhone
+        qualificationsLanguage: $qualificationsLanguage
       }
     ) {
       id
@@ -52,6 +73,7 @@ const REGISTER_PERSON_MUTATION = gql`
 function PersonRegisterForm(props) {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
+  const [allQualificationsLanguage, setAllQualificationsLanguage] = useState([]);
   const fields = {
     'email': useState(""),
     'password': useState(""),
@@ -59,7 +81,24 @@ function PersonRegisterForm(props) {
     'firstName': useState(""),
     'lastName': useState(""),
     'mobilePhone': useState(""),
+    'qualificationsLanguage': useState([]),
   }
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+  // allQualificationsLanguage
+  useQuery(
+    ALL_QUALIFICATIONS_LANGUAGE_QUERY, {
+      onCompleted: data => {
+        setAllQualificationsLanguage(
+          data.allQualificationsLanguage.edges.map(
+            edge => { return edge.node; }
+          )
+        );
+      },
+    },
+  );
 
   // registerPerson
   const [registerPerson, {
@@ -122,6 +161,7 @@ function PersonRegisterForm(props) {
         {/* Fields */}
         <FormControl
           margin="normal"
+          variant="standard"
           error={Boolean(errors.email)}
           fullWidth
           required
@@ -138,6 +178,7 @@ function PersonRegisterForm(props) {
 
         <FormControl
           margin="normal"
+          variant="standard"
           error={Boolean(errors.password)}
           fullWidth
           required
@@ -159,7 +200,7 @@ function PersonRegisterForm(props) {
           fullWidth
           required
         >
-          <InputLabel htmlFor="title" sx={{ ml: 1.5 }}>Title</InputLabel>
+          <InputLabel htmlFor="title">Title</InputLabel>
           <Select
             id="title"
             name="title"
@@ -177,6 +218,7 @@ function PersonRegisterForm(props) {
 
         <FormControl
           margin="normal"
+          variant="standard"
           error={Boolean(errors.firstName)}
           fullWidth
         >
@@ -191,6 +233,7 @@ function PersonRegisterForm(props) {
 
         <FormControl
           margin="normal"
+          variant="standard"
           error={Boolean(errors.lastName)}
           fullWidth
         >
@@ -205,6 +248,7 @@ function PersonRegisterForm(props) {
 
         <FormControl
           margin="normal"
+          variant="standard"
           error={Boolean(errors.mobilePhone)}
           fullWidth
         >
@@ -215,6 +259,39 @@ function PersonRegisterForm(props) {
             onChange={event => handleChange(event)}
           />
           <FormFieldError error={errors.mobilePhone}/>
+        </FormControl>
+
+        <FormControl
+          margin="normal"
+          variant="standard"
+          error={Boolean(errors.mobilePhone)}
+          fullWidth
+        >
+          <Autocomplete
+            multiple
+            fullWidth
+            size="small"
+            id="qualificationsLanguage"
+            options={allQualificationsLanguage}
+            getOptionLabel={(option) => option.name}
+            renderOption={(props, option, { selected }) => (
+              <li {...props}>
+                <Checkbox
+                  icon={icon}
+                  checkedIcon={checkedIcon}
+                  style={{ marginRight: 8 }}
+                  checked={selected}
+                />
+                {option.name}
+              </li>
+            )}
+            renderInput={(params) => (
+              <TextField {...params} variant="standard" label="Languages" />
+            )}
+            onChange={(event, options) => {
+              fields.qualificationsLanguage[1](options.map(option => option.id))
+            }}
+          />
         </FormControl>
 
         {/* Controls */}
