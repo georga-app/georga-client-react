@@ -166,7 +166,7 @@ function PersonUpdateForm(props) {
     fields[target][1](updatedValue);
     // update diff
     let isEqual = updatedValue === currentValue || (currentValue === null && !updatedValue);
-    if (currentValue.__typename?.endsWith("Connection")) {
+    if (currentValue?.__typename?.endsWith("Connection")) {
       const updatedIDs = updatedValue.map(edge => edge.node.id);
       isEqual = currentValue.edges.length === updatedValue.length &&
                 currentValue.edges.every(edge => updatedIDs.includes(edge.node.id))
