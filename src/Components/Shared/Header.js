@@ -12,6 +12,9 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
+// import LogoGeorga from '../../Images/logo-georga.svg';
+import { ReactComponent as LogoGeorga } from '../../Images/logo-georga.svg';
+
 function Header(props) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -29,15 +32,16 @@ function Header(props) {
             key="home"
             component={Link}
             to="/"
-            sx={{ mr: 2, color: 'white', display: 'block' }}
+            sx={{ mr: 2, color: 'white', display: { xs: 'none', md: 'block' } }}
           >
-            <Typography
-              variant="h6"
-              noWrap
-              sx={{ display: { xs: 'none', md: 'flex' }, textTransform: 'none' }}
-            >
-              GeoRGA
-            </Typography>
+            <Box sx={{ mt: '3px', height: 35 }}>
+              <LogoGeorga
+                fill="#eceff1"
+                stroke="#eceff1"
+                alt="GeoRGA"
+                style={{ width: 'auto', height: '100%' }}
+              />
+            </Box>
           </Button>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -81,21 +85,23 @@ function Header(props) {
               ))}
             </Menu>
           </Box>
-          <Button
-            key="home-xs"
-            component={Link}
-            to="/"
-            sx={{ mr: 2, color: 'white', display: 'block' }}
-          >
-            <Typography
-              component="div"
-              variant="h6"
-              noWrap
-              sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, textTransform: 'none' }}
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <Button
+              key="home-xs"
+              component={Link}
+              to="/"
+              sx={{ mr: 2, color: 'white', display: 'block' }}
             >
-              GeoRGA
-            </Typography>
-          </Button>
+              <Box sx={{ mt: '3px', height: 35 }}>
+                <LogoGeorga
+                  fill="#eceff1"
+                  stroke="#eceff1"
+                  alt="GeoRGA"
+                  style={{ width: 'auto', height: '100%' }}
+                />
+              </Box>
+            </Button>
+          </Box>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {props.menus.main.map((page) => (

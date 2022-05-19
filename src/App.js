@@ -1,7 +1,6 @@
 import { useLayoutEffect } from "react";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import { gql, useQuery } from '@apollo/client';
-import "@fontsource/roboto";
 
 import Frontend from './Frontend';
 import Backend from './Backend';
