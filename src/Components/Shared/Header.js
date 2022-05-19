@@ -81,14 +81,21 @@ function Header(props) {
               ))}
             </Menu>
           </Box>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
+          <Button
+            key="home-xs"
+            component={Link}
+            to="/"
+            sx={{ mr: 2, color: 'white', display: 'block' }}
           >
-            GeoRGA
-          </Typography>
+            <Typography
+              component="div"
+              variant="h6"
+              noWrap
+              sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, textTransform: 'none' }}
+            >
+              GeoRGA
+            </Typography>
+          </Button>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {props.menus.main.map((page) => (
