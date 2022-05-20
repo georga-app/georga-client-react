@@ -57,8 +57,8 @@ function PersonDataTable() {
 
   const { data, loading } = useQuery(
     ALL_PERSONS_QUERY, {
-      'variables': {
-        'email': emailFilter,
+      variables: {
+        email: emailFilter,
       }
     }
   );

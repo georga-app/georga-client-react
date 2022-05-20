@@ -89,7 +89,13 @@ function PersonLoginForm() {
         {/* Form */}
         <form onSubmit={event => handleSubmit(event)}>
           <FormError error={errors?.form}/>
-          <FormControl margin="normal" required fullWidth error={Boolean(errors.email)}>
+          <FormControl
+            margin="normal"
+            variant="standard"
+            required
+            fullWidth
+            error={Boolean(errors.email)}
+          >
             <InputLabel htmlFor="email">Email</InputLabel>
             <Input
               id="email"
@@ -99,7 +105,13 @@ function PersonLoginForm() {
             />
             <FormFieldError error={errors.email}/>
           </FormControl>
-          <FormControl margin="normal" required fullWidth error={Boolean(errors.password)}>
+          <FormControl
+            margin="normal"
+            variant="standard"
+            required
+            fullWidth
+            error={Boolean(errors.password)}
+          >
             <InputLabel htmlFor="password">Password</InputLabel>
             <Input
               id="password"

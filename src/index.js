@@ -1,16 +1,23 @@
 import { createRoot } from 'react-dom/client';
-import { ApolloClient, createHttpLink, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { ApolloClient, split, HttpLink, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { gql } from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
 import { setContext } from '@apollo/client/link/context';
+import { WebSocketLink } from '@apollo/client/link/ws'
+import { SubscriptionClient } from 'subscriptions-transport-ws'
+
 import "@fontsource/roboto";
 
 import App from './App';
 
 // apollo client
 const cache = new InMemoryCache();
-const httpLink = createHttpLink({
-  uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
+const httpLink = new HttpLink({
+  uri: process.env.REACT_APP_GRAPHQL_HTTP_ENDPOINT,
 });
+const wsLink = new WebSocketLink(
+  new SubscriptionClient(process.env.REACT_APP_GRAPHQL_WS_ENDPOINT)
+);
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('authToken');
   return {
@@ -20,8 +27,19 @@ const authLink = setContext((_, { headers }) => {
     }
   }
 });
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  authLink.concat(wsLink),
+  authLink.concat(httpLink),
+);
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: splitLink,
   cache: cache,
 });
 
