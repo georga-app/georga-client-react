@@ -12,7 +12,6 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
-// import LogoGeorga from '../../Images/logo-georga.svg';
 import { ReactComponent as LogoGeorga } from '../../Images/logo-georga.svg';
 
 function Header(props) {
