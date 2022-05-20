@@ -85,11 +85,11 @@ function PersonUpdateForm(props) {
   const [changed, setChanged] = useState({});
   const [allQualificationsLanguage, setAllQualificationsLanguage] = useState([]);
   const fields = {
-    'title': useState(""),
-    'firstName': useState(""),
-    'lastName': useState(""),
-    'mobilePhone': useState(""),
-    'qualificationsLanguage': useState([]),
+    title: useState(""),
+    firstName: useState(""),
+    lastName: useState(""),
+    mobilePhone: useState(""),
+    qualificationsLanguage: useState([]),
   }
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -196,7 +196,7 @@ function PersonUpdateForm(props) {
   if (!getCalled || getLoading)
     return <div>Loading...</div>;
   return (
-    <form onSubmit={event => handleSubmit(event)}>
+    <form onSubmit={handleSubmit}>
 
       {/* Errors */}
       <FormError error={errors.form}/>
@@ -214,8 +214,8 @@ function PersonUpdateForm(props) {
           id="title"
           name="title"
           label="Title"
-          value={fields['title'][0]}
-          onChange={event => handleChange(event)}
+          value={fields.title[0]}
+          onChange={handleChange}
         >
           <MenuItem value={"NONE"}>None</MenuItem>
           <MenuItem value={"HERR"}>Male</MenuItem>
@@ -234,8 +234,8 @@ function PersonUpdateForm(props) {
         <InputLabel htmlFor="firstName">First Name</InputLabel>
         <Input
           id="firstName"
-          value={fields['firstName'][0]}
-          onChange={event => handleChange(event)}
+          value={fields.firstName[0]}
+          onChange={handleChange}
         />
         <FormFieldError error={errors.firstName}/>
       </FormControl>
@@ -249,8 +249,8 @@ function PersonUpdateForm(props) {
         <InputLabel htmlFor="lastName">Last Name</InputLabel>
         <Input
           id="lastName"
-          value={fields['lastName'][0]}
-          onChange={event => handleChange(event)}
+          value={fields.lastName[0]}
+          onChange={handleChange}
         />
         <FormFieldError error={errors.lastName}/>
       </FormControl>
@@ -264,8 +264,8 @@ function PersonUpdateForm(props) {
         <InputLabel htmlFor="mobilePhone">Mobile Phone</InputLabel>
         <Input
           id="mobilePhone"
-          value={fields['mobilePhone'][0]}
-          onChange={event => handleChange(event)}
+          value={fields.mobilePhone[0]}
+          onChange={handleChange}
         />
         <FormFieldError error={errors.mobilePhone}/>
       </FormControl>
@@ -273,7 +273,7 @@ function PersonUpdateForm(props) {
       <FormControl
         margin="normal"
         variant="standard"
-        error={Boolean(errors.mobilePhone)}
+        error={Boolean(errors.qualificationsLanguage)}
         fullWidth
       >
         <Autocomplete

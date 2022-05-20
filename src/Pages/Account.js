@@ -35,6 +35,8 @@ function Account(props) {
             md: 700
           },
         }}>
+
+        {/* Profile */}
         <Accordion
           expanded={expanded === 'panel1'}
           onChange={handleChange('panel1')}
@@ -55,6 +57,8 @@ function Account(props) {
             <PersonUpdateForm />
           </AccordionDetails>
         </Accordion>
+
+        {/* Notifications */}
         <Accordion
           expanded={expanded === 'panel2'}
           onChange={handleChange('panel2')}
@@ -78,6 +82,8 @@ function Account(props) {
             </Typography>
           </AccordionDetails>
         </Accordion>
+
+        {/* Security */}
         <Accordion
           expanded={expanded === 'panel3'}
           onChange={handleChange('panel3')}
@@ -102,6 +108,7 @@ function Account(props) {
           </AccordionDetails>
         </Accordion>
       </Box>
+
     </Theme>
   );
 }

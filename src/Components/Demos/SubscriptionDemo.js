@@ -60,7 +60,7 @@ function SubscriptionDemo(props) {
     }
   );
 
-  const { subscriptionData, subscriptionLoading } = useSubscription(
+  useSubscription(
     TEST_SUBSCRIPTION, {
       variables: {
         arg1: 'arg1',
@@ -85,7 +85,7 @@ function SubscriptionDemo(props) {
 
   return (
     <>
-      <form onSubmit={event => handleSubmit(event)} autoComplete="off">
+      <form onSubmit={handleSubmit} autoComplete="off">
         <FormControl
           margin="normal"
           variant="standard"

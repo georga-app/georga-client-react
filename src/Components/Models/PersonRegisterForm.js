@@ -75,13 +75,13 @@ function PersonRegisterForm(props) {
   const [errors, setErrors] = useState({});
   const [allQualificationsLanguage, setAllQualificationsLanguage] = useState([]);
   const fields = {
-    'email': useState(""),
-    'password': useState(""),
-    'title': useState(""),
-    'firstName': useState(""),
-    'lastName': useState(""),
-    'mobilePhone': useState(""),
-    'qualificationsLanguage': useState([]),
+    email: useState(""),
+    password: useState(""),
+    title: useState(""),
+    firstName: useState(""),
+    lastName: useState(""),
+    mobilePhone: useState(""),
+    qualificationsLanguage: useState([]),
   }
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -153,7 +153,7 @@ function PersonRegisterForm(props) {
       <Typography variant="headline">Register</Typography>
 
       {/* Form */}
-      <form onSubmit={event => handleSubmit(event)}>
+      <form onSubmit={handleSubmit}>
 
         {/* Errors */}
         <FormError error={errors.form}/>
@@ -170,8 +170,8 @@ function PersonRegisterForm(props) {
           <Input
             id="email"
             type="email"
-            value={fields['email'][0]}
-            onChange={event => handleChange(event)}
+            value={fields.email[0]}
+            onChange={handleChange}
           />
           <FormFieldError error={errors.email}/>
         </FormControl>
@@ -187,8 +187,8 @@ function PersonRegisterForm(props) {
           <Input
             id="password"
             type="password"
-            value={fields['password'][0]}
-            onChange={event => handleChange(event)}
+            value={fields.password[0]}
+            onChange={handleChange}
           />
           <FormFieldError error={errors.password}/>
         </FormControl>
@@ -205,8 +205,8 @@ function PersonRegisterForm(props) {
             id="title"
             name="title"
             label="Title"
-            value={fields['title'][0]}
-            onChange={event => handleChange(event)}
+            value={fields.title[0]}
+            onChange={handleChange}
           >
             <MenuItem value={"NONE"}>None</MenuItem>
             <MenuItem value={"HERR"}>Male</MenuItem>
@@ -225,8 +225,8 @@ function PersonRegisterForm(props) {
           <InputLabel htmlFor="firstName">First Name</InputLabel>
           <Input
             id="firstName"
-            value={fields['firstName'][0]}
-            onChange={event => handleChange(event)}
+            value={fields.firstName[0]}
+            onChange={handleChange}
           />
           <FormFieldError error={errors.firstName}/>
         </FormControl>
@@ -240,8 +240,8 @@ function PersonRegisterForm(props) {
           <InputLabel htmlFor="lastName">Last Name</InputLabel>
           <Input
             id="lastName"
-            value={fields['lastName'][0]}
-            onChange={event => handleChange(event)}
+            value={fields.lastName[0]}
+            onChange={handleChange}
           />
           <FormFieldError error={errors.lastName}/>
         </FormControl>
@@ -255,8 +255,8 @@ function PersonRegisterForm(props) {
           <InputLabel htmlFor="mobilePhone">Mobile Phone</InputLabel>
           <Input
             id="mobilePhone"
-            value={fields['mobilePhone'][0]}
-            onChange={event => handleChange(event)}
+            value={fields.mobilePhone[0]}
+            onChange={handleChange}
           />
           <FormFieldError error={errors.mobilePhone}/>
         </FormControl>
@@ -303,8 +303,8 @@ function PersonRegisterForm(props) {
           sx={{ marginTop: 1 }}
           disabled={
             registerLoading ||
-            !fields['email'][0].trim() ||
-            !fields['title'][0].trim()
+            !fields.email[0].trim() ||
+            !fields.title[0].trim()
           }
         >
           {registerLoading ? "Registering..." : "Register"}

@@ -14,12 +14,12 @@ import FormError from "../Shared/FormError";
 
 const TOKEN_AUTH_MUTATION = gql`
   mutation TokenAuth (
-    $email: String!,
+    $email: String!
     $password: String!
   ) {
     tokenAuth(
       input: {
-        email: $email,
+        email: $email
         password: $password
       }
     ) {
