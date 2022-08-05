@@ -27,9 +27,29 @@ import FormFieldError from "../Shared/FormFieldError";
 import FormError from "../Shared/FormError";
 
 
-const ALL_QUALIFICATIONS_LANGUAGE_QUERY = gql`
-  query AllQualificationsLanguage {
-    allQualificationsLanguage {
+const PROFILE_OPTIONS_QUERY = gql`
+  query ProfileOptions {
+    allQualificationCategories {
+      edges {
+        node {
+          id
+          code
+          name
+        }
+      }
+    }
+    allQualifications {
+      edges {
+        node {
+          id
+          name
+          qualificationCategory {
+            code
+          }
+        }
+      }
+    }
+    allRestrictions {
       edges {
         node {
           id
@@ -48,7 +68,7 @@ const REGISTER_PERSON_MUTATION = gql`
     $firstName: String
     $lastName: String
     $mobilePhone: String
-    $qualificationsLanguage: [ID]
+    $qualifications: [ID]
   ) {
     registerPerson(
       input: {
@@ -58,7 +78,7 @@ const REGISTER_PERSON_MUTATION = gql`
         firstName: $firstName
         lastName: $lastName
         mobilePhone: $mobilePhone
-        qualificationsLanguage: $qualificationsLanguage
+        qualifications: $qualifications
       }
     ) {
       id
@@ -73,7 +93,9 @@ const REGISTER_PERSON_MUTATION = gql`
 function PersonRegisterForm(props) {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
-  const [allQualificationsLanguage, setAllQualificationsLanguage] = useState([]);
+  const [allQualificationCategories, setAllQualificationCategories] = useState([]);
+  const [allQualifications, setAllQualifications] = useState([]);
+  const [allRestrictions, setAllRestrictions] = useState([]);
   const fields = {
     email: useState(""),
     password: useState(""),
@@ -81,18 +103,29 @@ function PersonRegisterForm(props) {
     firstName: useState(""),
     lastName: useState(""),
     mobilePhone: useState(""),
-    qualificationsLanguage: useState([]),
+    qualifications: useState({}),
+    restrictions: useState([]),
   }
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-  // allQualificationsLanguage
+  // allQualifications
   useQuery(
-    ALL_QUALIFICATIONS_LANGUAGE_QUERY, {
+    PROFILE_OPTIONS_QUERY, {
       onCompleted: data => {
-        setAllQualificationsLanguage(
-          data.allQualificationsLanguage.edges.map(
+        setAllQualificationCategories(
+          data.allQualificationCategories.edges.map(
+            edge => { return edge.node; }
+          )
+        );
+        setAllQualifications(
+          data.allQualifications.edges.map(
+            edge => { return edge.node; }
+          )
+        );
+        setAllRestrictions(
+          data.allRestrictions.edges.map(
             edge => { return edge.node; }
           )
         );
@@ -134,7 +167,16 @@ function PersonRegisterForm(props) {
     event.preventDefault();
     let variables = {}
     for (const [key, state] of Object.entries(fields)) {
-      variables[key] = state[0];
+      switch (key) {
+        case 'qualifications':
+          variables[key] = [];
+          for (const [category, selection] of Object.entries(state[0])) {
+            variables[key] = variables[key].concat(selection);
+          }
+          break;
+        default:
+          variables[key] = state[0];
+      }
     }
     registerPerson({variables: variables});
   }
@@ -261,18 +303,58 @@ function PersonRegisterForm(props) {
           <FormFieldError error={errors.mobilePhone}/>
         </FormControl>
 
+        {allQualificationCategories.map((category) =>
+          <FormControl
+            key={category.code}
+            margin="normal"
+            variant="standard"
+            error={Boolean(errors.qualifications)}
+            fullWidth
+          >
+            <Autocomplete
+              multiple
+              fullWidth
+              size="small"
+              id={"qualifications-" + category.code}
+              options={allQualifications.filter((obj) =>
+                obj.qualificationCategory.code === category.code)}
+              getOptionLabel={(option) => option.name}
+              renderOption={(props, option, { selected }) => (
+                <li {...props}>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option.name}
+                </li>
+              )}
+              renderInput={(params) => (
+                <TextField {...params} variant="standard" label={category.name} />
+              )}
+              onChange={(event, options) => {
+                fields.qualifications[1](currentQualifications => ({
+                  ...currentQualifications,
+                  [category.code]: options.map(option => option.id)
+                }))
+              }}
+            />
+          </FormControl>
+        )}
+
         <FormControl
           margin="normal"
           variant="standard"
-          error={Boolean(errors.mobilePhone)}
+          error={Boolean(errors.restrictions)}
           fullWidth
         >
           <Autocomplete
             multiple
             fullWidth
             size="small"
-            id="qualificationsLanguage"
-            options={allQualificationsLanguage}
+            id="restrictions"
+            options={allRestrictions}
             getOptionLabel={(option) => option.name}
             renderOption={(props, option, { selected }) => (
               <li {...props}>
@@ -286,10 +368,10 @@ function PersonRegisterForm(props) {
               </li>
             )}
             renderInput={(params) => (
-              <TextField {...params} variant="standard" label="Languages" />
+              <TextField {...params} variant="standard" label="Restrictions" />
             )}
             onChange={(event, options) => {
-              fields.qualificationsLanguage[1](options.map(option => option.id))
+              fields.restrictions[1](options.map(option => option.id))
             }}
           />
         </FormControl>
