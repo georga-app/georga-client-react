@@ -367,9 +367,9 @@ function PersonUpdateForm(props) {
             size="small"
             id={"qualifications-" + category.code}
             name={"qualifications-" + category.code}
-            options={allQualifications ? allQualifications.filter((obj) =>
-              obj.node.qualificationCategory.code === category.code) : []}
-            value={fields.qualifications[0][category.code]}
+            options={allQualifications.filter((obj) =>
+              obj.node.qualificationCategory.code === category.code)}
+            value={fields.qualifications[0][category.code] || []}
             isOptionEqualToValue={(option, value) => option.node.id === value.node.id}
             getOptionLabel={option => option.node.name}
             renderOption={(props, option, { selected }) => (
