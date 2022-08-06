@@ -110,7 +110,7 @@ function PersonRegisterForm(props) {
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-  // allQualifications
+  // qualifications, restrictions
   useQuery(
     PROFILE_OPTIONS_QUERY, {
       onCompleted: data => {

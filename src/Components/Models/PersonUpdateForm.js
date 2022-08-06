@@ -16,6 +16,39 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import FormFieldError from "../Shared/FormFieldError";
 import FormError from "../Shared/FormError";
 
+const GET_PERSON_OPTIONS_QUERY = gql`
+  query GetPersonOptions {
+    allQualificationCategories {
+      edges {
+        node {
+          id
+          code
+          name
+        }
+      }
+    }
+    allQualifications {
+      edges {
+        node {
+          id
+          name
+          qualificationCategory {
+            code
+          }
+        }
+      }
+    }
+    allRestrictions {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 const GET_PERSON_QUERY = gql`
   query GetPerson ($id: ID!) {
     node(id: $id) {
@@ -24,26 +57,24 @@ const GET_PERSON_QUERY = gql`
         firstName
         lastName
         mobilePhone
-        qualificationsLanguage {
+        qualifications {
+          edges {
+            node {
+              id
+              name
+              qualificationCategory {
+                code
+              }
+            }
+          }
+        }
+        restrictions {
           edges {
             node {
               id
               name
             }
           }
-        }
-      }
-    }
-  }
-`;
-
-const ALL_QUALIFICATIONS_LANGUAGE_QUERY = gql`
-  query AllQualificationsLanguage {
-    allQualificationsLanguage {
-      edges {
-        node {
-          id
-          name
         }
       }
     }
@@ -57,7 +88,8 @@ const UPDATE_PERSON_MUTATION = gql`
     $firstName: String
     $lastName: String
     $mobilePhone: String
-    $qualificationsLanguage: [ID]
+    $qualifications: [ID]
+    $restrictions: [ID]
   ) {
     updatePerson(
       input: {
@@ -66,7 +98,8 @@ const UPDATE_PERSON_MUTATION = gql`
         firstName: $firstName
         lastName: $lastName
         mobilePhone: $mobilePhone
-        qualificationsLanguage: $qualificationsLanguage
+        qualifications: $qualifications
+        restrictions: $restrictions
       }
     ) {
       person {
@@ -83,13 +116,16 @@ const UPDATE_PERSON_MUTATION = gql`
 function PersonUpdateForm(props) {
   const [errors, setErrors] = useState({});
   const [changed, setChanged] = useState({});
-  const [allQualificationsLanguage, setAllQualificationsLanguage] = useState([]);
+  const [allQualificationCategories, setAllQualificationCategories] = useState([]);
+  const [allQualifications, setAllQualifications] = useState([]);
+  const [allRestrictions, setAllRestrictions] = useState([]);
   const fields = {
     title: useState(""),
     firstName: useState(""),
     lastName: useState(""),
     mobilePhone: useState(""),
-    qualificationsLanguage: useState([]),
+    qualifications: useState({}),
+    restrictions: useState([]),
   }
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -97,7 +133,10 @@ function PersonUpdateForm(props) {
 
   // getPerson
   const {
-    called: getCalled, loading: getLoading, data: getData, error: getError
+    called: getPersonCalled,
+    loading: getPersonLoading,
+    data: getPersonData,
+    error: getPersonError
   } = useQuery(
     GET_PERSON_QUERY, {
       variables: {
@@ -115,29 +154,58 @@ function PersonUpdateForm(props) {
           if (value.__typename?.endsWith("Connection"))
             value = value.edges;
           // set state
-          state[1](value);
+          switch (key) {
+            case "qualifications":
+              let categories = {}
+              value.forEach(obj => {
+                const category = obj.node.qualificationCategory.code
+                if (!(category in categories))
+                  categories[category] = []
+                categories[category] = categories[category].concat(obj);
+              });
+              state[1](categories);
+              break;
+            default:
+              state[1](value);
+          }
         }
       },
     },
   );
 
-  // allQualificationsLanguage
-  useQuery(
-    ALL_QUALIFICATIONS_LANGUAGE_QUERY, {
+  // qualifications, restrictions
+  const {
+    called: getPersonOptionsCalled,
+    loading: getPersonOptionsLoading
+  } = useQuery(
+    GET_PERSON_OPTIONS_QUERY, {
       onCompleted: data => {
-        setAllQualificationsLanguage(data.allQualificationsLanguage.edges);
+        const categories = data.allQualificationCategories.edges.map(
+          edge => { return edge.node; }
+        )
+        setAllQualificationCategories(categories);
+        setAllQualifications(data.allQualifications.edges);
+        setAllRestrictions(data.allRestrictions.edges);
+        let emptyCategories = {}
+        categories.forEach(obj => {
+          const category = obj.code
+          if (!(category in fields.qualifications[0]))
+            emptyCategories[category] = []
+        });
+        fields.qualifications[1](obj => ({...obj, ...emptyCategories}));
       },
     },
   );
 
   // updatePerson
   const [ updatePerson, {
-    loading: updateLoading, reset: updateReset
+    loading: updatePersonLoading,
+    reset: updatePersonReset
   }] = useMutation(
     UPDATE_PERSON_MUTATION, {
       onCompleted: data => {
         if(data.updatePerson.errors.length === 0) {
-          updateReset();
+          updatePersonReset();
           setChanged({});
         } else {
           var fieldErrors = {};
@@ -145,7 +213,7 @@ function PersonUpdateForm(props) {
             fieldErrors[error.field] = error.messages
           });
           setErrors(fieldErrors);
-          updateReset();
+          updatePersonReset();
         }
       },
       onError: error => {
@@ -160,11 +228,26 @@ function PersonUpdateForm(props) {
   // change
   function handleChange(event) {
     const target = event.field || event.target.id || event.target.name;
-    const currentValue = getData.node[target];
+    const category = event.fieldCategory
+    const currentValue = getPersonData.node[target];
     let updatedValue = event.value || event.target.value;
-    // update field
-    fields[target][1](updatedValue);
+    let updatedCategories = null;
+
+    // update fields
+    if (category) {  // fields -1:n-> form inputs
+      updatedCategories = {...fields[target][0], [category]: updatedValue};
+      fields[target][1](updatedCategories);
+    } else {  // fields -1:1-> form inputs
+      fields[target][1](updatedValue);
+    }
+
     // update diff
+    if (category) {  // fields -1:n-> form inputs
+      updatedValue = []
+      for (const [key, values] of Object.entries(updatedCategories)) {
+        values.forEach(obj => updatedValue.push(obj));
+      }
+    }
     let isEqual = updatedValue === currentValue || (currentValue === null && !updatedValue);
     if (currentValue?.__typename?.endsWith("Connection")) {
       const updatedIDs = updatedValue.map(edge => edge.node.id);
@@ -191,9 +274,9 @@ function PersonUpdateForm(props) {
   }
 
   // return
-  if (getError)
+  if (getPersonError)
     return <div>Error</div>;
-  if (!getCalled || getLoading)
+  if (!getPersonCalled || getPersonLoading || !getPersonOptionsCalled || getPersonOptionsLoading)
     return <div>Loading...</div>;
   return (
     <form onSubmit={handleSubmit}>
@@ -218,9 +301,9 @@ function PersonUpdateForm(props) {
           onChange={handleChange}
         >
           <MenuItem value={"NONE"}>None</MenuItem>
-          <MenuItem value={"HERR"}>Male</MenuItem>
-          <MenuItem value={"FRAU"}>Female</MenuItem>
-          <MenuItem value={"DIVERS"}>Diverse</MenuItem>
+          <MenuItem value={"MR"}>Male</MenuItem>
+          <MenuItem value={"MS"}>Female</MenuItem>
+          <MenuItem value={"MX"}>Diverse</MenuItem>
         </Select>
         <FormFieldError error={errors.title}/>
       </FormControl>
@@ -270,43 +353,48 @@ function PersonUpdateForm(props) {
         <FormFieldError error={errors.mobilePhone}/>
       </FormControl>
 
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.qualificationsLanguage)}
-        fullWidth
-      >
-        <Autocomplete
-          multiple
+      {allQualificationCategories.map((category) =>
+        <FormControl
+          key={category.code}
+          margin="normal"
+          variant="standard"
+          error={Boolean(errors.qualifications)}
           fullWidth
-          size="small"
-          id="qualificationsLanguage"
-          name="qualificationsLanguage"
-          options={allQualificationsLanguage}
-          value={fields.qualificationsLanguage[0]}
-          isOptionEqualToValue={(option, value) => option.node.id === value.node.id}
-          getOptionLabel={option => option.node.name}
-          renderOption={(props, option, { selected }) => (
-            <li {...props}>
-              <Checkbox
-                icon={icon}
-                checkedIcon={checkedIcon}
-                style={{ marginRight: 8 }}
-                checked={selected}
-              />
-              {option.node.name}
-            </li>
-          )}
-          renderInput={(params) => (
-            <TextField {...params} variant="standard" label="Languages" />
-          )}
-          onChange={(event, selected) => {
-            event.field = "qualificationsLanguage";
-            event.value = selected;
-            handleChange(event);
-          }}
-        />
-      </FormControl>
+        >
+          <Autocomplete
+            multiple
+            fullWidth
+            size="small"
+            id={"qualifications-" + category.code}
+            name={"qualifications-" + category.code}
+            options={allQualifications ? allQualifications.filter((obj) =>
+              obj.node.qualificationCategory.code === category.code) : []}
+            value={fields.qualifications[0][category.code]}
+            isOptionEqualToValue={(option, value) => option.node.id === value.node.id}
+            getOptionLabel={option => option.node.name}
+            renderOption={(props, option, { selected }) => (
+              <li {...props}>
+                <Checkbox
+                  icon={icon}
+                  checkedIcon={checkedIcon}
+                  style={{ marginRight: 8 }}
+                  checked={selected}
+                />
+                {option.node.name}
+              </li>
+            )}
+            renderInput={(params) => (
+              <TextField {...params} variant="standard" label={category.name} />
+            )}
+            onChange={(event, selected) => {
+              event.field = "qualifications";
+              event.fieldCategory = category.code;
+              event.value = selected;
+              handleChange(event);
+            }}
+          />
+        </FormControl>
+      )}
 
       {/* Controls */}
       <Button
@@ -316,11 +404,11 @@ function PersonUpdateForm(props) {
         color="secondary"
         sx={{ marginTop: 1 }}
         disabled={
-          updateLoading ||
+          updatePersonLoading ||
           Object.keys(changed).length === 0
         }
       >
-        {updateLoading ? "Saving..." : "Save"}
+        {updatePersonLoading ? "Saving..." : "Save"}
       </Button>
 
       {/* Feedback */}
