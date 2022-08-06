@@ -251,9 +251,9 @@ function PersonRegisterForm(props) {
             onChange={handleChange}
           >
             <MenuItem value={"NONE"}>None</MenuItem>
-            <MenuItem value={"HERR"}>Male</MenuItem>
-            <MenuItem value={"FRAU"}>Female</MenuItem>
-            <MenuItem value={"DIVERS"}>Diverse</MenuItem>
+            <MenuItem value={"MR"}>Male</MenuItem>
+            <MenuItem value={"MS"}>Female</MenuItem>
+            <MenuItem value={"MX"}>Diverse</MenuItem>
           </Select>
           <FormFieldError error={errors.title}/>
         </FormControl>
