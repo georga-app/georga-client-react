@@ -170,8 +170,8 @@ function PersonRegisterForm(props) {
       switch (key) {
         case 'qualifications':
           variables[key] = [];
-          for (const [category, selection] of Object.entries(state[0])) {
-            variables[key] = variables[key].concat(selection);
+          for (const category in state[0]) {
+            variables[key] = variables[key].concat(state[0][category]);
           }
           break;
         default:
