@@ -30,6 +30,7 @@ const GET_PERSON_OPTIONS_QUERY = gql`
           id
           code
           name
+          selectionType
         }
       }
     }
@@ -196,9 +197,9 @@ function PersonUpdateForm(props) {
         setAllRestrictions(data.allRestrictions.edges);
         let emptyCategories = {}
         categories.forEach(obj => {
-          const category = obj.code
-          if (!(category in fields.qualifications[0]))
-            emptyCategories[category] = []
+          if (!(obj.code in fields.qualifications[0])) {
+            emptyCategories[obj.code] = []
+          }
         });
         fields.qualifications[1](obj => ({...obj, ...emptyCategories}));
       },
@@ -236,7 +237,7 @@ function PersonUpdateForm(props) {
   // change
   function handleChange(event) {
     const target = event.field || event.target.id || event.target.name;
-    const category = event.fieldCategory
+    const category = event.category?.code;
     const currentValue = getPersonData.node[target];
     let updatedValue = event.value || event.target.value;
     let updatedCategories = null;
@@ -369,14 +370,19 @@ function PersonUpdateForm(props) {
           fullWidth
         >
           <Autocomplete
-            multiple
+            multiple={category.selectionType === "MULTISELECT" ? true : false}
             fullWidth
             size="small"
             id={"qualifications-" + category.code}
             name={"qualifications-" + category.code}
             options={allQualifications.filter((obj) =>
               obj.node.qualificationCategory.code === category.code)}
-            value={fields.qualifications[0][category.code] || []}
+            value={category.selectionType === "MULTISELECT"
+              ? fields.qualifications[0][category.code] || []
+              : fields.qualifications[0][category.code]?.length === 1
+                ? fields.qualifications[0][category.code][0]
+                : null
+            }
             isOptionEqualToValue={(option, value) => option.node.id === value.node.id}
             getOptionLabel={option => option.node.name}
             renderOption={(props, option, { selected }) => (
@@ -395,8 +401,10 @@ function PersonUpdateForm(props) {
             )}
             onChange={(event, selected) => {
               event.field = "qualifications";
-              event.fieldCategory = category.code;
+              event.category = category;
               event.value = selected;
+              if (category.selectionType === "SINGLESELECT")
+                event.value = selected === null ? [] : [selected]
               handleChange(event);
             }}
           />

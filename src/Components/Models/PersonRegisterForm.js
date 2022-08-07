@@ -41,6 +41,7 @@ const GET_PERSON_OPTIONS_QUERY = gql`
           id
           code
           name
+          selectionType
         }
       }
     }
@@ -321,7 +322,7 @@ function PersonRegisterForm(props) {
             fullWidth
           >
             <Autocomplete
-              multiple
+              multiple={category.selectionType === "MULTISELECT" ? true : false}
               fullWidth
               size="small"
               id={"qualifications-" + category.code}
@@ -345,7 +346,9 @@ function PersonRegisterForm(props) {
               onChange={(event, options) => {
                 fields.qualifications[1](currentQualifications => ({
                   ...currentQualifications,
-                  [category.code]: options.map(option => option.id)
+                  [category.code]: category.selectionType === "MULTISELECT"
+                    ? options.map(option => option.id)
+                    : options?.id
                 }))
               }}
             />
