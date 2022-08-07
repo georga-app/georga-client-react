@@ -411,6 +411,43 @@ function PersonUpdateForm(props) {
         </FormControl>
       )}
 
+      <FormControl
+        margin="normal"
+        variant="standard"
+        error={Boolean(errors.restrictions)}
+        fullWidth
+      >
+        <Autocomplete
+          multiple
+          fullWidth
+          size="small"
+          id="restrictions"
+          options={allRestrictions}
+          value={fields.restrictions[0] || []}
+          isOptionEqualToValue={(option, value) => option.node.id === value.node.id}
+          getOptionLabel={(option) => option.node.name}
+          renderOption={(props, option, { selected }) => (
+            <li {...props}>
+              <Checkbox
+                icon={icon}
+                checkedIcon={checkedIcon}
+                style={{ marginRight: 8 }}
+                checked={selected}
+              />
+              {option.node.name}
+            </li>
+          )}
+          renderInput={(params) => (
+            <TextField {...params} variant="standard" label="Restrictions" />
+          )}
+          onChange={(event, selected) => {
+            event.field = "restrictions";
+            event.value = selected;
+            handleChange(event);
+          }}
+        />
+      </FormControl>
+
       {/* Controls */}
       <Button
         type="submit"
