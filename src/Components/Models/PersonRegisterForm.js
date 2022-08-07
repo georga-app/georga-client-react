@@ -27,8 +27,14 @@ import FormFieldError from "../Shared/FormFieldError";
 import FormError from "../Shared/FormError";
 
 
-const PROFILE_OPTIONS_QUERY = gql`
-  query ProfileOptions {
+const GET_PERSON_OPTIONS_QUERY = gql`
+  query GetPersonOptions {
+    allPersonTitleOptions: __type(name: "PersonTitle") {
+      enumValues {
+        name
+        description
+      }
+    }
     allQualificationCategories {
       edges {
         node {
@@ -93,6 +99,7 @@ const REGISTER_PERSON_MUTATION = gql`
 function PersonRegisterForm(props) {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
+  const [allPersonTitleOptions, setAllPersonTitleOptions] = useState([]);
   const [allQualificationCategories, setAllQualificationCategories] = useState([]);
   const [allQualifications, setAllQualifications] = useState([]);
   const [allRestrictions, setAllRestrictions] = useState([]);
@@ -112,8 +119,11 @@ function PersonRegisterForm(props) {
 
   // qualifications, restrictions
   useQuery(
-    PROFILE_OPTIONS_QUERY, {
+    GET_PERSON_OPTIONS_QUERY, {
       onCompleted: data => {
+        setAllPersonTitleOptions(
+          data.allPersonTitleOptions.enumValues
+        );
         setAllQualificationCategories(
           data.allQualificationCategories.edges.map(
             edge => { return edge.node; }
@@ -250,10 +260,9 @@ function PersonRegisterForm(props) {
             value={fields.title[0]}
             onChange={handleChange}
           >
-            <MenuItem value={"NONE"}>None</MenuItem>
-            <MenuItem value={"MR"}>Male</MenuItem>
-            <MenuItem value={"MS"}>Female</MenuItem>
-            <MenuItem value={"MX"}>Diverse</MenuItem>
+            {allPersonTitleOptions.map(option =>
+              <MenuItem key={option.name} value={option.name}>{option.description}</MenuItem>
+            )}
           </Select>
           <FormFieldError error={errors.title}/>
         </FormControl>

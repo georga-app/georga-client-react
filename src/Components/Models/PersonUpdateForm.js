@@ -18,6 +18,12 @@ import FormError from "../Shared/FormError";
 
 const GET_PERSON_OPTIONS_QUERY = gql`
   query GetPersonOptions {
+    allPersonTitleOptions: __type(name: "PersonTitle") {
+      enumValues {
+        name
+        description
+      }
+    }
     allQualificationCategories {
       edges {
         node {
@@ -116,6 +122,7 @@ const UPDATE_PERSON_MUTATION = gql`
 function PersonUpdateForm(props) {
   const [errors, setErrors] = useState({});
   const [changed, setChanged] = useState({});
+  const [allPersonTitleOptions, setAllPersonTitleOptions] = useState([]);
   const [allQualificationCategories, setAllQualificationCategories] = useState([]);
   const [allQualifications, setAllQualifications] = useState([]);
   const [allRestrictions, setAllRestrictions] = useState([]);
@@ -183,6 +190,7 @@ function PersonUpdateForm(props) {
         const categories = data.allQualificationCategories.edges.map(
           edge => { return edge.node; }
         )
+        setAllPersonTitleOptions(data.allPersonTitleOptions.enumValues);
         setAllQualificationCategories(categories);
         setAllQualifications(data.allQualifications.edges);
         setAllRestrictions(data.allRestrictions.edges);
@@ -300,10 +308,9 @@ function PersonUpdateForm(props) {
           value={fields.title[0]}
           onChange={handleChange}
         >
-          <MenuItem value={"NONE"}>None</MenuItem>
-          <MenuItem value={"MR"}>Male</MenuItem>
-          <MenuItem value={"MS"}>Female</MenuItem>
-          <MenuItem value={"MX"}>Diverse</MenuItem>
+          {allPersonTitleOptions.map(option =>
+            <MenuItem key={option.name} value={option.name}>{option.description}</MenuItem>
+          )}
         </Select>
         <FormFieldError error={errors.title}/>
       </FormControl>
