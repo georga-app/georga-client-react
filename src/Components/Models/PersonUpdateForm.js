@@ -253,9 +253,12 @@ function PersonUpdateForm(props) {
     // update diff
     if (category) {  // fields -1:n-> form inputs
       updatedValue = []
-      for (const [key, values] of Object.entries(updatedCategories)) {
-        values.forEach(obj => updatedValue.push(obj));
-      }
+      Object.keys(updatedCategories).forEach(function(key) {
+        let updatedCategory = updatedCategories[key];
+        for (const value of updatedCategory) {
+          updatedValue.push(value);
+        }
+      });
     }
     let isEqual = updatedValue === currentValue || (currentValue === null && !updatedValue);
     if (currentValue?.__typename?.endsWith("Connection")) {
