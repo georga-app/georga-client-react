@@ -15,14 +15,8 @@ import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import FormError from '../Shared/FormError';
 
 const TEST_SUBSCRIPTION = gql`
-  subscription TestSubscription (
-    $arg1: String!
-    $arg2: String!
-  ) {
-    testSubscription(
-      arg1: $arg1
-      arg2: $arg2
-    ) {
+  subscription TestSubscription {
+    testSubscription {
       message
       time
     }
@@ -62,10 +56,6 @@ function SubscriptionDemo(props) {
 
   useSubscription(
     TEST_SUBSCRIPTION, {
-      variables: {
-        arg1: 'arg1',
-        arg2: 'arg2',
-      },
       onSubscriptionData: ({ subscriptionData }) => {
         setTestSubscriptionsEvents(
           [subscriptionData.data.testSubscription, ...testSubscriptionEvents]
