@@ -4,11 +4,11 @@ import { gql, useQuery } from '@apollo/client';
 import DataTable from '../Shared/DataTable'
 
 const ALL_PERSONS_QUERY = gql`
-  query AllPersons (
+  query ListPersons (
     $email: String
   ) {
-    allPersons(
-      email_Icontains: $email
+    listPersons(
+      email: $email
     ) {
       edges {
         node {
@@ -64,7 +64,7 @@ function PersonDataTable() {
   );
   let rows = [];
   if (!loading)
-    rows = data.allPersons?.edges.map((edge) => (edge.node));
+    rows = data.listPersons?.edges.map((edge) => (edge.node));
 
   return (
     <DataTable

@@ -16,7 +16,7 @@ function PersonLogoutFlow() {
     client.cache.writeQuery({
       query: IS_LOGGED_IN_QUERY,
       data: {
-        isLoggedIn: !!localStorage.getItem("authToken"),
+        isLoggedIn: false,
       },
     });
     navigate("/");

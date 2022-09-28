@@ -1,11 +1,11 @@
 import Theme from '../Components/Shared/Theme';
 
-function Tools(props) {
+function Messages(props) {
   return (
     <Theme menus={props.menus}>
-      Tools
+      Messages
     </Theme>
   );
 }
 
-export default Tools;
+export default Messages;

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Home from './Pages/Home';
 import Register from './Pages/Register';
@@ -27,6 +27,7 @@ function Frontend() {
       <Route path="/activate/:token" element={ <PersonActivateFlow /> } />
       <Route path="/imprint" element={ <Imprint menus={menus} /> } />
       <Route path="/feedback" element={ <Feedback menus={menus} /> } />
+      <Route path="*" element={ <Navigate to="/" replace /> } />
     </Routes>
   );
 }

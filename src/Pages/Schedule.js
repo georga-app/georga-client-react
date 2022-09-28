@@ -1,11 +1,11 @@
 import Theme from '../Components/Shared/Theme';
 
-function Actions(props) {
+function Schedule(props) {
   return (
     <Theme menus={props.menus}>
-      Actions
+      Schedule
     </Theme>
   );
 }
 
-export default Actions;
+export default Schedule;

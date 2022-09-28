@@ -9,8 +9,11 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import MenuIcon from '@mui/icons-material/Menu';
+
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import BuildCircle from '@mui/icons-material/BuildCircle';
+import MenuIcon from '@mui/icons-material/Menu';
+import CircleNotifications from '@mui/icons-material/CircleNotifications';
 
 import { ReactComponent as LogoGeorga } from '../../Images/logo-georga.svg';
 
@@ -85,21 +88,6 @@ function Header(props) {
             </Menu>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <Button
-              key="home-xs"
-              component={Link}
-              to="/"
-              sx={{ mr: 2, color: 'white', display: 'block' }}
-            >
-              <Box sx={{ mt: '3px', height: 35 }}>
-                <LogoGeorga
-                  fill="#eceff1"
-                  stroke="#eceff1"
-                  alt="GeoRGA"
-                  style={{ width: 'auto', height: '100%' }}
-                />
-              </Box>
-            </Button>
           </Box>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -119,7 +107,24 @@ function Header(props) {
           {props.menus.user && (
             <Box sx={{ flexGrow: 0 }}>
               <IconButton
-                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenUserMenu}
+                color="inherit"
+              >
+                <BuildCircle />
+              </IconButton>
+              <IconButton
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenUserMenu}
+                color="inherit"
+              >
+                <CircleNotifications />
+              </IconButton>
+              <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"

@@ -1,10 +1,10 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Dashboard from './Pages/Dashboard'
-import Actions from './Pages/Actions'
-import Instructions from './Pages/Instructions'
-import Tools from './Pages/Tools'
-import Notes from './Pages/Notes'
+import Schedule from './Pages/Schedule'
+import Mission from './Pages/Mission'
+import Messages from './Pages/Messages'
+import Demos from './Pages/Demos'
 
 import Account from './Pages/Account'
 import Help from './Pages/Help'
@@ -15,10 +15,9 @@ import Feedback from './Pages/Feedback'
 
 const menus = {
   main: [
-    { path: '/actions', name: 'Actions' },
-    { path: '/instructions', name: 'Instructions' },
-    { path: '/tools', name: 'Tools' },
-    { path: '/notes', name: 'Notes' },
+    { path: '/schedule', name: 'Schedule' },
+    { path: '/mission', name: 'Mission' },
+    { path: '/messages', name: 'Messages' },
   ],
   user: [
     { path: '/account', name: 'Account' },
@@ -34,16 +33,17 @@ const menus = {
 function Backend() {
   return (
     <Routes>
-      <Route exact path="/" element={ <Dashboard menus={menus} /> } />
+      <Route exact path="/" element={ <Navigate to="/schedule" replace /> } />
       <Route path="/logout" element={ <PersonLogoutFlow menus={menus} /> } />
-      <Route path="/actions" element={ <Actions menus={menus} /> } />
-      <Route path="/instructions" element={ <Instructions menus={menus} /> } />
-      <Route path="/tools" element={ <Tools menus={menus} /> } />
+      <Route path="/schedule" element={ <Schedule menus={menus} /> } />
+      <Route path="/mission" element={ <Mission menus={menus} /> } />
+      <Route path="/messages" element={ <Messages menus={menus} /> } />
+      <Route path="/demos" element={ <Demos menus={menus} /> } />
       <Route path="/account" element={ <Account menus={menus} /> } />
       <Route path="/help" element={ <Help menus={menus} /> } />
-      <Route path="/notes" element={ <Notes menus={menus} /> } />
       <Route path="/imprint" element={ <Imprint menus={menus} /> } />
       <Route path="/feedback" element={ <Feedback menus={menus} /> } />
+      <Route path="*" element={ <Navigate to="/" replace /> } />
     </Routes>
   );
 }

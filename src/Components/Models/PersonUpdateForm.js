@@ -16,97 +16,81 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import FormFieldError from "../Shared/FormFieldError";
 import FormError from "../Shared/FormError";
 
-const GET_PERSON_OPTIONS_QUERY = gql`
-  query GetPersonOptions {
-    allPersonTitleOptions: __type(name: "PersonTitle") {
-      enumValues {
-        name
-        description
-      }
-    }
-    allQualificationCategories {
+const LIST_PERSON_PROPERTIES_QUERY = gql`
+  query ListPersonProperties (
+    $organizationName: String
+  ) {
+    listPersonPropertyGroups (organization_Name: $organizationName) {
       edges {
         node {
           id
-          code
+          codename
           name
           selectionType
-        }
-      }
-    }
-    allQualifications {
-      edges {
-        node {
-          id
-          name
-          qualificationCategory {
-            code
+          necessity
+          organization {
+            id
+            name
           }
         }
       }
     }
-    allRestrictions {
+    listPersonProperties (group_Organization_Name: $organizationName) {
       edges {
         node {
           id
           name
+          group {
+            codename
+            organization {
+              id
+              name
+            }
+          }
         }
       }
     }
   }
 `;
 
-const GET_PERSON_QUERY = gql`
-  query GetPerson ($id: ID!) {
-    node(id: $id) {
-      ... on PersonType {
-        title
-        firstName
-        lastName
-        mobilePhone
-        qualifications {
-          edges {
-            node {
-              id
-              name
-              qualificationCategory {
-                code
+const GET_PERSON_PROFILE_QUERY = gql`
+  query GetPersonProfile {
+    getPersonProfile {
+      firstName
+      lastName
+      mobilePhone
+      properties {
+        edges {
+          node {
+            id
+            name
+            group {
+              codename
+              organization {
+                id
+                name
               }
             }
           }
         }
-        restrictions {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-        }
       }
     }
   }
 `;
 
-const UPDATE_PERSON_MUTATION = gql`
-  mutation UpdatePerson (
-    $id: ID!
-    $title: String
+const UPDATE_PERSON_PROFILE_MUTATION = gql`
+  mutation UpdatePersonProfile (
     $firstName: String
     $lastName: String
     $mobilePhone: String
-    $qualifications: [ID]
-    $restrictions: [ID]
+    $properties: [ID]
   ) {
-    updatePerson(
+    updatePersonProfile (
       input: {
-        id: $id
-        title: $title
         firstName: $firstName
         lastName: $lastName
         mobilePhone: $mobilePhone
-        qualifications: $qualifications
-        restrictions: $restrictions
+        properties: $properties
       }
     ) {
       person {
@@ -124,38 +108,32 @@ function PersonUpdateForm(props) {
   const [errors, setErrors] = useState({});
   const [changed, setChanged] = useState({});
   const [allPersonTitleOptions, setAllPersonTitleOptions] = useState([]);
-  const [allQualificationCategories, setAllQualificationCategories] = useState([]);
-  const [allQualifications, setAllQualifications] = useState([]);
-  const [allRestrictions, setAllRestrictions] = useState([]);
+  const [allPersonPropertyGroups, setAllPersonPropertyGroups] = useState([]);
+  const [allPersonProperties, setAllPersonProperties] = useState([]);
   const fields = {
-    title: useState(""),
     firstName: useState(""),
     lastName: useState(""),
     mobilePhone: useState(""),
-    qualifications: useState({}),
-    restrictions: useState([]),
+    properties: useState({}),
   }
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-  // getPerson
+  // getPersonProfile
   const {
-    called: getPersonCalled,
-    loading: getPersonLoading,
-    data: getPersonData,
-    error: getPersonError
+    called: getPersonProfileCalled,
+    loading: getPersonProfileLoading,
+    data: getPersonProfileData,
+    error: getPersonProfileError
   } = useQuery(
-    GET_PERSON_QUERY, {
-      variables: {
-        id: localStorage.getItem("authId"),
-      },
+    GET_PERSON_PROFILE_QUERY, {
       onCompleted: data => {
         for (const [key, state] of Object.entries(fields)) {
           // sanity checks
-          if (!(key in data.node))
+          if (!(key in data))
             continue;
-          let value = data.node[key]
+          let value = data[key]
           if (!value)
             continue;
           // use edges for connections
@@ -163,15 +141,16 @@ function PersonUpdateForm(props) {
             value = value.edges;
           // set state
           switch (key) {
-            case "qualifications":
-              let categories = {}
+            case "properties":
+              let propertyGroups = {}
               value.forEach(obj => {
-                const category = obj.node.qualificationCategory.code
-                if (!(category in categories))
-                  categories[category] = []
-                categories[category] = categories[category].concat(obj);
+                const group = obj.node.group.codename
+                if (!(group in propertyGroups))
+                  propertyGroups[group] = []
+                propertyGroups[group] = propertyGroups[group].concat(obj);
               });
-              state[1](categories);
+              state[1](propertyGroups);
+              console.log(propertyGroups)
               break;
             default:
               state[1](value);
@@ -181,55 +160,56 @@ function PersonUpdateForm(props) {
     },
   );
 
-  // qualifications, restrictions
+  // listPersonProperties
   const {
-    called: getPersonOptionsCalled,
-    loading: getPersonOptionsLoading
+    called: listPersonPropertiesCalled,
+    loading: listPersonPropertiesLoading
   } = useQuery(
-    GET_PERSON_OPTIONS_QUERY, {
+    LIST_PERSON_PROPERTIES_QUERY, {
+      variables: {
+        organizationName: "French Blue Circle",
+      },
       onCompleted: data => {
-        const categories = data.allQualificationCategories.edges.map(
+        const propertyGroups = data.listPersonPropertyGroups.edges.map(
           edge => { return edge.node; }
         )
-        setAllPersonTitleOptions(data.allPersonTitleOptions.enumValues);
-        setAllQualificationCategories(categories);
-        setAllQualifications(data.allQualifications.edges);
-        setAllRestrictions(data.allRestrictions.edges);
-        let emptyCategories = {}
-        categories.forEach(obj => {
-          if (!(obj.code in fields.qualifications[0])) {
-            emptyCategories[obj.code] = []
+        setAllPersonPropertyGroups(propertyGroups);
+        setAllPersonProperties(data.listPersonProperties.edges);
+        let emptyPropertyGroups = {}
+        propertyGroups.forEach(obj => {
+          if (!(obj.codename in fields.properties[0])) {
+            emptyPropertyGroups[obj.codename] = []
           }
         });
-        fields.qualifications[1](obj => ({...obj, ...emptyCategories}));
+        fields.properties[1](obj => ({...obj, ...emptyPropertyGroups}));
       },
     },
   );
 
-  // updatePerson
-  const [ updatePerson, {
-    loading: updatePersonLoading,
-    reset: updatePersonReset
+  // updatePersonProfile
+  const [ updatePersonProfile, {
+    loading: updatePersonProfileLoading,
+    reset: updatePersonProfileReset
   }] = useMutation(
-    UPDATE_PERSON_MUTATION, {
+    UPDATE_PERSON_PROFILE_MUTATION, {
       onCompleted: data => {
-        if(data.updatePerson.errors.length === 0) {
-          updatePersonReset();
+        if(data.updatePersonProfile.errors.length === 0) {
+          updatePersonProfileReset();
           setChanged({});
         } else {
           var fieldErrors = {};
-          data.updatePerson.errors.forEach(error => {
+          data.updatePersonProfile.errors.forEach(error => {
             fieldErrors[error.field] = error.messages
           });
           setErrors(fieldErrors);
-          updatePersonReset();
+          updatePersonProfileReset();
         }
       },
       onError: error => {
         setErrors({form: error.message});
       },
       refetchQueries: [
-        "GetPerson"
+        "GetPersonProfile"
       ]
     }
   );
@@ -237,25 +217,25 @@ function PersonUpdateForm(props) {
   // change
   function handleChange(event) {
     const target = event.field || event.target.id || event.target.name;
-    const category = event.category?.code;
-    const currentValue = getPersonData.node[target];
+    const propertyGroup = event.propertyGroup?.codename;
+    const currentValue = getPersonProfileData[target];
     let updatedValue = event.value || event.target.value;
-    let updatedCategories = null;
+    let updatedPropertyGroups = null;
 
     // update fields
-    if (category) {  // fields -1:n-> form inputs
-      updatedCategories = {...fields[target][0], [category]: updatedValue};
-      fields[target][1](updatedCategories);
+    if (propertyGroup) {  // fields -1:n-> form inputs
+      updatedPropertyGroups = {...fields[target][0], [propertyGroup]: updatedValue};
+      fields[target][1](updatedPropertyGroups);
     } else {  // fields -1:1-> form inputs
       fields[target][1](updatedValue);
     }
 
     // update diff
-    if (category) {  // fields -1:n-> form inputs
+    if (propertyGroup) {  // fields -1:n-> form inputs
       updatedValue = []
-      Object.keys(updatedCategories).forEach(function(key) {
-        let updatedCategory = updatedCategories[key];
-        for (const value of updatedCategory) {
+      Object.keys(updatedPropertyGroups).forEach(function(key) {
+        let updatedPropertyGroup = updatedPropertyGroups[key];
+        for (const value of updatedPropertyGroup) {
           updatedValue.push(value);
         }
       });
@@ -282,13 +262,14 @@ function PersonUpdateForm(props) {
     if (Object.keys(changed).length === 0)
       return;
     const variables = { id: localStorage.getItem("authId"), ...changed };
-    updatePerson({variables: variables});
+    updatePersonProfile({variables: variables});
   }
 
   // return
-  if (getPersonError)
+  if (getPersonProfileError)
     return <div>Error</div>;
-  if (!getPersonCalled || getPersonLoading || !getPersonOptionsCalled || getPersonOptionsLoading)
+  if (!getPersonProfileCalled || getPersonProfileLoading
+      || !listPersonPropertiesCalled || listPersonPropertiesLoading)
     return <div>Loading...</div>;
   return (
     <form onSubmit={handleSubmit}>
@@ -297,28 +278,6 @@ function PersonUpdateForm(props) {
       <FormError error={errors.form}/>
 
       {/* Fields */}
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.title)}
-        fullWidth
-        required
-      >
-        <InputLabel htmlFor="title">Title</InputLabel>
-        <Select
-          id="title"
-          name="title"
-          label="Title"
-          value={fields.title[0]}
-          onChange={handleChange}
-        >
-          {allPersonTitleOptions.map(option =>
-            <MenuItem key={option.name} value={option.name}>{option.description}</MenuItem>
-          )}
-        </Select>
-        <FormFieldError error={errors.title}/>
-      </FormControl>
-
       <FormControl
         margin="normal"
         variant="standard"
@@ -364,26 +323,26 @@ function PersonUpdateForm(props) {
         <FormFieldError error={errors.mobilePhone}/>
       </FormControl>
 
-      {allQualificationCategories.map((category) =>
+      {allPersonPropertyGroups.map((propertyGroup) =>
         <FormControl
-          key={category.code}
+          key={propertyGroup.codename}
           margin="normal"
           variant="standard"
-          error={Boolean(errors.qualifications)}
+          error={Boolean(errors.properties)}
           fullWidth
         >
           <Autocomplete
-            multiple={category.selectionType === "MULTISELECT" ? true : false}
+            multiple={propertyGroup.selectionType === "MULTISELECT" ? true : false}
             fullWidth
             size="small"
-            id={"qualifications-" + category.code}
-            name={"qualifications-" + category.code}
-            options={allQualifications.filter((obj) =>
-              obj.node.qualificationCategory.code === category.code)}
-            value={category.selectionType === "MULTISELECT"
-              ? fields.qualifications[0][category.code] || []
-              : fields.qualifications[0][category.code]?.length === 1
-                ? fields.qualifications[0][category.code][0]
+            id={"properties-" + propertyGroup.codename}
+            name={"properties-" + propertyGroup.codename}
+            options={allPersonProperties.filter((obj) =>
+              obj.node.group.codename === propertyGroup.codename)}
+            value={propertyGroup.selectionType === "MULTISELECT"
+              ? fields.properties[0][propertyGroup.codename] || []
+              : fields.properties[0][propertyGroup.codename]?.length === 1
+                ? fields.properties[0][propertyGroup.codename][0]
                 : null
             }
             isOptionEqualToValue={(option, value) => option.node.id === value.node.id}
@@ -400,56 +359,19 @@ function PersonUpdateForm(props) {
               </li>
             )}
             renderInput={(params) => (
-              <TextField {...params} variant="standard" label={category.name} />
+              <TextField {...params} variant="standard" label={propertyGroup.name} />
             )}
             onChange={(event, selected) => {
-              event.field = "qualifications";
-              event.category = category;
+              event.field = "properties";
+              event.propertyGroup = propertyGroup;
               event.value = selected;
-              if (category.selectionType === "SINGLESELECT")
+              if (propertyGroup.selectionType === "SINGLESELECT")
                 event.value = selected === null ? [] : [selected]
               handleChange(event);
             }}
           />
         </FormControl>
       )}
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.restrictions)}
-        fullWidth
-      >
-        <Autocomplete
-          multiple
-          fullWidth
-          size="small"
-          id="restrictions"
-          options={allRestrictions}
-          value={fields.restrictions[0] || []}
-          isOptionEqualToValue={(option, value) => option.node.id === value.node.id}
-          getOptionLabel={(option) => option.node.name}
-          renderOption={(props, option, { selected }) => (
-            <li {...props}>
-              <Checkbox
-                icon={icon}
-                checkedIcon={checkedIcon}
-                style={{ marginRight: 8 }}
-                checked={selected}
-              />
-              {option.node.name}
-            </li>
-          )}
-          renderInput={(params) => (
-            <TextField {...params} variant="standard" label="Restrictions" />
-          )}
-          onChange={(event, selected) => {
-            event.field = "restrictions";
-            event.value = selected;
-            handleChange(event);
-          }}
-        />
-      </FormControl>
 
       {/* Controls */}
       <Button
@@ -459,11 +381,11 @@ function PersonUpdateForm(props) {
         color="secondary"
         sx={{ marginTop: 1 }}
         disabled={
-          updatePersonLoading ||
+          updatePersonProfileLoading ||
           Object.keys(changed).length === 0
         }
       >
-        {updatePersonLoading ? "Saving..." : "Save"}
+        {updatePersonProfileLoading ? "Saving..." : "Save"}
       </Button>
 
       {/* Feedback */}

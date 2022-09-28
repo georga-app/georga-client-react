@@ -1,11 +1,11 @@
 import Theme from '../Components/Shared/Theme';
 
-function Instructions(props) {
+function Mission(props) {
   return (
     <Theme menus={props.menus}>
-      Instructions
+      Mission
     </Theme>
   );
 }
 
-export default Instructions;
+export default Mission;

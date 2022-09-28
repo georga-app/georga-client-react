@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 
-import Autocomplete from '@mui/material/Autocomplete';
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Checkbox from '@mui/material/Checkbox';
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -14,12 +12,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import FormControl from "@mui/material/FormControl";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import TextField from '@mui/material/TextField';
 import Typography from "@mui/material/Typography";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import Gavel from "@mui/icons-material/Gavel";
 import VerifiedUserTwoTone from "@mui/icons-material/VerifiedUserTwoTone";
 
@@ -27,65 +20,15 @@ import FormFieldError from "../Shared/FormFieldError";
 import FormError from "../Shared/FormError";
 
 
-const GET_PERSON_OPTIONS_QUERY = gql`
-  query GetPersonOptions {
-    allPersonTitleOptions: __type(name: "PersonTitle") {
-      enumValues {
-        name
-        description
-      }
-    }
-    allQualificationCategories {
-      edges {
-        node {
-          id
-          code
-          name
-          selectionType
-        }
-      }
-    }
-    allQualifications {
-      edges {
-        node {
-          id
-          name
-          qualificationCategory {
-            code
-          }
-        }
-      }
-    }
-    allRestrictions {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-
 const REGISTER_PERSON_MUTATION = gql`
   mutation RegisterPerson (
     $email: String!
     $password: String!
-    $title: String!
-    $firstName: String
-    $lastName: String
-    $mobilePhone: String
-    $qualifications: [ID]
   ) {
     registerPerson(
       input: {
         email: $email
         password: $password
-        title: $title
-        firstName: $firstName
-        lastName: $lastName
-        mobilePhone: $mobilePhone
-        qualifications: $qualifications
       }
     ) {
       id
@@ -99,52 +42,13 @@ const REGISTER_PERSON_MUTATION = gql`
 
 function PersonRegisterForm(props) {
   const [open, setOpen] = useState(false);
+
+  // fields
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const [allPersonTitleOptions, setAllPersonTitleOptions] = useState([]);
-  const [allQualificationCategories, setAllQualificationCategories] = useState([]);
-  const [allQualifications, setAllQualifications] = useState([]);
-  const [allRestrictions, setAllRestrictions] = useState([]);
-  const fields = {
-    email: useState(""),
-    password: useState(""),
-    title: useState(""),
-    firstName: useState(""),
-    lastName: useState(""),
-    mobilePhone: useState(""),
-    qualifications: useState({}),
-    restrictions: useState([]),
-  }
 
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-  const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
-  // qualifications, restrictions
-  useQuery(
-    GET_PERSON_OPTIONS_QUERY, {
-      onCompleted: data => {
-        setAllPersonTitleOptions(
-          data.allPersonTitleOptions.enumValues
-        );
-        setAllQualificationCategories(
-          data.allQualificationCategories.edges.map(
-            edge => { return edge.node; }
-          )
-        );
-        setAllQualifications(
-          data.allQualifications.edges.map(
-            edge => { return edge.node; }
-          )
-        );
-        setAllRestrictions(
-          data.allRestrictions.edges.map(
-            edge => { return edge.node; }
-          )
-        );
-      },
-    },
-  );
-
-  // registerPerson
+  // registerPersonMutation
   const [registerPerson, {
     loading: registerLoading, reset: registerReset
   }] = useMutation(
@@ -167,29 +71,15 @@ function PersonRegisterForm(props) {
     }
   );
 
-  // change
-  function handleChange(event) {
-    const target = event.target.id || event.target.name;
-    fields[target][1](event.target.value);
-  }
-
   // submit
   function handleSubmit(event) {
     event.preventDefault();
-    let variables = {}
-    for (const [key, state] of Object.entries(fields)) {
-      switch (key) {
-        case 'qualifications':
-          variables[key] = [];
-          for (const category in state[0]) {
-            variables[key] = variables[key].concat(state[0][category]);
-          }
-          break;
-        default:
-          variables[key] = state[0];
+    registerPerson({
+      variables: {
+        email: email,
+        password: password,
       }
-    }
-    registerPerson({variables: variables});
+    });
   }
 
   // return
@@ -223,8 +113,8 @@ function PersonRegisterForm(props) {
           <Input
             id="email"
             type="email"
-            value={fields.email[0]}
-            onChange={handleChange}
+            value={email}
+            onChange={event => setEmail(event.target.value)}
           />
           <FormFieldError error={errors.email}/>
         </FormControl>
@@ -240,152 +130,10 @@ function PersonRegisterForm(props) {
           <Input
             id="password"
             type="password"
-            value={fields.password[0]}
-            onChange={handleChange}
+            value={password}
+            onChange={event => setPassword(event.target.value)}
           />
           <FormFieldError error={errors.password}/>
-        </FormControl>
-
-        <FormControl
-          margin="normal"
-          variant="standard"
-          error={Boolean(errors.title)}
-          fullWidth
-          required
-        >
-          <InputLabel htmlFor="title">Title</InputLabel>
-          <Select
-            id="title"
-            name="title"
-            label="Title"
-            value={fields.title[0]}
-            onChange={handleChange}
-          >
-            {allPersonTitleOptions.map(option =>
-              <MenuItem key={option.name} value={option.name}>{option.description}</MenuItem>
-            )}
-          </Select>
-          <FormFieldError error={errors.title}/>
-        </FormControl>
-
-        <FormControl
-          margin="normal"
-          variant="standard"
-          error={Boolean(errors.firstName)}
-          fullWidth
-        >
-          <InputLabel htmlFor="firstName">First Name</InputLabel>
-          <Input
-            id="firstName"
-            value={fields.firstName[0]}
-            onChange={handleChange}
-          />
-          <FormFieldError error={errors.firstName}/>
-        </FormControl>
-
-        <FormControl
-          margin="normal"
-          variant="standard"
-          error={Boolean(errors.lastName)}
-          fullWidth
-        >
-          <InputLabel htmlFor="lastName">Last Name</InputLabel>
-          <Input
-            id="lastName"
-            value={fields.lastName[0]}
-            onChange={handleChange}
-          />
-          <FormFieldError error={errors.lastName}/>
-        </FormControl>
-
-        <FormControl
-          margin="normal"
-          variant="standard"
-          error={Boolean(errors.mobilePhone)}
-          fullWidth
-        >
-          <InputLabel htmlFor="mobilePhone">Mobile Phone</InputLabel>
-          <Input
-            id="mobilePhone"
-            value={fields.mobilePhone[0]}
-            onChange={handleChange}
-          />
-          <FormFieldError error={errors.mobilePhone}/>
-        </FormControl>
-
-        {allQualificationCategories.map((category) =>
-          <FormControl
-            key={category.code}
-            margin="normal"
-            variant="standard"
-            error={Boolean(errors.qualifications)}
-            fullWidth
-          >
-            <Autocomplete
-              multiple={category.selectionType === "MULTISELECT" ? true : false}
-              fullWidth
-              size="small"
-              id={"qualifications-" + category.code}
-              options={allQualifications.filter((obj) =>
-                obj.qualificationCategory.code === category.code)}
-              getOptionLabel={(option) => option.name}
-              renderOption={(props, option, { selected }) => (
-                <li {...props}>
-                  <Checkbox
-                    icon={icon}
-                    checkedIcon={checkedIcon}
-                    style={{ marginRight: 8 }}
-                    checked={selected}
-                  />
-                  {option.name}
-                </li>
-              )}
-              renderInput={(params) => (
-                <TextField {...params} variant="standard" label={category.name} />
-              )}
-              onChange={(event, options) => {
-                fields.qualifications[1](currentQualifications => ({
-                  ...currentQualifications,
-                  [category.code]: category.selectionType === "MULTISELECT"
-                    ? options.map(option => option.id)
-                    : options?.id
-                }))
-              }}
-            />
-          </FormControl>
-        )}
-
-        <FormControl
-          margin="normal"
-          variant="standard"
-          error={Boolean(errors.restrictions)}
-          fullWidth
-        >
-          <Autocomplete
-            multiple
-            fullWidth
-            size="small"
-            id="restrictions"
-            options={allRestrictions}
-            getOptionLabel={(option) => option.name}
-            renderOption={(props, option, { selected }) => (
-              <li {...props}>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
-                {option.name}
-              </li>
-            )}
-            renderInput={(params) => (
-              <TextField {...params} variant="standard" label="Restrictions" />
-            )}
-            onChange={(event, options) => {
-              fields.restrictions[1](options.map(option => option.id))
-            }}
-          />
         </FormControl>
 
         {/* Controls */}
@@ -397,8 +145,8 @@ function PersonRegisterForm(props) {
           sx={{ marginTop: 1 }}
           disabled={
             registerLoading ||
-            !fields.email[0].trim() ||
-            !fields.title[0].trim()
+            !email.trim() ||
+            !password.trim()
           }
         >
           {registerLoading ? "Registering..." : "Register"}

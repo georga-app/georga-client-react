@@ -40,10 +40,12 @@ function PersonLoginForm() {
   const { state } = useLocation();
   const navigate = useNavigate()
 
+  // fields
   const [email, setEmail] = useState(state?.email ? state.email : "");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
 
+  // tokenAuthMutation
   const [login, { loading, reset, client }] = useMutation(
     TOKEN_AUTH_MUTATION, {
       onCompleted: data => {
