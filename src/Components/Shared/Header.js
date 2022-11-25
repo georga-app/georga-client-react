@@ -4,6 +4,7 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -146,16 +147,19 @@ function Header(props) {
                     open={Boolean(anchorElAdmin)}
                     onClose={handleCloseAdminMenu}
                   >
-                    {props.menus.admin.map((page) => user.hasAdminLevel(page.adminLevel) && (
-                      <MenuItem
-                        key={page.path}
-                        component={Link}
-                        to={page.path}
-                        onClick={handleCloseAdminMenu}
-                      >
-                        <Typography textAlign="center">{page.name}</Typography>
-                      </MenuItem>
-                    ))}
+                    {props.menus.admin.map((page, index) => {
+                      if (user.hasAdminLevel(page.adminLevel))
+                        return page.divider ? <Divider key={index} /> : (
+                          <MenuItem
+                            key={page.path}
+                            component={Link}
+                            to={page.path}
+                            onClick={handleCloseAdminMenu}
+                          >
+                            <Typography textAlign="center">{page.name}</Typography>
+                          </MenuItem>
+                        )
+                    })}
                   </Menu>
                 </>
               }

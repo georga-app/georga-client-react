@@ -9,12 +9,12 @@ import Feedback from './Pages/Feedback';
 
 const menus = {
   main: [
-    { path: '/register', name: 'Register' },
-    { path: '/login', name: 'Login' },
+    { path: '/register',  name: 'Register' },
+    { path: '/login',     name: 'Login' },
   ],
   footer: [
-    { path: '/imprint', name: 'Imprint' },
-    { path: '/feedback', name: 'Feedback' },
+    { path: '/imprint',   name: 'Imprint' },
+    { path: '/feedback',  name: 'Feedback' },
   ],
 };
 
@@ -22,19 +22,19 @@ function Frontend() {
   return (
     <Routes>
       {/* root */}
-      <Route exact path="/" element={ <Home menus={menus} /> } />
+      <Route exact path="/"           element={ <Home                 menus={menus} />  } />
 
       {/* user */}
-      <Route path="/register" element={ <Register menus={menus} /> }/>
-      <Route path="/login" element={ <Login menus={menus}/> } />
-      <Route path="/activate/:token" element={ <PersonActivateFlow /> } />
+      <Route path="/register"         element={ <Register             menus={menus} />  }/>
+      <Route path="/login"            element={ <Login                menus={menus} />  } />
+      <Route path="/activate/:token"  element={ <PersonActivateFlow />                  } />
 
       {/* footer */}
-      <Route path="/imprint" element={ <Imprint menus={menus} /> } />
-      <Route path="/feedback" element={ <Feedback menus={menus} /> } />
+      <Route path="/imprint"          element={ <Imprint              menus={menus} />  } />
+      <Route path="/feedback"         element={ <Feedback             menus={menus} />  } />
 
       {/* fallback */}
-      <Route path="*" element={ <Navigate to="/" replace /> } />
+      <Route path="*"                 element={ <Navigate to="/" replace />             } />
     </Routes>
   );
 }
