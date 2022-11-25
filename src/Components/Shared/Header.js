@@ -17,19 +17,28 @@ import CircleNotifications from '@mui/icons-material/CircleNotifications';
 
 import { ReactComponent as LogoGeorga } from '../../Images/logo-georga.svg';
 
+import UserContext from '../../User';
+
 function Header(props) {
+  const user = React.useContext(UserContext)
+
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElAdmin, setAnchorElAdmin] = React.useState(null);
 
   const handleOpenNavMenu = (event) => { setAnchorElNav(event.currentTarget); };
   const handleOpenUserMenu = (event) => { setAnchorElUser(event.currentTarget); };
+  const handleOpenAdminMenu = (event) => { setAnchorElAdmin(event.currentTarget); };
+  const handleOpenNotifications = () => {};
   const handleCloseNavMenu = () => { setAnchorElNav(null); };
   const handleCloseUserMenu = () => { setAnchorElUser(null); };
+  const handleCloseAdminMenu = () => { setAnchorElAdmin(null); };
 
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          {/* logo */}
           <Button
             key="home"
             component={Link}
@@ -46,6 +55,7 @@ function Header(props) {
             </Box>
           </Button>
 
+          {/* appbar menue */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -90,6 +100,7 @@ function Header(props) {
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
           </Box>
 
+          {/* main menue */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {props.menus.main.map((page) => (
               <Button
@@ -104,29 +115,64 @@ function Header(props) {
             ))}
           </Box>
 
-          {props.menus.user && (
+          {/* icon nav */}
+          {user.isLoggedIn &&
             <Box sx={{ flexGrow: 0 }}>
+
+              {/* admin menue */}
+              {user.hasAdminLevel() && <>
+                  <IconButton
+                    aria-label="admin menue"
+                    aria-controls="menu-admin"
+                    aria-haspopup="true"
+                    onClick={handleOpenAdminMenu}
+                    color="inherit"
+                  >
+                    <BuildCircle />
+                  </IconButton>
+                  <Menu
+                    sx={{ mt: '45px' }}
+                    id="menu-admin"
+                    anchorEl={anchorElAdmin}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    open={Boolean(anchorElAdmin)}
+                    onClose={handleCloseAdminMenu}
+                  >
+                    {props.menus.admin.map((page) => user.hasAdminLevel(page.adminLevel) && (
+                      <MenuItem
+                        key={page.path}
+                        component={Link}
+                        to={page.path}
+                        onClick={handleCloseAdminMenu}
+                      >
+                        <Typography textAlign="center">{page.name}</Typography>
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </>
+              }
+
+              {/* notifications */}
               <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenUserMenu}
-                color="inherit"
-              >
-                <BuildCircle />
-              </IconButton>
-              <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenUserMenu}
+                aria-label="notifications"
+                onClick={handleOpenNotifications}
                 color="inherit"
               >
                 <CircleNotifications />
               </IconButton>
+
+              {/* user menue */}
               <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
+                aria-label="user menue"
+                aria-controls="menu-user"
                 aria-haspopup="true"
                 onClick={handleOpenUserMenu}
                 color="inherit"
@@ -135,7 +181,7 @@ function Header(props) {
               </IconButton>
               <Menu
                 sx={{ mt: '45px' }}
-                id="menu-appbar"
+                id="menu-user"
                 anchorEl={anchorElUser}
                 anchorOrigin={{
                   vertical: 'top',
@@ -161,7 +207,8 @@ function Header(props) {
                 ))}
               </Menu>
             </Box>
-          )}
+          }
+
         </Toolbar>
       </Container>
     </AppBar>

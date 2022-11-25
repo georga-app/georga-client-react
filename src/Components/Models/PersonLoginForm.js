@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import Avatar from "@mui/material/Avatar";
@@ -9,6 +9,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import Lock from "@mui/icons-material/Lock";
 
+import UserContext from "../../User";
 import FormFieldError from "../Shared/FormFieldError";
 import FormError from "../Shared/FormError";
 
@@ -26,19 +27,15 @@ const TOKEN_AUTH_MUTATION = gql`
       id
       token
       refreshExpiresIn
+      adminLevel
     }
-  }
-`;
-
-const IS_LOGGED_IN = gql`
-  query IsUserLoggedIn {
-    isLoggedIn @client
   }
 `;
 
 function PersonLoginForm() {
   const { state } = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const user = useContext(UserContext);
 
   // fields
   const [email, setEmail] = useState(state?.email ? state.email : "");
@@ -46,17 +43,10 @@ function PersonLoginForm() {
   const [errors, setErrors] = useState({});
 
   // tokenAuthMutation
-  const [login, { loading, reset, client }] = useMutation(
+  const [login, { loading, reset }] = useMutation(
     TOKEN_AUTH_MUTATION, {
       onCompleted: data => {
-        localStorage.setItem("authId", data.tokenAuth.id);
-        localStorage.setItem("authToken", data.tokenAuth.token);
-        client.cache.writeQuery({
-          query: IS_LOGGED_IN,
-          data: {
-            isLoggedIn: !!localStorage.getItem("authToken"),
-          },
-        });
+        user.login(data.tokenAuth);
         navigate("/");
       },
       onError: error => {

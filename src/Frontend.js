@@ -21,12 +21,19 @@ const menus = {
 function Frontend() {
   return (
     <Routes>
+      {/* root */}
       <Route exact path="/" element={ <Home menus={menus} /> } />
+
+      {/* user */}
       <Route path="/register" element={ <Register menus={menus} /> }/>
       <Route path="/login" element={ <Login menus={menus}/> } />
       <Route path="/activate/:token" element={ <PersonActivateFlow /> } />
+
+      {/* footer */}
       <Route path="/imprint" element={ <Imprint menus={menus} /> } />
       <Route path="/feedback" element={ <Feedback menus={menus} /> } />
+
+      {/* fallback */}
       <Route path="*" element={ <Navigate to="/" replace /> } />
     </Routes>
   );

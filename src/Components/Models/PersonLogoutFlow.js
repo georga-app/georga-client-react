@@ -1,24 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
-import { gql, useApolloClient } from '@apollo/client';
 
-const IS_LOGGED_IN_QUERY = gql`
-  query IsUserLoggedIn {
-    isLoggedIn @client
-  }
-`;
+import UserContext from "../../User";
 
 function PersonLogoutFlow() {
   let navigate = useNavigate();
-  let client = useApolloClient();
+  const user = useContext(UserContext);
+
   useEffect(() => {
-    localStorage.removeItem("authToken");
-    client.cache.writeQuery({
-      query: IS_LOGGED_IN_QUERY,
-      data: {
-        isLoggedIn: false,
-      },
-    });
+    user.logout();
     navigate("/");
   });
 }

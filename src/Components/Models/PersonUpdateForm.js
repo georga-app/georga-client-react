@@ -7,8 +7,6 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControl from "@mui/material/FormControl";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import TextField from '@mui/material/TextField';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -107,7 +105,6 @@ const UPDATE_PERSON_PROFILE_MUTATION = gql`
 function PersonUpdateForm(props) {
   const [errors, setErrors] = useState({});
   const [changed, setChanged] = useState({});
-  const [allPersonTitleOptions, setAllPersonTitleOptions] = useState([]);
   const [allPersonPropertyGroups, setAllPersonPropertyGroups] = useState([]);
   const [allPersonProperties, setAllPersonProperties] = useState([]);
   const fields = {

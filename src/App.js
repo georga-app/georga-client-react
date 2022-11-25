@@ -1,15 +1,9 @@
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useContext } from "react";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
-import { gql, useQuery } from '@apollo/client';
 
 import Frontend from './Frontend';
 import Backend from './Backend';
-
-const IS_LOGGED_IN = gql`
-  query IsUserLoggedIn {
-    isLoggedIn @client
-  }
-`;
+import UserContext from './User';
 
 function ScrollToTop({children}) {
   const location = useLocation();
@@ -20,12 +14,12 @@ function ScrollToTop({children}) {
 }
 
 function App() {
-  const { data } = useQuery(IS_LOGGED_IN);
+  const user = useContext(UserContext);
 
   return (
     <Router>
       <ScrollToTop />
-      {data.isLoggedIn ? <Backend /> : <Frontend />}
+      {user.isLoggedIn ? <Backend /> : <Frontend />}
     </Router>
   )
 }
