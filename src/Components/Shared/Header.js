@@ -98,8 +98,6 @@ function Header(props) {
               ))}
             </Menu>
           </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-          </Box>
 
           {/* main menue */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -148,17 +146,18 @@ function Header(props) {
                     onClose={handleCloseAdminMenu}
                   >
                     {props.menus.admin.map((page, index) => {
-                      if (user.hasAdminLevel(page.adminLevel))
-                        return page.divider ? <Divider key={index} /> : (
-                          <MenuItem
-                            key={page.path}
-                            component={Link}
-                            to={page.path}
-                            onClick={handleCloseAdminMenu}
-                          >
-                            <Typography textAlign="center">{page.name}</Typography>
-                          </MenuItem>
-                        )
+                      if (!user.hasAdminLevel(page.adminLevel))
+                        return <></>
+                      return page.divider ? <Divider key={index} /> : (
+                        <MenuItem
+                          key={page.path}
+                          component={Link}
+                          to={page.path}
+                          onClick={handleCloseAdminMenu}
+                        >
+                          <Typography textAlign="center">{page.name}</Typography>
+                        </MenuItem>
+                      )
                     })}
                   </Menu>
                 </>
