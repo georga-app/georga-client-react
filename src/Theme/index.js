@@ -1,6 +1,5 @@
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import ScrollToTop from './ScrollToTop';
