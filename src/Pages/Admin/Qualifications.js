@@ -1,10 +1,10 @@
-import Theme from '../../Components/Shared/Theme';
+import OneColumn from '../../Theme/Layouts/OneColumn';
 
-function Qualifications(props) {
+function Qualifications() {
   return (
-    <Theme menus={props.menus}>
+    <OneColumn bg='admin'>
       Qualifications
-    </Theme>
+    </OneColumn>
   );
 }
 

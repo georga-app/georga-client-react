@@ -1,10 +1,10 @@
-import Theme from '../../Components/Shared/Theme';
+import OneColumn from '../../Theme/Layouts/OneColumn';
 
-function Fields(props) {
+function Fields() {
   return (
-    <Theme menus={props.menus}>
+    <OneColumn bg='admin'>
       Fields
-    </Theme>
+    </OneColumn>
   );
 }
 

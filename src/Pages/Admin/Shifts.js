@@ -1,10 +1,10 @@
-import Theme from '../../Components/Shared/Theme';
+import OneColumn from '../../Theme/Layouts/OneColumn';
 
-function Shifts(props) {
+function Shifts() {
   return (
-    <Theme menus={props.menus}>
+    <OneColumn bg='admin'>
       Shifts
-    </Theme>
+    </OneColumn>
   );
 }
 

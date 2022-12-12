@@ -1,11 +1,11 @@
 import OneColumn from '../../Theme/Layouts/OneColumn';
 
-function Resources() {
+function Imprint() {
   return (
-    <OneColumn bg='admin'>
-      Resources
+    <OneColumn>
+      Imprint
     </OneColumn>
   );
 }
 
-export default Resources;
+export default Imprint;

@@ -1,10 +1,10 @@
-import Theme from '../../Components/Shared/Theme';
+import OneColumn from '../../Theme/Layouts/OneColumn';
 
-function Participants(props) {
+function Participants() {
   return (
-    <Theme menus={props.menus}>
+    <OneColumn bg='admin'>
       Participants
-    </Theme>
+    </OneColumn>
   );
 }
 

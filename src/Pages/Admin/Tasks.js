@@ -1,10 +1,10 @@
-import Theme from '../../Components/Shared/Theme';
+import OneColumn from '../../Theme/Layouts/OneColumn';
 
-function Tasks(props) {
+function Tasks() {
   return (
-    <Theme menus={props.menus}>
+    <OneColumn bg='admin'>
       Tasks
-    </Theme>
+    </OneColumn>
   );
 }
 

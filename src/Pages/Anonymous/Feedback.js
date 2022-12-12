@@ -1,11 +1,11 @@
 import OneColumn from '../../Theme/Layouts/OneColumn';
 
-function Resources() {
+function Feedback() {
   return (
-    <OneColumn bg='admin'>
-      Resources
+    <OneColumn>
+      Feedback
     </OneColumn>
   );
 }
 
-export default Resources;
+export default Feedback;

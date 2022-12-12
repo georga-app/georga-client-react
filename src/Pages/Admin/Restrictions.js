@@ -1,10 +1,10 @@
-import Theme from '../../Components/Shared/Theme';
+import OneColumn from '../../Theme/Layouts/OneColumn';
 
-function Restrictions(props) {
+function Restrictions() {
   return (
-    <Theme menus={props.menus}>
+    <OneColumn bg='admin'>
       Restrictions
-    </Theme>
+    </OneColumn>
   );
 }
 
