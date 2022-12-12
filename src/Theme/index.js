@@ -23,6 +23,7 @@ const theme = createTheme({
     background: {
       bright: "#ffffff",
       default: "#eceff1",
+      admin: "#eceff1",
       dark: "#dcdfe1",
     },
   },
