@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -29,13 +31,17 @@ const theme = createTheme({
 });
 
 function Theme(props) {
+  const [notifications, setNotifications] = useState(false);
+  function toggleNotifications() {
+    setNotifications(!notifications);
+  }
   return (
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <ScrollToTop />
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Header />
-        {props.children}
+        <Header notifications={notifications} toggleNotifications={toggleNotifications} />
+          {props.children}
       </Box>
       <Footer />
     </MuiThemeProvider>

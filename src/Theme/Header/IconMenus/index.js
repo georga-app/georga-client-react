@@ -8,12 +8,12 @@ import UserMenu from './UserMenu';
 
 import UserContext from '../../../Context/User';
 
-function IconMenus() {
+function IconMenus(props) {
   const user = useContext(UserContext);
   return user.isLoggedIn && (
     <Box sx={{ flexGrow: 0 }}>
       <AdminMenu />
-      <Notifications />
+      <Notifications toggleNotifications={props.toggleNotifications} />
       <UserMenu />
     </Box>
   );

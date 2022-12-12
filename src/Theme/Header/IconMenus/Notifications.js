@@ -2,12 +2,11 @@ import IconButton from '@mui/material/IconButton';
 
 import CircleNotifications from '@mui/icons-material/CircleNotifications';
 
-function Notifications() {
-  const handleOpenNotifications = () => {};
+function Notifications(props) {
   return (
     <IconButton
       aria-label="notifications"
-      onClick={handleOpenNotifications}
+      onClick={props.toggleNotifications}
       color="inherit"
     >
       <CircleNotifications />

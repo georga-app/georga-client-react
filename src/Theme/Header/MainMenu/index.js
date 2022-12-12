@@ -1,10 +1,11 @@
 import DesktopMenu from './DesktopMenu';
 import MobileMenu from './MobileMenu';
 
-function MainMenu() {
+function MainMenu(props) {
+  const { notifications } = props;
   return <>
     <MobileMenu />
-    <DesktopMenu />
+    <DesktopMenu notifications={notifications} />
   </>;
 };
 
