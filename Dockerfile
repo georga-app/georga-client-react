@@ -1,4 +1,4 @@
-FROM node:bullseye
+FROM node:bookworm
 
 WORKDIR /code
 COPY package*.json ./
