@@ -1,10 +1,19 @@
-import OneColumn from '../../Theme/Layouts/OneColumn';
+import ThreeColumns from '../../Theme/Layouts/ThreeColumns';
 
 function Organizations() {
   return (
-    <OneColumn bg='admin'>
-      Organizations
-    </OneColumn>
+    <ThreeColumns
+      bg='admin'
+      left={
+        <p>Left</p>
+      }
+      middle={
+        <p>Middle</p>
+      }
+      right={
+        <p>Right</p>
+      }
+    />
   );
 }
 

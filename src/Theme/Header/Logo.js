@@ -11,7 +11,12 @@ function Logo() {
       key="home"
       component={Link}
       to="/"
-      sx={{ mr: 2, color: 'white', display: { xs: 'none', md: 'block' } }}
+      sx={{
+        mr: 2,
+        color: 'white',
+        width: 'fit-content',
+        display: { xs: 'none', md: 'inline-block' },
+      }}
     >
       <Box sx={{ mt: '3px', height: 35 }}>
         <LogoGeorga
