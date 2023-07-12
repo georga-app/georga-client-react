@@ -3,6 +3,9 @@
 ## Install
 
 npm install
-npm start
+npm run dev
 xdg-open http://localhost:3000
 
+## GraphQL Types
+
+npm run compile

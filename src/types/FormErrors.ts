@@ -1,0 +1,31 @@
+import { ApolloError } from '@apollo/client/errors';
+
+type PersonRegisterFormErrors = {
+  form?: ApolloError["message"],
+  email?: string[],
+  password?: string[],
+}
+
+type PersonLoginFormErrors = {
+  form?: ApolloError["message"],
+}
+
+type PersonProfileFormErrors = {
+  form?: ApolloError["message"],
+  firstName?: string[],
+  lastName?: string[],
+  street?: string[],
+  number?: string[],
+  postalCode?: string[],
+  city?: string[],
+  privatePhone?: string[],
+  mobilePhone?: string[],
+  occupation?: string[],
+  onlyJobRelatedTopics?: string[],
+}
+
+export type {
+  PersonRegisterFormErrors,
+  PersonLoginFormErrors,
+  PersonProfileFormErrors,
+};

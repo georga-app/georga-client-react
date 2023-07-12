@@ -1,9 +1,0 @@
-{
-  "short_name": "GeoRGA",
-  "name": "Geo Resource and Group App",
-  "icons": [],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
-}
