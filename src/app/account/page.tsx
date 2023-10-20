@@ -17,6 +17,7 @@ import SecurityIcon from '@mui/icons-material/Security';
 
 import OneColumn from '@/theme/layouts/OneColumn';
 import PersonProfileForm from '@/components/person/ProfileForm';
+import PersonOrganizationsTable from '@/components/person/OrganizationsTable';
 
 import Panels from '@/types/Panels';
 
@@ -34,13 +35,7 @@ function Account() {
       title: "Organizations",
       icon: <GroupsIcon />,
       description: "Subscribe to organizations",
-      content: (
-        <Typography>
-          Donec placerat, lectus sed mattis semper, neque lectus feugiat lectus,
-          varius pulvinar diam eros in elit. Pellentesque convallis laoreet
-          laoreet.
-        </Typography>
-      ),
+      content: <PersonOrganizationsTable />,
     },
     {
       title: "Qualifications",
@@ -108,6 +103,7 @@ function Account() {
             expanded={expanded === 'panel' + index}
             onChange={handleChange('panel' + index)}
             sx={{ width: '100%' }}
+            TransitionProps={{ unmountOnExit: true }}
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}

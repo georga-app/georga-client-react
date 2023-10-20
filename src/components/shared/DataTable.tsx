@@ -21,14 +21,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
-import { Order, DataTableHeadCell } from '@/types/DataTable';
-
-// interface Data { // TODO: ?
-//   email: string,
-//   firstName: string,
-//   lastName: string,
-//   dateJoined: string,
-// }
+import { Order, DataTableColumn } from '@/types/DataTable';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -85,7 +78,7 @@ function DataTableHead<T>({
   order: Order,
   orderBy: string,
   rowCount: number,
-  columns: DataTableHeadCell<T>[],
+  columns: DataTableColumn<T>[],
   filterRow: boolean,
 }) {
   const createSortHandler =
@@ -94,7 +87,7 @@ function DataTableHead<T>({
     };
 
   let timeouts: {[headCellId: string]: ReturnType<typeof setTimeout>} = {}
-  const filterRowHandler = (headCell: DataTableHeadCell<T>) =>
+  const filterRowHandler = (headCell: DataTableColumn<T>) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       clearTimeout(timeouts[headCell.id as string]);
       timeouts[headCell.id as string] = setTimeout(() =>
@@ -117,10 +110,10 @@ function DataTableHead<T>({
             }}
           />
         </TableCell>
-        {columns.map((headCell: DataTableHeadCell<T>) => (
+        {columns.map((headCell: DataTableColumn<T>) => (
           <TableCell
             key={headCell.id as string}
-            align={headCell.numeric ? 'right' : 'left'}
+            align={headCell.align ? headCell.align : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -142,7 +135,7 @@ function DataTableHead<T>({
       {filterRow ? (
         <TableRow sx={{ backgroundColor: "#f9f9f9" }}>
           <TableCell />
-          {columns.map((headCell: DataTableHeadCell<T>) => {
+          {columns.map((headCell: DataTableColumn<T>) => {
             if (headCell.filter)
               return (
                 <TableCell
@@ -235,15 +228,17 @@ function DataTableToolbar({
 };
 
 function DataTable<T>({
-  title,
+  title = '',
   columns,
   rows,
   rowKey,
+  elevation = 1,
 }: {
-  title: string,
-  columns: DataTableHeadCell<T>[],
+  title?: string,
+  columns: DataTableColumn<T>[],
   rows: T[],
   rowKey: keyof T,
+  elevation?: number,
 }) {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof T>(rowKey);
@@ -317,11 +312,14 @@ function DataTable<T>({
 
   const toggleFilterRow = () => {
     setFilterRow(!filterRow);
+    if (filterRow) {
+      columns.map(column => column.filter && column.filter(''))
+    }
   };
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+      <Paper elevation={elevation} sx={{ width: '100%', mb: 2 }}>
         <DataTableToolbar
           numSelected={selected.length}
           title={title}
@@ -368,11 +366,14 @@ function DataTable<T>({
                           }}
                         />
                       </TableCell>
-                      {columns.map((column, index) =>
-                        <TableCell key={column.id as string}>
-                          {row[column.id] as string}
-                        </TableCell>
-                      )}
+                      {columns.map((column, index) => {
+                        let content = row[column.id];
+                        return (
+                          <TableCell key={column.id as string}>
+                            {column.content ? column.content(content) : content as string}
+                          </TableCell>
+                        );
+                      })}
                     </TableRow>
                   );
                 })}
