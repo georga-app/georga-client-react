@@ -217,6 +217,7 @@ export type CreateOperationMutationPayload = {
 
 export type CreateOrganizationMutationInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
 };
@@ -1664,6 +1665,7 @@ export type OrganizationType = Node & {
   ace?: Maybe<AceTypeConnection>;
   channelFilters?: Maybe<ChannelFiltersType>;
   createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   /** The ID of the object */
   id: Scalars['ID']['output'];
@@ -1823,8 +1825,11 @@ export type PersonPropertyGroupTypePersonpropertySetArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   group?: InputMaybe<Scalars['ID']['input']>;
   group_Codename?: InputMaybe<Scalars['String']['input']>;
+  group_Codename_Icontains?: InputMaybe<Scalars['String']['input']>;
   group_Name?: InputMaybe<Scalars['String']['input']>;
+  group_Name_Icontains?: InputMaybe<Scalars['String']['input']>;
   group_Organization_Name?: InputMaybe<Scalars['String']['input']>;
+  group_Organization_Name_Icontains?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   modifiedAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -1866,6 +1871,7 @@ export type PersonPropertyTypePersonSetArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   city?: InputMaybe<Scalars['String']['input']>;
+  city_Icontains?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   createdAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   createdAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
@@ -1873,26 +1879,35 @@ export type PersonPropertyTypePersonSetArgs = {
   dateJoined_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   dateJoined_Lte?: InputMaybe<Scalars['DateTime']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
+  email_Icontains?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   firstName?: InputMaybe<Scalars['String']['input']>;
+  firstName_Icontains?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   lastLogin?: InputMaybe<Scalars['DateTime']['input']>;
   lastLogin_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   lastLogin_Lte?: InputMaybe<Scalars['DateTime']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
+  lastName_Icontains?: InputMaybe<Scalars['String']['input']>;
   mobilePhone?: InputMaybe<Scalars['String']['input']>;
+  mobilePhone_Icontains?: InputMaybe<Scalars['String']['input']>;
   modifiedAt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
   number?: InputMaybe<Scalars['String']['input']>;
+  number_Icontains?: InputMaybe<Scalars['String']['input']>;
   occupation?: InputMaybe<Scalars['String']['input']>;
+  occupation_Icontains?: InputMaybe<Scalars['String']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   onlyJobRelatedTopics?: InputMaybe<GeorgaPersonOnlyJobRelatedTopicsChoices>;
   postalCode?: InputMaybe<Scalars['String']['input']>;
+  postalCode_Icontains?: InputMaybe<Scalars['String']['input']>;
   privatePhone?: InputMaybe<Scalars['String']['input']>;
+  privatePhone_Icontains?: InputMaybe<Scalars['String']['input']>;
   properties?: InputMaybe<Scalars['ID']['input']>;
   street?: InputMaybe<Scalars['String']['input']>;
+  street_Icontains?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<GeorgaPersonTitleChoices>;
 };
 
@@ -2016,6 +2031,8 @@ export type PersonTypeOrganizationsSubscribedArgs = {
   modifiedAt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  name_Icontains?: InputMaybe<Scalars['String']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -2029,8 +2046,11 @@ export type PersonTypePropertiesArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   group?: InputMaybe<Scalars['ID']['input']>;
   group_Codename?: InputMaybe<Scalars['String']['input']>;
+  group_Codename_Icontains?: InputMaybe<Scalars['String']['input']>;
   group_Name?: InputMaybe<Scalars['String']['input']>;
+  group_Name_Icontains?: InputMaybe<Scalars['String']['input']>;
   group_Organization_Name?: InputMaybe<Scalars['String']['input']>;
+  group_Organization_Name_Icontains?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   modifiedAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -2229,6 +2249,7 @@ export type QueryTypeListEquipmentArgs = {
   modifiedAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  name_Icontains?: InputMaybe<Scalars['String']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -2263,6 +2284,7 @@ export type QueryTypeListLocationsArgs = {
   modifiedAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   postalAddressName?: InputMaybe<Scalars['String']['input']>;
+  postalAddressName_Icontains?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2331,6 +2353,8 @@ export type QueryTypeListOrganizationsArgs = {
   modifiedAt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  name_Icontains?: InputMaybe<Scalars['String']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -2360,8 +2384,11 @@ export type QueryTypeListPersonPropertiesArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   group?: InputMaybe<Scalars['ID']['input']>;
   group_Codename?: InputMaybe<Scalars['String']['input']>;
+  group_Codename_Icontains?: InputMaybe<Scalars['String']['input']>;
   group_Name?: InputMaybe<Scalars['String']['input']>;
+  group_Name_Icontains?: InputMaybe<Scalars['String']['input']>;
   group_Organization_Name?: InputMaybe<Scalars['String']['input']>;
+  group_Organization_Name_Icontains?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   modifiedAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -2375,6 +2402,7 @@ export type QueryTypeListPersonPropertyGroupsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   codename?: InputMaybe<Scalars['String']['input']>;
+  codename_Icontains?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   createdAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   createdAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
@@ -2385,10 +2413,12 @@ export type QueryTypeListPersonPropertyGroupsArgs = {
   modifiedAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  name_Icontains?: InputMaybe<Scalars['String']['input']>;
   necessity?: InputMaybe<GeorgaPersonPropertyGroupNecessityChoices>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   organization?: InputMaybe<Scalars['ID']['input']>;
   organization_Name?: InputMaybe<Scalars['String']['input']>;
+  organization_Name_Icontains?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2414,6 +2444,7 @@ export type QueryTypeListPersonsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   city?: InputMaybe<Scalars['String']['input']>;
+  city_Icontains?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   createdAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   createdAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
@@ -2421,26 +2452,35 @@ export type QueryTypeListPersonsArgs = {
   dateJoined_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   dateJoined_Lte?: InputMaybe<Scalars['DateTime']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
+  email_Icontains?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   firstName?: InputMaybe<Scalars['String']['input']>;
+  firstName_Icontains?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   lastLogin?: InputMaybe<Scalars['DateTime']['input']>;
   lastLogin_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   lastLogin_Lte?: InputMaybe<Scalars['DateTime']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
+  lastName_Icontains?: InputMaybe<Scalars['String']['input']>;
   mobilePhone?: InputMaybe<Scalars['String']['input']>;
+  mobilePhone_Icontains?: InputMaybe<Scalars['String']['input']>;
   modifiedAt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
   number?: InputMaybe<Scalars['String']['input']>;
+  number_Icontains?: InputMaybe<Scalars['String']['input']>;
   occupation?: InputMaybe<Scalars['String']['input']>;
+  occupation_Icontains?: InputMaybe<Scalars['String']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   onlyJobRelatedTopics?: InputMaybe<GeorgaPersonOnlyJobRelatedTopicsChoices>;
   postalCode?: InputMaybe<Scalars['String']['input']>;
+  postalCode_Icontains?: InputMaybe<Scalars['String']['input']>;
   privatePhone?: InputMaybe<Scalars['String']['input']>;
+  privatePhone_Icontains?: InputMaybe<Scalars['String']['input']>;
   properties?: InputMaybe<Scalars['ID']['input']>;
   street?: InputMaybe<Scalars['String']['input']>;
+  street_Icontains?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<GeorgaPersonTitleChoices>;
 };
 
@@ -2664,6 +2704,7 @@ export type ResourceTypeEquipmentNeededArgs = {
   modifiedAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   modifiedAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  name_Icontains?: InputMaybe<Scalars['String']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -2716,8 +2757,11 @@ export type RoleSpecificationTypePersonPropertiesArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   group?: InputMaybe<Scalars['ID']['input']>;
   group_Codename?: InputMaybe<Scalars['String']['input']>;
+  group_Codename_Icontains?: InputMaybe<Scalars['String']['input']>;
   group_Name?: InputMaybe<Scalars['String']['input']>;
+  group_Name_Icontains?: InputMaybe<Scalars['String']['input']>;
   group_Organization_Name?: InputMaybe<Scalars['String']['input']>;
+  group_Organization_Name_Icontains?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   modifiedAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -3169,6 +3213,7 @@ export type UpdateOperationMutationPayload = {
 
 export type UpdateOrganizationMutationInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
@@ -3428,7 +3473,7 @@ export type ActivatePersonMutationVariables = Exact<{
 export type ActivatePersonMutation = { __typename?: 'MutationType', activatePerson?: { __typename?: 'ActivatePersonMutationPayload', email?: string | null, errors: Array<{ __typename?: 'ErrorType', field: string, messages: Array<string> }> } | null };
 
 export type ListPersonsQueryVariables = Exact<{
-  email?: InputMaybe<Scalars['String']['input']>;
+  email_Icontains?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -3441,6 +3486,13 @@ export type TokenAuthMutationVariables = Exact<{
 
 
 export type TokenAuthMutation = { __typename?: 'MutationType', tokenAuth?: { __typename?: 'LoginPersonMutationPayload', id?: string | null, token: string, refreshExpiresIn: number, adminLevel: AdminLevel } | null };
+
+export type GetPersonOrganizationsProfileQueryVariables = Exact<{
+  name_Icontains?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetPersonOrganizationsProfileQuery = { __typename?: 'QueryType', getPersonProfile?: { __typename?: 'PersonType', organizationsSubscribed: { __typename?: 'OrganizationTypeConnection', edges: Array<{ __typename?: 'OrganizationTypeEdge', node?: { __typename?: 'OrganizationType', id: string, name: string, description?: string | null, icon?: string | null } | null } | null> } } | null };
 
 export type GetPersonProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3475,8 +3527,9 @@ export type RegisterPersonMutation = { __typename?: 'MutationType', registerPers
 export const TestSubscriptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"TestSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"time"}}]}}]}}]} as unknown as DocumentNode<TestSubscriptionSubscription, TestSubscriptionSubscriptionVariables>;
 export const TestSubscriptionEventDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestSubscriptionEvent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"message"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testSubscriptionEvent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"message"},"value":{"kind":"Variable","name":{"kind":"Name","value":"message"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"response"}}]}}]}}]} as unknown as DocumentNode<TestSubscriptionEventMutation, TestSubscriptionEventMutationVariables>;
 export const ActivatePersonDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivatePerson"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activatePerson"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"messages"}}]}}]}}]}}]} as unknown as DocumentNode<ActivatePersonMutation, ActivatePersonMutationVariables>;
-export const ListPersonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListPersons"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listPersons"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"dateJoined"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ListPersonsQuery, ListPersonsQueryVariables>;
+export const ListPersonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListPersons"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email_Icontains"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listPersons"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email_Icontains"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email_Icontains"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"dateJoined"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ListPersonsQuery, ListPersonsQueryVariables>;
 export const TokenAuthDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TokenAuth"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokenAuth"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"refreshExpiresIn"}},{"kind":"Field","name":{"kind":"Name","value":"adminLevel"}}]}}]}}]} as unknown as DocumentNode<TokenAuthMutation, TokenAuthMutationVariables>;
+export const GetPersonOrganizationsProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPersonOrganizationsProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name_Icontains"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getPersonProfile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organizationsSubscribed"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name_Icontains"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name_Icontains"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetPersonOrganizationsProfileQuery, GetPersonOrganizationsProfileQueryVariables>;
 export const GetPersonProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPersonProfile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getPersonProfile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"occupation"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"privatePhone"}},{"kind":"Field","name":{"kind":"Name","value":"mobilePhone"}},{"kind":"Field","name":{"kind":"Name","value":"onlyJobRelatedTopics"}}]}}]}}]} as unknown as DocumentNode<GetPersonProfileQuery, GetPersonProfileQueryVariables>;
 export const UpdatePersonProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdatePersonProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"firstName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lastName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"occupation"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"street"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"number"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"postalCode"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"city"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"privatePhone"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mobilePhone"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"onlyJobRelatedTopics"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updatePersonProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"firstName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"firstName"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"lastName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lastName"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"occupation"},"value":{"kind":"Variable","name":{"kind":"Name","value":"occupation"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"street"},"value":{"kind":"Variable","name":{"kind":"Name","value":"street"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"number"},"value":{"kind":"Variable","name":{"kind":"Name","value":"number"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"postalCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"postalCode"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"city"},"value":{"kind":"Variable","name":{"kind":"Name","value":"city"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"privatePhone"},"value":{"kind":"Variable","name":{"kind":"Name","value":"privatePhone"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"mobilePhone"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mobilePhone"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"onlyJobRelatedTopics"},"value":{"kind":"Variable","name":{"kind":"Name","value":"onlyJobRelatedTopics"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"person"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"messages"}}]}}]}}]}}]} as unknown as DocumentNode<UpdatePersonProfileMutation, UpdatePersonProfileMutationVariables>;
 export const RegisterPersonDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterPerson"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registerPerson"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"messages"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterPersonMutation, RegisterPersonMutationVariables>;
