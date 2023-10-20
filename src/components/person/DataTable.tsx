@@ -4,15 +4,15 @@ import { gql } from '@/__generated__/gql';
 
 import DataTable from '@/components/shared/DataTable'
 
-import { DataTableHeadCell } from '@/types/DataTable'
+import { DataTableColumn } from '@/types/DataTable'
 import { PersonType } from '@/__generated__/graphql'
 
 const ALL_PERSONS_QUERY = gql(`
   query ListPersons (
-    $email: String
+    $email_Icontains: String
   ) {
     listPersons(
-      email: $email
+      email_Icontains: $email_Icontains
     ) {
       edges {
         node {
@@ -28,29 +28,21 @@ const ALL_PERSONS_QUERY = gql(`
 
 const title = 'Persons';
 const rowKey = 'email';
-let columns: DataTableHeadCell<PersonType>[] = [
+let columns: DataTableColumn<PersonType>[] = [
   {
     id: 'email',
-    numeric: false,
-    disablePadding: true,
     label: 'Email',
   },
   {
     id: 'firstName',
-    numeric: false,
-    disablePadding: false,
     label: 'First Name',
   },
   {
     id: 'lastName',
-    numeric: false,
-    disablePadding: false,
     label: 'Last Name',
   },
   {
     id: 'dateJoined',
-    numeric: false,
-    disablePadding: false,
     label: 'Date Joined',
   },
 ];
@@ -62,7 +54,7 @@ function PersonDataTable() {
   const { data, loading } = useQuery(
     ALL_PERSONS_QUERY, {
       variables: {
-        email: emailFilter,
+        email_Icontains: emailFilter,
       }
     }
   );

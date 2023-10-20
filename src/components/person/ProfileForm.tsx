@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, forwardRef } from "react";
 import { useQuery, useMutation } from '@apollo/client';
 import { gql } from '@/__generated__/gql';
 
@@ -79,7 +79,7 @@ const UPDATE_PERSON_PROFILE_MUTATION = gql(`
   }
 `);
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref,
 ) {
@@ -87,7 +87,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 function PersonProfileForm() {
-  const [success, setSuccess] = React.useState(false);
+  const [success, setSuccess] = useState(false);
 
   // fields
   const [firstName, setFirstName] = useState("");
