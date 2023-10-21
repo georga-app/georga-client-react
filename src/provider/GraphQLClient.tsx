@@ -4,7 +4,6 @@ import {
   ApolloClient,
   ApolloLink,
   HttpLink,
-  SuspenseCache,
   split,
 } from "@apollo/client";
 import {
@@ -65,20 +64,13 @@ function makeClient() {
   });
 }
 
-function makeSuspenseCache() {
-  return new SuspenseCache();
-}
-
 function GraphQLClientProvider({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <ApolloNextAppProvider
-      makeClient={makeClient}
-      makeSuspenseCache={makeSuspenseCache}
-    >
+    <ApolloNextAppProvider makeClient={makeClient} >
       {children}
     </ApolloNextAppProvider>
   )
