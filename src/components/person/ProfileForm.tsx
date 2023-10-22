@@ -1,3 +1,7 @@
+/*
+ * For copyright and license terms, see COPYRIGHT.md (top level of repository)
+ * Repository: https://github.com/georga-app/georga-client-react
+ */
 import { useState, forwardRef } from "react";
 import { useQuery, useMutation } from '@apollo/client';
 import { gql } from '@/__generated__/gql';

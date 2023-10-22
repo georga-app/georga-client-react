@@ -1,3 +1,7 @@
+/*
+ * For copyright and license terms, see COPYRIGHT.md (top level of repository)
+ * Repository: https://github.com/georga-app/georga-client-react
+ */
 'use client';
 
 import Grid from '@mui/material/Unstable_Grid2'; // TODO: switch when stable

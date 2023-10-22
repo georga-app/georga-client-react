@@ -1,3 +1,7 @@
+/*
+ * For copyright and license terms, see COPYRIGHT.md (top level of repository)
+ * Repository: https://github.com/georga-app/georga-client-react
+ */
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
