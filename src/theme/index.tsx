@@ -20,6 +20,8 @@ import Footer from '@/theme/Footer';
 declare module '@mui/material/styles' {
   interface TypeBackground {
     bright?: string;
+    brighter?: string;
+    active?: string;
     admin?: string;
     dark?: string;
   }
@@ -39,6 +41,8 @@ const theme = createTheme({
     },
     background: {
       bright: "#ffffff",
+      brighter: "#fafafa",
+      active: "#cfd8dc",
       default: "#eceff1",
       admin: "#eceff1",
       dark: "#dcdfe1",

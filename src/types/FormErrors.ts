@@ -28,8 +28,13 @@ type PersonProfileFormErrors = {
   onlyJobRelatedTopics?: string[],
 }
 
+type PersonPropertiesFormErrors = {
+  form?: ApolloError["message"],
+}
+
 export type {
   PersonRegisterFormErrors,
   PersonLoginFormErrors,
   PersonProfileFormErrors,
+  PersonPropertiesFormErrors,
 };

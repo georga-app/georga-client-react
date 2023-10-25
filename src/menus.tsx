@@ -2,6 +2,13 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PersonIcon from '@mui/icons-material/Person';
+import GroupsIcon from '@mui/icons-material/Groups';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import SecurityIcon from '@mui/icons-material/Security';
+
 import Menus from '@/types/Menus'
 
 const menus: Menus = {
@@ -20,6 +27,7 @@ const menus: Menus = {
       { path: '/feedback',
           type: 'link', name: 'Feedback' },
     ],
+    account: [],
   },
   backend: {
     main: [
@@ -73,6 +81,23 @@ const menus: Menus = {
           type: 'link', name: 'Imprint' },
       { path: '/feedback',
           type: 'link', name: 'Feedback' },
+    ],
+    account: [
+      { path: '/account/profile',
+          type: 'link', name: 'Profile', icon: <PersonIcon />,
+          description: "Change your personal data" },
+      { path: '/account/organizations',
+          type: 'link', name: 'Organizations', icon: <GroupsIcon />,
+          description: "Subscribe to organizations" },
+      { path: '/account/qualifications',
+          type: 'link', name: 'Qualifications', icon: <VerifiedIcon />,
+          description: "Manage your qualifications and restrictions" },
+      { path: '/account/notifications',
+          type: 'link', name: 'Notifications', icon: <NotificationsIcon />,
+          description: "Configure your notifications channels" },
+      { path: '/account/security',
+          type: 'link', name: 'Security', icon: <SecurityIcon />,
+          description: "Add security to your login" },
     ],
   },
 };

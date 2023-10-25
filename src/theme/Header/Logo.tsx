@@ -18,7 +18,7 @@ function Logo() {
         mr: 2,
         color: 'white',
         width: 'fit-content',
-        display: { xs: 'none', md: 'inline-block' },
+        display: { xs: 'none', sm: 'inline-block' },
       }}
     >
       <Box sx={{ mt: '3px', height: 35 }}>

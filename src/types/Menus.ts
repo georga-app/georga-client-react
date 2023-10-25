@@ -8,26 +8,30 @@ type MenuItemLink = {
   type: 'link',
   path: string,
   name: string,
-  adminLevel?: AdminLevel;
+  description?: string,
+  icon?: React.ReactNode,
+  adminLevel?: AdminLevel,
 }
 
 type MenuItemDivider = {
   type: 'divider',
-  adminLevel?: AdminLevel;
+  adminLevel?: AdminLevel,
 }
 
 type MenuItem = MenuItemLink | MenuItemDivider;
 
 type MenuSlots = {
-  main:   MenuItem[],
-  user:   MenuItem[],
-  admin:  MenuItem[],
-  footer: MenuItem[],
+  main:    MenuItem[],
+  user:    MenuItem[],
+  admin:   MenuItem[],
+  footer:  MenuItem[],
+  account: MenuItem[],
 }
 
 type Menus = {
   frontend: MenuSlots,
-  backend: MenuSlots,
+  backend:  MenuSlots,
 }
 
-export default Menus
+export type { MenuItem };
+export default Menus;

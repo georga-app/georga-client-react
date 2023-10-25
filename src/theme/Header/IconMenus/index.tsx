@@ -21,7 +21,7 @@ function IconMenus({
 }) {
   const user = useContext(UserContext);
   return !user.isLoggedIn ? <></> : (
-    <Box sx={{ flexGrow: 0 }}>
+    <Box sx={{ flexGrow: 0, flexWrap: 0 }}>
       <AdminMenu />
       <Notifications toggleNotifications={toggleNotifications} />
       <UserMenu />

@@ -2,8 +2,16 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  MouseEvent,
+  ChangeEvent
+} from "react";
+
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -25,7 +33,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
+import PropTypes from 'prop-types';
 import { Order, DataTableColumn } from '@/types/DataTable';
+
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -74,6 +84,7 @@ function DataTableHead<T>({
   rowCount,
   columns,
   filterRow,
+  checkbox = false,
 }: {
   numSelected: number,
   onRequestSort: (event: React.MouseEvent<unknown>,
@@ -84,6 +95,7 @@ function DataTableHead<T>({
   rowCount: number,
   columns: DataTableColumn<T>[],
   filterRow: boolean,
+  checkbox?: boolean,
 }) {
   const createSortHandler =
     (property: keyof T) => (event: React.MouseEvent<unknown>) => {
@@ -103,17 +115,19 @@ function DataTableHead<T>({
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all',
-            }}
-          />
-        </TableCell>
+        {checkbox &&
+          <TableCell padding="checkbox">
+            <Checkbox
+              color="primary"
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={rowCount > 0 && numSelected === rowCount}
+              onChange={onSelectAllClick}
+              inputProps={{
+                'aria-label': 'select all',
+              }}
+            />
+          </TableCell>
+        }
         {columns.map((headCell: DataTableColumn<T>) => (
           <TableCell
             key={headCell.id as string}
@@ -188,10 +202,23 @@ function DataTableToolbar({
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+        ...(numSelected > 0 ? {
+          bgcolor: 'background.active',
+        }: {
+          bgcolor: (theme) => {
+            return {
+              xs: theme.palette.background.default,
+              sm: theme.palette.background.brighter,
+            }
+          },
         }),
+        position: { xs: 'fixed', sm: 'unset' },
+        bottom: { xs: 0, sm: 'inherit' },
+        left: { xs: 0, sm: 'inherit' },
+        right: { xs: 0, sm: 'inherit' },
+        width: { xs: '100vw', sm: 'inherit' },
+        boxShadow: { xs: 'rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px', sm: 'none' },
+        zIndex: { xs: 1, sm: 'unset' }
       }}
     >
       {numSelected > 0 ? (
@@ -237,20 +264,24 @@ function DataTable<T>({
   rows,
   rowKey,
   elevation = 1,
+  checkbox = false,
+  header = true,
 }: {
   title?: string,
   columns: DataTableColumn<T>[],
   rows: T[],
   rowKey: keyof T,
   elevation?: number,
+  checkbox?: boolean,
+  header: boolean,
 }) {
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof T>(rowKey);
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5)
-  const [filterRow, setFilterRow] = React.useState(false);
+  const [order, setOrder] = useState<Order>('asc');
+  const [orderBy, setOrderBy] = useState<keyof T>(rowKey);
+  const [selected, setSelected] = useState<readonly string[]>([]);
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(25)
+  const [filterRow, setFilterRow] = useState(false);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -305,7 +336,7 @@ function DataTable<T>({
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-  const visibleRows = React.useMemo(
+  const visibleRows = useMemo(
     () =>
       stableSort(rows as Array<any>, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
@@ -331,20 +362,22 @@ function DataTable<T>({
         />
         <TableContainer>
           <Table
-            sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
           >
-            <DataTableHead
-              columns={columns}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy as string}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-              filterRow={filterRow}
-            />
+            {header &&
+              <DataTableHead
+                columns={columns}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy as string}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+                filterRow={filterRow}
+                checkbox={checkbox}
+              />
+            }
             <TableBody>
               {visibleRows.map((row, index) => {
                   const isItemSelected = isSelected(row[rowKey] as string);
@@ -361,15 +394,17 @@ function DataTable<T>({
                       key={row[rowKey] as string}
                       selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId,
-                          }}
-                        />
-                      </TableCell>
+                      {checkbox &&
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              'aria-labelledby': labelId,
+                            }}
+                          />
+                        </TableCell>
+                      }
                       {columns.map((column, index) => {
                         let content = row[column.id];
                         return (
@@ -393,9 +428,9 @@ function DataTable<T>({
             </TableBody>
           </Table>
         </TableContainer>
-        {rowsPerPage > 0 && (
+        {rowsPerPage > 0 && rows.length > rowsPerPage && (
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[5, 10, 25, 50]}
             component="div"
             count={rows.length}
             rowsPerPage={rowsPerPage}

@@ -21,7 +21,7 @@ function MainMenu({
   const menu = user.isLoggedIn ? menus['backend'] : menus['frontend']
   return (
     <Fade in={!notifications}>
-      <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+      <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
         {menu.main.map((page) => page.type !== 'link' ? '' : (
           <Button
             key={page.path}

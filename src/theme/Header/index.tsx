@@ -27,7 +27,7 @@ function Header({
         <Toolbar disableGutters>
 
           {/* Left */}
-          <Grid xs={4} sm={4} md={3} sx={{ textAlign: 'right' }}>
+          <Grid xs={4} sm={3} md={3} sx={{ textAlign: 'right' }}>
             <Logo />
             <ClientOnly>
               <MobileMenu />
@@ -42,7 +42,7 @@ function Header({
           </Grid>
 
           {/* Right */}
-          <Grid xs={4} sm={2} md={3}>
+          <Grid xs={4} sm={3} md={3}>
             <ClientOnly>
               <IconMenus toggleNotifications={toggleNotifications} />
             </ClientOnly>

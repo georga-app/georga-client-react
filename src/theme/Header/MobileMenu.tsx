@@ -27,7 +27,7 @@ function MobileMenu() {
   };
   const handleCloseMobileMenu = () => { setAnchorElMobile(null); };
   return (
-    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+    <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }}>
       <IconButton
         size="large"
         aria-label="account of current user"
@@ -53,7 +53,7 @@ function MobileMenu() {
         open={Boolean(anchorElMobile)}
         onClose={handleCloseMobileMenu}
         sx={{
-          display: { xs: 'block', md: 'none' },
+          display: { xs: 'block', sm: 'none' },
         }}
       >
         {menu.main.map((page) => page.type !== 'link' ? '' : (

@@ -2,9 +2,8 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import { useState, forwardRef } from "react";
+import { useState } from "react";
 import { useQuery, useMutation } from '@apollo/client';
-import { gql } from '@/__generated__/gql';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import Button from "@mui/material/Button";
@@ -13,19 +12,19 @@ import FormControl from "@mui/material/FormControl";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
-
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
+import Alert from "@/components/shared/Alert";
 import FormFieldError from "@/components/shared/FormFieldError";
 import FormError from "@/components/shared/FormError";
 
-import { PersonProfileFormErrors } from "@/types/FormErrors";
+import { gql } from '@/__generated__/gql';
 import { PersonType, GetPersonProfileQuery } from '@/__generated__/graphql';
+import { PersonProfileFormErrors } from "@/types/FormErrors";
 
 const GET_PERSON_PROFILE_QUERY = gql(`
   query GetPersonProfile {
@@ -83,15 +82,10 @@ const UPDATE_PERSON_PROFILE_MUTATION = gql(`
   }
 `);
 
-const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref,
-) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
 function PersonProfileForm() {
   const [success, setSuccess] = useState(false);
+  const [changed, setChanged] = useState<{[id: string]: any}>({});
+  const [errors, setErrors] = useState<PersonProfileFormErrors>({});
 
   // fields
   const [firstName, setFirstName] = useState("");
@@ -104,9 +98,6 @@ function PersonProfileForm() {
   const [mobilePhone, setMobilePhone] = useState("");
   const [occupation, setOccupation] = useState("");
   const [onlyJobRelatedTopics, setOnlyJobRelatedTopics] = useState(false);
-
-  const [changed, setChanged] = useState<{[id: string]: any}>({});
-  const [errors, setErrors] = useState<PersonProfileFormErrors>({});
 
   // getPersonProfile
   const {

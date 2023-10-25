@@ -5,12 +5,12 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useQuery, useMutation } from '@apollo/client';
-import { gql } from '@/__generated__/gql';
 
 import DataTable from '@/components/shared/DataTable'
 
-import { DataTableColumn } from '@/types/DataTable'
+import { gql } from '@/__generated__/gql';
 import { OrganizationType } from '@/__generated__/graphql'
+import { DataTableColumn } from '@/types/DataTable'
 
 const GET_PERSON_ORGANIZATIONS_QUERY = gql(`
   query GetPersonOrganizationsProfile (
@@ -79,9 +79,10 @@ function PersonOrganizationTable() {
       columns={columns}
       rows={rows}
       rowKey={rowKey}
-      elevation={0}
+      header={false}
     />
   );
 }
 
 export default PersonOrganizationTable;
+export { GET_PERSON_ORGANIZATIONS_QUERY };

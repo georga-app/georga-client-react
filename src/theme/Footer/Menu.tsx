@@ -19,6 +19,7 @@ function Menu() {
       direction="row"
       justifyContent="center"
       alignItems="center"
+      sx={{ marginBottom: { xs: '55px', sm: '0'} }}
     >
       {menu.footer.map((page) => page.type !== 'link' ? '' : (
         <Button

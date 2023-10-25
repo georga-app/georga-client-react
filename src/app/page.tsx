@@ -29,7 +29,7 @@ function Home() {
   const user = useContext(UserContext);
   useEffect(() => {
     if(user.isLoggedIn)
-      router.push("/schedule")
+      router.replace("/schedule")
   });
 
   if (user.isLoggedIn)
