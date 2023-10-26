@@ -20,7 +20,6 @@ function Funding() {
           <Image
             src="/logo-bmbf.svg"
             alt="BMBF Logo"
-            style={{ width: 'auto', height: '100%' }}
             width={170}
             height={120}
             priority
@@ -30,7 +29,6 @@ function Funding() {
           <Image
             src="/logo-prototypefund.svg"
             alt="Prototype Fund Logo"
-            style={{ width: 'auto', height: '100%' }}
             width={72}
             height={120}
             priority
