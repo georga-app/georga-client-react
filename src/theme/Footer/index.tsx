@@ -12,8 +12,7 @@ import Funding from './Funding';
 
 function Footer() {
   const user = useContext(UserContext);
-  if (user.isLoggedIn) return;
-  return (
+  return !user.isLoggedIn && (
     <Box sx={{ paddingT: 2 }}>
       <Funding />
       <Menu />

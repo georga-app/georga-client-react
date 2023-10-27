@@ -185,6 +185,7 @@ function PersonProfileForm() {
     });
   }
 
+  // success
   const handleSuccess = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway')
       return;
@@ -395,8 +396,8 @@ function PersonProfileForm() {
         color="secondary"
         sx={{ marginTop: 1 }}
         disabled={
-          updatePersonProfileLoading ||
-          Object.keys(changed).length === 0
+          updatePersonProfileLoading
+          || Object.keys(changed).length === 0
         }
       >
         {updatePersonProfileLoading ? "Saving..." : "Save"}

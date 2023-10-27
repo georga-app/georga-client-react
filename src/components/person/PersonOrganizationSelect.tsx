@@ -30,9 +30,10 @@ function PersonOrganizationSelect({
   const { data, loading } = useQuery(GET_PERSON_ORGANIZATIONS_QUERY, {
     'onCompleted': data => {
       if (!data?.getPersonProfile?.organizationsSubscribed.edges) return;
-      let orgs = data.getPersonProfile.organizationsSubscribed.edges
-          .map((edge) => edge?.node)
-          .filter((node): node is OrganizationType => node !== undefined)
+      const orgs = data.getPersonProfile.organizationsSubscribed.edges
+        .map((edge) => edge?.node)
+        .filter((node): node is OrganizationType => node !== undefined)
+      if (!orgs) return;
       setOrganizations(orgs);
       setOrganizationId(orgs[0].id);
     }

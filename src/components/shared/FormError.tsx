@@ -10,7 +10,13 @@ function FormError({error}: {error: string | undefined}) {
   return (
     <Typography
       variant="subtitle2"
-      sx={{ fontSize: 13, color: "error.main", textAlign: "center", marginTop: 1 }}
+      sx={{
+        fontSize: 13,
+        color: "error.main",
+        textAlign: "center",
+        marginTop: 1,
+        ... (error ? {} : {display: 'none'}),
+      }}
     >
       {error}
     </Typography>

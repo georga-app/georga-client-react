@@ -30,6 +30,7 @@ type PersonProfileFormErrors = {
 
 type PersonPropertiesFormErrors = {
   form?: ApolloError["message"],
+  properties?: string[],
 }
 
 export type {
