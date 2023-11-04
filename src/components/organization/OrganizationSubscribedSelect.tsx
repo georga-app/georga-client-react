@@ -15,9 +15,9 @@ import Typography from "@mui/material/Typography";
 
 import { OrganizationType } from '@/__generated__/graphql';
 
-import { GET_PERSON_ORGANIZATIONS_QUERY } from "@/components/person/OrganizationsTable"
+import { GET_PERSON_ORGANIZATIONS_QUERY } from "@/components/organization/OrganizationSubscribedTable"
 
-function PersonOrganizationSelect({
+function OrganizationSubscribedSelect({
   organizationId,
   setOrganizationId,
 }: {
@@ -75,4 +75,4 @@ function PersonOrganizationSelect({
 
 }
 
-export default PersonOrganizationSelect;
+export default OrganizationSubscribedSelect;

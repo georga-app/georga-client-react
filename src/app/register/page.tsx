@@ -7,7 +7,7 @@
 import Paper from "@mui/material/Paper";
 
 import OneColumn from '@/theme/layouts/OneColumn';
-import PersonRegisterForm from "@/components/person/RegisterForm";
+import PersonRegisterForm from "@/components/person/PersonRegisterForm";
 
 function Register() {
   return (

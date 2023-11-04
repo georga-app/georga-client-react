@@ -54,7 +54,7 @@ let columns: DataTableColumn<OrganizationType>[] = [
 ]
 
 
-function PersonOrganizationTable() {
+function OrganizationSubscribedTable() {
   const [success, setSuccess] = useState(false);
 
   const [nameFilter, setNameFilter] = useState("");
@@ -84,5 +84,5 @@ function PersonOrganizationTable() {
   );
 }
 
-export default PersonOrganizationTable;
+export default OrganizationSubscribedTable;
 export { GET_PERSON_ORGANIZATIONS_QUERY };

@@ -9,7 +9,7 @@ import ThreeColumns from '@/theme/layouts/ThreeColumns';
 import Paper from '@mui/material/Paper';
 
 import HeaderNav from '@/components/shared/HeaderNav';
-import PersonOrganizationsTable from '@/components/person/OrganizationsTable';
+import OrganizationSubscribedTable from '@/components/organization/OrganizationSubscribedTable';
 
 function Organizations() {
   return (
@@ -21,7 +21,7 @@ function Organizations() {
       middle={
         <>
           <HeaderNav title="Organizations" back="/account" />
-          <PersonOrganizationsTable />
+          <OrganizationSubscribedTable />
         </>
       }
       right={

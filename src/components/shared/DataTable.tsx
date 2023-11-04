@@ -273,7 +273,7 @@ function DataTable<T>({
   rowKey: keyof T,
   elevation?: number,
   checkbox?: boolean,
-  header: boolean,
+  header?: boolean,
 }) {
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof T>(rowKey);

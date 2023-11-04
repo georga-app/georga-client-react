@@ -7,7 +7,7 @@
 import Paper from "@mui/material/Paper";
 
 import OneColumn from '@/theme/layouts/OneColumn';
-import PersonLoginForm from '@/components/person/LoginForm';
+import PersonLoginForm from '@/components/person/PersonLoginForm';
 
 function Login() {
   return (

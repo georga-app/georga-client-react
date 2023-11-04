@@ -4,7 +4,7 @@
  */
 'use client';
 
-import PersonLogoutFlow from '@/components/person/LogoutFlow';
+import PersonLogoutFlow from '@/components/person/PersonLogoutFlow';
 
 function Logout() {
   return (

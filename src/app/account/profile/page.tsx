@@ -9,7 +9,7 @@ import ThreeColumns from '@/theme/layouts/ThreeColumns';
 import Paper from '@mui/material/Paper';
 
 import HeaderNav from '@/components/shared/HeaderNav';
-import PersonProfileForm from '@/components/person/ProfileForm';
+import PersonProfileForm from '@/components/person/PersonProfileForm';
 
 function Profile() {
   return (

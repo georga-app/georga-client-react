@@ -12,7 +12,7 @@ import Paper from '@mui/material/Paper';
 
 import HeaderNav from '@/components/shared/HeaderNav';
 import PersonPropertiesForm from '@/components/person/PersonPropertiesForm';
-import PersonOrganizationSelect from '@/components/person/PersonOrganizationSelect';
+import OrganizationSubscribedSelect from '@/components/organization/OrganizationSubscribedSelect';
 
 function Qualifications() {
   const [organizationId, setOrganizationId] = useState('');
@@ -32,7 +32,7 @@ function Qualifications() {
             backgroundColor: 'background.brighter',
             borderRadius: '4px 4px 0 0'
           }}>
-            <PersonOrganizationSelect
+            <OrganizationSubscribedSelect
               organizationId={organizationId}
               setOrganizationId={setOrganizationId}
             />

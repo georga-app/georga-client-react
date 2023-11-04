@@ -2,10 +2,10 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import PersonDataTable from '@/components/person/DataTable';
+import PersonTable from '@/components/person/PersonTable';
 
 function DataTableDemo() {
-  return <PersonDataTable />
+  return <PersonTable />
 }
 
 export default DataTableDemo;
