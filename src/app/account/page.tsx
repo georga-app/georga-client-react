@@ -8,6 +8,7 @@ import Link from "next/link";
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -56,16 +57,14 @@ function Account() {
     <ThreeColumns
       bg='admin'
       middle={
-        <Box sx={{
-          width: { xs: "auto", sm: 600 },
-        }}>
+        <Container sx={{ width: { xs: "auto", sm: 600 }, }}>
           <HeaderNav title="Account" back="/"/>
           <Stack spacing={0}>
             {menus.backend.account.map((page) => page.type !== 'link' ? '' : (
               <Item key={page.path} page={page} />
             ))}
           </Stack>
-        </Box>
+        </Container>
       }
     />
   )

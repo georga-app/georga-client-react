@@ -4,7 +4,7 @@
  */
 'use client';
 
-import ThreeColumns from '@/theme/layouts/ThreeColumns';
+import TwoColumns from '@/theme/layouts/TwoColumns';
 
 import Paper from '@mui/material/Paper';
 
@@ -13,21 +13,18 @@ import PersonProfileForm from '@/components/person/PersonProfileForm';
 
 function Profile() {
   return (
-    <ThreeColumns
+    <TwoColumns
       bg='admin'
       left={
         <></>
       }
-      middle={
+      right={
         <>
           <HeaderNav title="Profile" back="/account" />
           <Paper sx= {{ padding: { xs: 2, sm: 5 } }}>
             <PersonProfileForm />
           </Paper>
         </>
-      }
-      right={
-        <></>
       }
     />
   );

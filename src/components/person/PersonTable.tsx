@@ -51,7 +51,7 @@ let columns: DataTableColumn<PersonType>[] = [
   },
 ];
 
-function PersonDataTable() {
+function PersonTable() {
   const [emailFilter, setEmailFilter] = useState("");
   columns[0].filter = setEmailFilter;
 
@@ -78,4 +78,4 @@ function PersonDataTable() {
   );
 }
 
-export default PersonDataTable;
+export default PersonTable;

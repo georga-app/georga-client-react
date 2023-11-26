@@ -24,7 +24,7 @@ function OneColumn({
         {children}
       </Container>
     </Box>
-  )
+  );
 }
 
 export default OneColumn;
