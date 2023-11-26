@@ -2,20 +2,20 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import ThreeColumns from '@/theme/layouts/ThreeColumns';
+'use client';
+
+import TwoColumns from '@/theme/layouts/TwoColumns';
+import OrganizationTable from '@/components/organization/OrganizationTable';
 
 function Organizations() {
   return (
-    <ThreeColumns
+    <TwoColumns
       bg='admin'
       left={
-        <p>Left</p>
-      }
-      middle={
-        <p>Middle</p>
+        <></>
       }
       right={
-        <p>Right</p>
+        <OrganizationTable />
       }
     />
   );

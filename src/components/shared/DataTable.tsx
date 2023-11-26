@@ -83,7 +83,6 @@ function DataTableHead<T>({
   orderBy,
   rowCount,
   columns,
-  filterRow,
   checkbox = false,
 }: {
   numSelected: number,
@@ -94,7 +93,6 @@ function DataTableHead<T>({
   orderBy: string,
   rowCount: number,
   columns: DataTableColumn<T>[],
-  filterRow: boolean,
   checkbox?: boolean,
 }) {
   const createSortHandler =
@@ -103,14 +101,6 @@ function DataTableHead<T>({
     };
 
   let timeouts: {[headCellId: string]: ReturnType<typeof setTimeout>} = {}
-  const filterRowHandler = (headCell: DataTableColumn<T>) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      clearTimeout(timeouts[headCell.id as string]);
-      timeouts[headCell.id as string] = setTimeout(() =>
-        headCell.filter ? headCell.filter(event.target.value) : '',
-        350
-      );
-    };
 
   return (
     <TableHead>
@@ -150,35 +140,6 @@ function DataTableHead<T>({
           </TableCell>
         ))}
       </TableRow>
-      {filterRow ? (
-        <TableRow sx={{ backgroundColor: "#f9f9f9" }}>
-          <TableCell />
-          {columns.map((headCell: DataTableColumn<T>) => {
-            if (headCell.filter)
-              return (
-                <TableCell
-                  key={headCell.id as string + "-filter"}
-                  sx={{ paddingX: 0, paddingY: 1 }}
-                >
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    sx={{ backgroundColor: 'white' }}
-                    InputProps={{style: {fontSize: 12}}}
-                    InputLabelProps={{style: {fontSize: 12}}}
-                    onChange={filterRowHandler(headCell)}
-                  />
-                </TableCell>
-              )
-            return (
-              <TableCell
-                key={headCell.id as string + "-filter"}
-                sx={{ paddingX: 0, paddingY: 1 }}
-              />
-            )
-          })}
-        </TableRow>
-      ) : ("")}
     </TableHead>
   );
 }
@@ -186,15 +147,12 @@ function DataTableHead<T>({
 function DataTableToolbar({
   numSelected,
   title,
-  toggleFilterRow,
 }: {
   numSelected: number,
   title: string,
-  toggleFilterRow: () => void,
 }) {
-
-  const handleFilterRowClick = (event: React.MouseEvent<HTMLElement>) => {
-    toggleFilterRow();
+  const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
+    console.log("filter");
   };
 
   return (
@@ -249,7 +207,7 @@ function DataTableToolbar({
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
-          <IconButton onClick={(event) => {handleFilterRowClick(event)}}>
+          <IconButton onClick={(event) => {handleFilterClick(event)}}>
             <FilterListIcon />
           </IconButton>
         </Tooltip>
@@ -281,7 +239,6 @@ function DataTable<T>({
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(25)
-  const [filterRow, setFilterRow] = useState(false);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -345,20 +302,12 @@ function DataTable<T>({
     [order, orderBy, page, rows, rowsPerPage],
   );
 
-  const toggleFilterRow = () => {
-    setFilterRow(!filterRow);
-    if (filterRow) {
-      columns.map(column => column.filter && column.filter(''))
-    }
-  };
-
   return (
     <Box sx={{ width: '100%' }}>
       <Paper elevation={elevation} sx={{ width: '100%', mb: 2 }}>
         <DataTableToolbar
           numSelected={selected.length}
           title={title}
-          toggleFilterRow={toggleFilterRow}
         />
         <TableContainer>
           <Table
@@ -374,7 +323,6 @@ function DataTable<T>({
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
                 rowCount={rows.length}
-                filterRow={filterRow}
                 checkbox={checkbox}
               />
             }

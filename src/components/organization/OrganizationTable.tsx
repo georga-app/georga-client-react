@@ -12,21 +12,15 @@ import { gql } from '@/__generated__/gql';
 import { OrganizationType } from '@/__generated__/graphql'
 import { DataTableColumn } from '@/types/DataTable'
 
-const GET_PERSON_ORGANIZATIONS_QUERY = gql(`
-  query GetPersonOrganizationsProfile (
-    $name_Icontains: String
-  ) {
-    getPersonProfile {
-      organizationsSubscribed (
-        name_Icontains: $name_Icontains
-      ) {
-        edges {
-          node {
-            id
-            name
-            description
-            icon
-          }
+const LIST_ORGANIZATIONS_QUERY = gql(`
+  query ListOrganizations {
+    listOrganizations {
+      edges {
+        node {
+          id
+          name
+          icon
+          description
         }
       }
     }
@@ -61,15 +55,13 @@ function PersonOrganizationTable() {
 
   // getPersonOrganizations
   const { data, loading } = useQuery(
-    GET_PERSON_ORGANIZATIONS_QUERY, {
-      variables: {
-        name_Icontains: nameFilter,
-      }
+    LIST_ORGANIZATIONS_QUERY, {
+      variables: {}
     }
   );
   let rows: OrganizationType[] = [];
-  if (!loading && data?.getPersonProfile?.organizationsSubscribed.edges)
-    rows = data.getPersonProfile.organizationsSubscribed.edges
+  if (!loading && data?.listOrganizations?.edges)
+    rows = data.listOrganizations.edges
       .map((edge) => edge?.node)
       .filter((node): node is OrganizationType => node !== undefined);
 
@@ -78,10 +70,9 @@ function PersonOrganizationTable() {
       columns={columns}
       rows={rows}
       rowKey={rowKey}
-      header={false}
+      header={true}
     />
   );
 }
 
 export default PersonOrganizationTable;
-export { GET_PERSON_ORGANIZATIONS_QUERY };
