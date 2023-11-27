@@ -317,10 +317,10 @@ function DataTableToolbar<T>({
         <Box
           sx={{
             width: !filterOpen ? 0 : { xs: '100%', sm: '350px' },
-            paddingLeft: { xs: 2.5, sm: 0.5 },
-            paddingRight: { xs: 1.5, sm: 0.5 },
-            paddingBottom: { xs: 1.5, sm: 0.5 },
-            paddingTop: { sm: 1.5 },
+            paddingLeft: !filterOpen ? 0 : { xs: 2.5, sm: 0.5 },
+            paddingRight: !filterOpen ? 0 : { xs: 1.5, sm: 0.5 },
+            paddingBottom: !filterOpen ? 0 : { xs: 1.5, sm: 0.5 },
+            paddingTop: !filterOpen ? 0 : { sm: 1.5 },
             order: { xs: 1, sm: 0 },
             overflow: 'hidden',
             display: 'flex',
@@ -351,7 +351,10 @@ function DataTableToolbar<T>({
           <IconButton
             onClick={() => {setFilter(''); setFilterOpen(false)}}
             size="small"
-            sx={{ visibility: filter ? 'visible' : 'hidden', paddingTop: { sm: '2px' } }}
+            sx={{
+              visibility: filter ? 'visible' : 'hidden',
+              paddingTop: { sm: '2px' }
+            }}
           >
             <ActionClearIcon />
           </IconButton>
