@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { NavigationBackIcon } from '@/theme/Icons';
 
 function HeaderNav({
   title,
@@ -21,7 +21,7 @@ function HeaderNav({
     <Stack direction="row" sx={{ padding: 1 }}>
       <Link href={back} aria-label="back">
         <Button variant="text" sx={{ padding: "3px", minWidth: "30px" }}>
-          <ArrowBackIosNewIcon color="secondary" />
+          <NavigationBackIcon color="secondary" />
         </Button>
       </Link>
       <Typography

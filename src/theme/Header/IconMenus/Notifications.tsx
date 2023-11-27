@@ -4,7 +4,7 @@
  */
 import IconButton from '@mui/material/IconButton';
 
-import CircleNotifications from '@mui/icons-material/CircleNotifications';
+import { MenuNotificationsIcon } from '@/theme/Icons';
 
 function Notifications({
   toggleNotifications,
@@ -13,11 +13,11 @@ function Notifications({
 }) {
   return (
     <IconButton
-      aria-label="notifications"
+      aria-label="Notifications"
       onClick={toggleNotifications}
       color="inherit"
     >
-      <CircleNotifications />
+      <MenuNotificationsIcon />
     </IconButton>
   );
 }

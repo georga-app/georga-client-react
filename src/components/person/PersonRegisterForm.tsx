@@ -18,8 +18,9 @@ import FormControl from "@mui/material/FormControl";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
-import Gavel from "@mui/icons-material/Gavel";
-import VerifiedUserTwoTone from "@mui/icons-material/VerifiedUserTwoTone";
+
+import { RegisterIcon } from "@/themes/Icons"
+import { RegisterSuccessIcon } from "@/themes/Icons"
 
 import FormFieldError from "@/components/shared/FormFieldError";
 import FormError from "@/components/shared/FormError";
@@ -102,7 +103,7 @@ function PersonRegisterForm() {
         backgroundColor: Object.keys(errors).length > 0 ? "error.main" : "secondary.main",
         color: "white",
       }}>
-        <Gavel />
+        <RegisterIcon />
       </Avatar>
       <Typography variant="button">Register</Typography>
 
@@ -166,7 +167,7 @@ function PersonRegisterForm() {
         {/* Feedback */}
         <Dialog open={open} /*disablebackdropclick="true"*/>
           <DialogTitle>
-            <VerifiedUserTwoTone sx={{
+            <RegisterSuccessIcon sx={{
               paddingY: "2px",
               marginRight: "5px",
               verticalAlign: "middle",

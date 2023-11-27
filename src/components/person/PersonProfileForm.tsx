@@ -15,8 +15,6 @@ import InputLabel from "@mui/material/InputLabel";
 import Snackbar from '@mui/material/Snackbar';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 import Alert from "@/components/shared/Alert";
 import FormFieldError from "@/components/shared/FormFieldError";

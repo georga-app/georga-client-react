@@ -17,9 +17,9 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import GitHubIcon from "@mui/icons-material/GitHub";
-import LinkIcon from "@mui/icons-material/Link";
-import TwitterIcon from "@mui/icons-material/Twitter";
+import { SocialGitHubIcon } from "@/theme/Icons";
+import { SocialLinkIcon } from "@/theme/Icons";
+import { SocialTwitterIcon } from "@/theme/Icons";
 
 import UserContext from "@/provider/User";
 import OneColumn from '@/theme/layouts/OneColumn';
@@ -87,17 +87,17 @@ function Home() {
         <Stack direction="row" spacing={2}>
           <ExtLink href="https://georga.app">
             <Avatar>
-              <LinkIcon />
+              <SocialLinkIcon />
             </Avatar>
           </ExtLink>
           <ExtLink href="https://twitter.com/GeoRGA_app">
             <Avatar>
-              <TwitterIcon />
+              <SocialTwitterIcon />
             </Avatar>
           </ExtLink>
           <ExtLink href="https://github.com/georga-app">
             <Avatar>
-              <GitHubIcon />
+              <SocialGitHubIcon />
             </Avatar>
           </ExtLink>
         </Stack>

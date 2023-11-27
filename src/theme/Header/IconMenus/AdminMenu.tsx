@@ -10,7 +10,8 @@ import Divider from '@mui/material/Divider';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import BuildCircle from '@mui/icons-material/BuildCircle';
+
+import { MenuAdminIcon } from '@/theme/Icons';
 
 import UserContext from '@/provider/User';
 import menus from '@/app/menus';
@@ -25,13 +26,13 @@ function AdminMenu() {
   const handleCloseAdminMenu = () => { setAnchorElAdmin(null); };
   return !user.hasAdminLevel() ? <></> : <>
     <IconButton
-      aria-label="admin menue"
+      aria-label="Admin menue"
       aria-controls="menu-admin"
       aria-haspopup="true"
       onClick={handleOpenAdminMenu}
       color="inherit"
     >
-      <BuildCircle />
+      <MenuAdminIcon />
     </IconButton>
     <Menu
       sx={{ mt: '45px' }}

@@ -15,7 +15,8 @@ import FormControl from "@mui/material/FormControl";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
-import Lock from "@mui/icons-material/Lock";
+
+import { LoginIcon } from "@/theme/Icons"
 
 import UserContext from "@/provider/User";
 import FormFieldError from "@/components/shared/FormFieldError";
@@ -85,7 +86,7 @@ function PersonLoginForm() {
           backgroundColor: Object.keys(errors).length > 0 ? "error.main" : "secondary.main",
           color: "white",
         }}>
-          <Lock />
+          <LoginIcon />
         </Avatar>
         <Typography variant="button">Login</Typography>
 

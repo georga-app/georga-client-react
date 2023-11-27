@@ -13,7 +13,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
-import MenuIcon from '@mui/icons-material/Menu';
+import { MenuMobileIcon } from '@/theme/Icons';
 
 import UserContext from '@/provider/User';
 import menus from '@/app/menus';
@@ -36,7 +36,7 @@ function MobileMenu() {
         onClick={handleOpenMobileMenu}
         color="inherit"
       >
-        <MenuIcon />
+        <MenuMobileIcon />
       </IconButton>
       <Menu
         id="menu-appbar"

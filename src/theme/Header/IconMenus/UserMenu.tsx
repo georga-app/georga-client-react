@@ -10,7 +10,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import { MenuUserIcon } from '@/theme/Icons';
 
 import UserContext from '@/provider/User';
 import menus from '@/app/menus';
@@ -25,13 +25,13 @@ function UserMenu() {
   const handleCloseUserMenu = () => { setAnchorElUser(null); };
   return <>
     <IconButton
-      aria-label="user menue"
+      aria-label="User menue"
       aria-controls="menu-user"
       aria-haspopup="true"
       onClick={handleOpenUserMenu}
       color="inherit"
     >
-      <AccountCircle />
+      <MenuUserIcon />
     </IconButton>
     <Menu
       sx={{ mt: '45px' }}
