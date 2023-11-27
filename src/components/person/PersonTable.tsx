@@ -52,14 +52,9 @@ let columns: DataTableColumn<PersonType>[] = [
 ];
 
 function PersonTable() {
-  const [emailFilter, setEmailFilter] = useState("");
-  columns[0].filter = setEmailFilter;
-
   const { data, loading } = useQuery(
     ALL_PERSONS_QUERY, {
-      variables: {
-        email_Icontains: emailFilter,
-      }
+      variables: {}
     }
   );
   let rows: PersonType[] = [];

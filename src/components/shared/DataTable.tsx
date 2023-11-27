@@ -2,18 +2,20 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-  MouseEvent,
-  ChangeEvent
-} from "react";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useRef } from "react";
+import { useCallback } from "react";
+import { useMemo } from "react";
+import { MouseEvent } from "react";
+import { ChangeEvent } from "react";
 
 import { alpha } from '@mui/material/styles';
+import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import Divider from '@mui/material/Divider';
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -25,17 +27,27 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import TextField from '@mui/material/TextField';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
+
 import { visuallyHidden } from '@mui/utils';
 
-import PropTypes from 'prop-types';
-import { Order, DataTableColumn } from '@/types/DataTable';
+import { ActionClearIcon } from '@/theme/Icons'
+import { ActionDeselectIcon } from '@/theme/Icons'
+import { ActionFilterIcon } from '@/theme/Icons'
+import { ActionMoreIcon } from '@/theme/Icons'
+import { ActionSearchIcon } from '@/theme/Icons'
+import { ActionSelectIcon } from '@/theme/Icons'
 
+import CatchContextMenu from '@/components/shared/CatchContextMenu';
+
+import PropTypes from 'prop-types';
+import { Order } from '@/types/DataTable';
+import { DataTableColumn } from '@/types/DataTable';
+import { DataTableActions } from '@/types/DataTable';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -78,22 +90,18 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
 function DataTableHead<T>({
   numSelected,
   onRequestSort,
-  onSelectAllClick,
   order,
   orderBy,
   rowCount,
   columns,
-  checkbox = false,
 }: {
   numSelected: number,
   onRequestSort: (event: React.MouseEvent<unknown>,
                   property: keyof T) => void,
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void,
   order: Order,
   orderBy: string,
   rowCount: number,
   columns: DataTableColumn<T>[],
-  checkbox?: boolean,
 }) {
   const createSortHandler =
     (property: keyof T) => (event: React.MouseEvent<unknown>) => {
@@ -105,38 +113,28 @@ function DataTableHead<T>({
   return (
     <TableHead>
       <TableRow>
-        {checkbox &&
-          <TableCell padding="checkbox">
-            <Checkbox
-              color="primary"
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={rowCount > 0 && numSelected === rowCount}
-              onChange={onSelectAllClick}
-              inputProps={{
-                'aria-label': 'select all',
-              }}
-            />
-          </TableCell>
-        }
         {columns.map((headCell: DataTableColumn<T>) => (
           <TableCell
             key={headCell.id as string}
             align={headCell.align ? headCell.align : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
+            sx={{ userSelect: 'none' }}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+            {headCell.sortable
+              ? <TableSortLabel
+                  active={orderBy === headCell.id}
+                  direction={orderBy === headCell.id ? order : 'asc'}
+                  onClick={createSortHandler(headCell.id)}
+                >
+                  {headCell.label}
+                  {orderBy === headCell.id ? (
+                    <Box component="span" sx={visuallyHidden}>
+                      {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    </Box>
+                  ) : null}
+                </TableSortLabel>
+            : headCell.label}
           </TableCell>
         ))}
       </TableRow>
@@ -144,22 +142,112 @@ function DataTableHead<T>({
   );
 }
 
-function DataTableToolbar({
-  numSelected,
-  title,
+function DataTableToolbarAction({
+  icon,
+  onClick,
+  tooltip = '',
+  badge = undefined,
+  ariaControls,
+  ariaHaspopup,
 }: {
-  numSelected: number,
-  title: string,
+  icon: React.ReactNode,
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void,
+  tooltip?: string,
+  badge?: number | undefined,
+  ariaControls?: React.ComponentProps<'button'>['aria-controls'],
+  ariaHaspopup?: React.ComponentProps<'button'>['aria-haspopup'],
 }) {
+  return (
+    <Tooltip title={tooltip}>
+      <IconButton
+        aria-controls={ariaControls}
+        aria-haspopup={ariaHaspopup}
+        onClick={onClick}
+        sx={{ marginX: { xs: 1.5, sm: 0.5 }, marginY: { xs: 1, sm: 0.5 } }}
+      >
+        <Badge badgeContent={badge} color="primary">
+          {icon}
+        </Badge>
+      </IconButton>
+    </Tooltip>
+  )
+}
+
+function DataTableToolbar<T>({
+  title = '',
+  actions = [],
+  selectable = true,
+  numSelected = 0,
+  getSelectedRows = () => [],
+  selectToggleAll = () => undefined,
+  filterable = true,
+  filter,
+  setFilter,
+  numVisible,
+  numTotal,
+}: {
+  title?: string,
+  actions?: DataTableActions<T>,
+  filterable?: boolean,
+  selectable?: boolean,
+  numSelected: number,
+  getSelectedRows?: () => T[],
+  selectToggleAll?: (event: React.MouseEvent<HTMLElement>) => void,
+  filter: string,
+  setFilter: React.Dispatch<React.SetStateAction<string>>,
+  numVisible: number,
+  numTotal: number,
+}) {
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [anchorElActions, setAnchorElActions] = useState<null | HTMLElement>(null);
+
+  // filter
+  const filterRef = useRef<HTMLInputElement>(null);
   const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log("filter");
+    const field = filterRef.current;
+    if ( !field )
+      return;
+
+    const allSelected = (
+      filter
+      && field.selectionStart == 0
+      && field.selectionEnd == field.value.length
+    )
+    if ( allSelected ) {
+      field.blur();
+      setFilter('');
+      setFilterOpen(false);
+    } else {
+      field.select();
+      field.focus();
+      setFilterOpen(true);
+    }
   };
 
+  // actions
+  const availableActions: DataTableActions<T> = actions
+    .filter(x => x.available([], numSelected))
+    .sort((x, y) => x.priority - y.priority);
+  let promotedActions: DataTableActions<T> = [];
+  let showActionMenu = false;
+  if ( Object.keys(actions).length ) {
+    const numSlots = 5;
+    const numActionSlots = numSlots - Number(filterable) - Number(selectable);
+    showActionMenu = availableActions.length > numActionSlots;
+    promotedActions = availableActions.slice(0, showActionMenu ? numActionSlots - 1 : -1);
+  }
+
+  // actions menu
+  const handleOpenActionsMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElActions(event.currentTarget);
+  };
+  const handleCloseActionsMenu = () => { setAnchorElActions(null); };
+
   return (
-    <Toolbar
+    <Box
       sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
+        paddingY: { xs: 0.5, sm: 0.5 },
+        paddingX: { xs: 0.5, sm: 2 },
         ...(numSelected > 0 ? {
           bgcolor: 'background.active',
         }: {
@@ -175,63 +263,175 @@ function DataTableToolbar({
         left: { xs: 0, sm: 'inherit' },
         right: { xs: 0, sm: 'inherit' },
         width: { xs: '100vw', sm: 'inherit' },
-        boxShadow: { xs: 'rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px', sm: 'none' },
+        boxShadow: {
+          xs: 'rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, '
+             +'rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, '
+             +'rgba(0, 0, 0, 0.12) 0px 1px 8px 0px',
+          sm: 'none'
+        },
         zIndex: { xs: 1, sm: 'unset' }
       }}
     >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          {title}
-        </Typography>
-      )}
+      <Toolbar
+        sx={{ px: { xs: 0.5, sm: 0 },
+          flexWrap: { xs: 'wrap', sm: 'nowrap' },
+          minHeight: 'unset',
+        }}
+      >
 
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
+        {/* title */}
+        {title &&
+          <Typography
+            sx={{ display: { xs: 'none', sm: 'block' }, marginRight: 1 }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            {title}
+          </Typography>
+        }
+
+        {/* select */}
+        {selectable && numSelected
+          ? <DataTableToolbarAction
+              icon=<ActionDeselectIcon />
+              tooltip='Deselect all'
+              badge={numSelected}
+              onClick={selectToggleAll}
+            />
+          : <DataTableToolbarAction
+              icon=<ActionSelectIcon />
+              tooltip='Select all'
+              onClick={selectToggleAll}
+            />
+        }
+
+        {/* filter */}
+        {filterable &&
+          <DataTableToolbarAction
+            icon=<ActionSearchIcon />
+            tooltip='Filter list'
+            onClick={handleFilterClick}
+          />
+        }
+        <Box
+          sx={{
+            width: !filterOpen ? 0 : { xs: '100%', sm: '350px' },
+            paddingLeft: { xs: 2.5, sm: 0.5 },
+            paddingRight: { xs: 1.5, sm: 0.5 },
+            paddingBottom: { xs: 1.5, sm: 0.5 },
+            paddingTop: { sm: 1.5 },
+            order: { xs: 1, sm: 0 },
+            overflow: 'hidden',
+            display: 'flex',
+          }}
+        >
+          <TextField
+            id="filter-local-simple"
+            size="small"
+            variant="standard"
+            value={filter}
+            onChange={event => setFilter(event.target.value)}
+            onBlur={() => !filter && setFilterOpen(false)}
+            inputRef={filterRef}
+            sx={{ color: '#fff', width: '100%' }}
+            InputProps={{
+              endAdornment: (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    whiteSpace: 'nowrap',
+                    margin: '5px',
+                    color: 'primary.light',
+                  }}
+                >{numVisible} / {numTotal}</Typography>
+              )
+            }}
+          />
+          <IconButton
+            onClick={() => {setFilter(''); setFilterOpen(false)}}
+            size="small"
+            sx={{ visibility: filter ? 'visible' : 'hidden', paddingTop: { sm: '2px' } }}
+          >
+            <ActionClearIcon />
           </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton onClick={(event) => {handleFilterClick(event)}}>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
+        </Box>
+
+        {/* spacer */}
+        <Box flexGrow={1} />
+
+        {/* actions */}
+        {promotedActions && promotedActions.map((action, index) =>
+          <DataTableToolbarAction
+            key={'promoted-action-' + index}
+            icon={action.icon}
+            tooltip={action.name}
+            onClick={event => action.action(getSelectedRows(), event)}
+          />
+        )}
+        {showActionMenu && <>
+          <DataTableToolbarAction
+            icon=<ActionMoreIcon />
+            tooltip='All actions'
+            onClick={handleOpenActionsMenu}
+            ariaControls="menu-actions"
+            ariaHaspopup="true"
+          />
+          <Menu
+            id="menu-actions"
+            anchorEl={anchorElActions}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(anchorElActions)}
+            onClose={handleCloseActionsMenu}
+          >
+            {availableActions.map((action, index) => [
+              index == promotedActions.length && <Divider key='divider' />,
+              <MenuItem
+                key={'available-action-' + index}
+                onClick={event => {
+                  action.action(getSelectedRows(), event); handleCloseActionsMenu();
+                }}
+              >
+                <Typography textAlign="center">{action.name}</Typography>
+              </MenuItem>
+            ])}
+          </Menu>
+        </>}
+
+      </Toolbar>
+
+    </Box>
   );
 };
 
 function DataTable<T>({
-  title = '',
   columns,
   rows,
   rowKey,
+  actions = [],
+  title = '',
   elevation = 1,
-  checkbox = false,
   header = true,
+  filterable = true,
+  selectable = true,
 }: {
-  title?: string,
   columns: DataTableColumn<T>[],
   rows: T[],
   rowKey: keyof T,
+  actions?: DataTableActions<T>,
+  title?: string,
   elevation?: number,
-  checkbox?: boolean,
   header?: boolean,
+  filterable?: boolean,
+  selectable?: boolean,
 }) {
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof T>(rowKey);
@@ -239,7 +439,9 @@ function DataTable<T>({
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(25)
+  const [filter, setFilter] = useState('');
 
+  // sort
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof T,
@@ -249,16 +451,23 @@ function DataTable<T>({
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n[rowKey] as string);
-      setSelected(newSelected);
+  // select
+  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const numSelected = selected.length;
+  const getSelectedRows = () => rows.filter(row => selected.includes(row[rowKey] as string));
+
+  const handleSelectToggleAllClick = (event: React.MouseEvent<HTMLElement>) => {
+    if (selected.length > 0) {
+      setSelected([]);
       return;
     }
-    setSelected([]);
+    const newSelected = rows.map(row => row[rowKey] as string);
+    setSelected(newSelected);
   };
 
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+    if (!selectable)
+      return;
     const selectedIndex = selected.indexOf(name);
     let newSelected: readonly string[] = [];
 
@@ -278,115 +487,123 @@ function DataTable<T>({
     setSelected(newSelected);
   };
 
+  // paging
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
-
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  // filter
+  const filterColumns = columns.filter(column => column.filterable).map(column => column.id);
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
+  // visible
   const visibleRows = useMemo(
-    () =>
-      stableSort(rows as Array<any>, getComparator(order, orderBy)).slice(
+    () => {
+      const filteredRows = !filter ? rows : rows.reduce((result: typeof rows, row) => {
+        filterColumns.every(column => {
+          if ( String(row[column]).toLowerCase().includes(filter.toLowerCase()) )
+            return result.push(row);
+          return true;
+        });
+        return result;
+      }, []);
+      return stableSort(filteredRows as Array<any>, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
-      ),
-    [order, orderBy, page, rows, rowsPerPage],
+      )},
+    [order, orderBy, page, rows, rowsPerPage, filter, filterColumns],
   );
+  const numVisible = visibleRows.length;
+  const numTotal = rows.length;
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper elevation={elevation} sx={{ width: '100%', mb: 2 }}>
-        <DataTableToolbar
-          numSelected={selected.length}
-          title={title}
-        />
-        <TableContainer>
-          <Table
-            aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-          >
-            {header &&
-              <DataTableHead
-                columns={columns}
-                numSelected={selected.length}
-                order={order}
-                orderBy={orderBy as string}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={rows.length}
-                checkbox={checkbox}
-              />
-            }
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                  const isItemSelected = isSelected(row[rowKey] as string);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event: React.MouseEvent<HTMLElement>) =>
-                               handleClick(event, row[rowKey] as string)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row[rowKey] as string}
-                      selected={isItemSelected}
-                    >
-                      {checkbox &&
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              'aria-labelledby': labelId,
-                            }}
-                          />
-                        </TableCell>
-                      }
-                      {columns.map((column, index) => {
-                        let content = row[column.id];
-                        return (
-                          <TableCell key={column.id as string}>
-                            {column.content ? column.content(content) : content as string}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {rowsPerPage > 0 && rows.length > rowsPerPage && (
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+        <CatchContextMenu>
+          <DataTableToolbar
+            title={title}
+            actions={actions}
+            selectable={selectable}
+            numSelected={numSelected}
+            getSelectedRows={getSelectedRows}
+            selectToggleAll={handleSelectToggleAllClick}
+            filterable={filterable}
+            filter={filter}
+            setFilter={setFilter}
+            numVisible={numVisible}
+            numTotal={numTotal}
           />
-        )}
+          <TableContainer>
+            <Table
+              aria-labelledby="tableTitle"
+              size={dense ? 'small' : 'medium'}
+            >
+              {header &&
+                <DataTableHead
+                  columns={columns}
+                  numSelected={numSelected}
+                  order={order}
+                  orderBy={orderBy as string}
+                  onRequestSort={handleRequestSort}
+                  rowCount={rows.length}
+                />
+              }
+              <TableBody>
+                {visibleRows.map((row, index) => {
+                    const isItemSelected = isSelected(row[rowKey] as string);
+                    return (
+                      <TableRow
+                        hover
+                        onClick={(event: React.MouseEvent<HTMLElement>) =>
+                                 handleClick(event, row[rowKey] as string)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row[rowKey] as string}
+                        selected={isItemSelected}
+                      >
+                        {columns.map((column, index) => {
+                          let content = row[column.id];
+                          return (
+                            <TableCell
+                              key={column.id as string}
+                              sx={{ cursor: 'default' }}
+                            >
+                              {column.content ? column.content(content) : content as string}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow
+                    style={{
+                      height: (dense ? 33 : 53) * emptyRows,
+                    }}
+                  >
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {rowsPerPage > 0 && rows.length > rowsPerPage && (
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25, 50]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          )}
+        </CatchContextMenu>
       </Paper>
     </Box>
   );

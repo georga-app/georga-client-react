@@ -9,8 +9,19 @@ interface DataTableColumn<T> {
   id: keyof T,
   label: string,
   align?: "center" | "left" | "right" | "inherit" | "justify" | undefined,
-  filter?: React.Dispatch<React.SetStateAction<string>>,
+  sortable?: boolean,
+  filterable?: boolean,
   content?: (content: string | number) => React.ReactNode | string,
 }
 
-export type { Order, DataTableColumn };
+type DataTableAction<T> = {
+  name: string,
+  icon: React.ReactNode,
+  priority: number,
+  action: (rows: T[], event: React.MouseEvent<HTMLElement>) => void,
+  available: (rows: T[], numSelected: number) => boolean,
+}
+
+type DataTableActions<T> = DataTableAction<T>[]
+
+export type { Order, DataTableColumn, DataTableAction, DataTableActions };
