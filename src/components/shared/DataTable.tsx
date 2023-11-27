@@ -176,6 +176,7 @@ function DataTableToolbarAction({
 function DataTableToolbar<T>({
   title = '',
   actions = [],
+  availableActions = [],
   selectable = true,
   numSelected = 0,
   getSelectedRows = () => [],
@@ -188,6 +189,7 @@ function DataTableToolbar<T>({
 }: {
   title?: string,
   actions?: DataTableActions<T>,
+  availableActions?: DataTableActions<T>,
   filterable?: boolean,
   selectable?: boolean,
   numSelected: number,
@@ -225,9 +227,6 @@ function DataTableToolbar<T>({
   };
 
   // actions
-  const availableActions: DataTableActions<T> = actions
-    .filter(x => x.available([], numSelected))
-    .sort((x, y) => x.priority - y.priority);
   let promotedActions: DataTableActions<T> = [];
   let showActionMenu = false;
   if ( Object.keys(actions).length ) {
@@ -398,7 +397,7 @@ function DataTableToolbar<T>({
             {availableActions.map((action, index) => [
               index == promotedActions.length && <Divider key='divider' />,
               <MenuItem
-                key={'available-action-' + index}
+                key={'toolbar-available-action-' + index}
                 onClick={event => {
                   action.action(getSelectedRows(), event); handleCloseActionsMenu();
                 }}
@@ -443,6 +442,10 @@ function DataTable<T>({
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(25)
   const [filter, setFilter] = useState('');
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
 
   // sort
   const handleRequestSort = (
@@ -523,13 +526,40 @@ function DataTable<T>({
   const numVisible = visibleRows.length;
   const numTotal = rows.length;
 
+  // actions
+  const availableActions: DataTableActions<T> = actions
+    .filter(x => x.available([], numSelected))
+    .sort((x, y) => x.priority - y.priority);
+
+  // context menu
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+  const handleContextMenu = (event: React.MouseEvent, name: string) => {
+    event.preventDefault();
+    if ( selected.length == 0 ) {
+      handleClick(event, name);
+    }
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6,
+          }
+        : null,
+    );
+  };
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper elevation={elevation} sx={{ width: '100%', mb: 2 }}>
         <CatchContextMenu>
+
+          {/* toolbar */}
           <DataTableToolbar
             title={title}
             actions={actions}
+            availableActions={availableActions}
             selectable={selectable}
             numSelected={numSelected}
             getSelectedRows={getSelectedRows}
@@ -540,11 +570,13 @@ function DataTable<T>({
             numVisible={numVisible}
             numTotal={numTotal}
           />
+
           <TableContainer>
             <Table
               aria-labelledby="tableTitle"
               size={dense ? 'small' : 'medium'}
             >
+              {/* header */}
               {header &&
                 <DataTableHead
                   columns={columns}
@@ -555,6 +587,8 @@ function DataTable<T>({
                   rowCount={rows.length}
                 />
               }
+
+              {/* body */}
               <TableBody>
                 {visibleRows.map((row, index) => {
                     const isItemSelected = isSelected(row[rowKey] as string);
@@ -563,6 +597,9 @@ function DataTable<T>({
                         hover
                         onClick={(event: React.MouseEvent<HTMLElement>) =>
                                  handleClick(event, row[rowKey] as string)}
+                        onContextMenu={(event: React.MouseEvent<HTMLElement>) =>
+                                        handleContextMenu(event, row[rowKey] as string)}
+                        // onContextMenu={handleContextMenu}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
@@ -583,18 +620,23 @@ function DataTable<T>({
                       </TableRow>
                     );
                   })}
+                {visibleRows.length == 0 &&
+                  <TableRow style={{ height: (dense ? 33 : 53) * 2 }} >
+                    <TableCell colSpan={columns.length} sx={{ textAlign: 'center' }}>
+                      No data to display.
+                    </TableCell>
+                  </TableRow>
+                }
                 {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: (dense ? 33 : 53) * emptyRows,
-                    }}
-                  >
-                    <TableCell colSpan={6} />
+                  <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }} >
+                    <TableCell colSpan={columns.length} />
                   </TableRow>
                 )}
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* paging */}
           {rowsPerPage > 0 && rows.length > rowsPerPage && (
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50]}
@@ -606,6 +648,29 @@ function DataTable<T>({
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           )}
+
+          {/* context menu */}
+          <Menu
+            open={contextMenu !== null}
+            onClose={handleCloseContextMenu}
+            anchorReference="anchorPosition"
+            anchorPosition={
+              contextMenu !== null
+                ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                : undefined
+            }
+          >
+            {availableActions.map((action, index) => (
+              <MenuItem
+                key={'context-available-action-' + index}
+                onClick={event => {
+                  action.action(getSelectedRows(), event); handleCloseContextMenu();
+                }}
+              >
+                <Typography textAlign="center">{action.name}</Typography>
+              </MenuItem>
+            ))}
+          </Menu>
         </CatchContextMenu>
       </Paper>
     </Box>
