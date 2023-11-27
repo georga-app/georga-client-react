@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
 import UserContext from '@/provider/User';
-import menus from '@/menus';
+import menus from '@/app/menus';
 
 function Menu() {
   const user = useContext(UserContext);

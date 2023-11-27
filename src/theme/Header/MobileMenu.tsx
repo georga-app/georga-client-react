@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import UserContext from '@/provider/User';
-import menus from '@/menus';
+import menus from '@/app/menus';
 
 function MobileMenu() {
   const user = useContext(UserContext)

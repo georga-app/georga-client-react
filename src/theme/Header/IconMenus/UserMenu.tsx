@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
 import UserContext from '@/provider/User';
-import menus from '@/menus';
+import menus from '@/app/menus';
 
 function UserMenu() {
   const user = useContext(UserContext);

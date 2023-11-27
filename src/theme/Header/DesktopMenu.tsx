@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import Fade from '@mui/material/Fade';
 
 import UserContext from '@/provider/User';
-import menus from '@/menus';
+import menus from '@/app/menus';
 
 function MainMenu({
   notifications,

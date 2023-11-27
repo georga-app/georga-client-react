@@ -17,7 +17,7 @@ import ThreeColumns from '@/theme/layouts/ThreeColumns';
 import HeaderNav from '@/components/shared/HeaderNav';
 
 import { MenuItem } from '@/types/Menus';
-import menus from '@/menus';
+import menus from '@/app/menus';
 
 function Item({
   page

@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import BuildCircle from '@mui/icons-material/BuildCircle';
 
 import UserContext from '@/provider/User';
-import menus from '@/menus';
+import menus from '@/app/menus';
 
 function AdminMenu() {
   const user = useContext(UserContext);
