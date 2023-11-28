@@ -57,15 +57,10 @@ let columns: DataTableColumn<OrganizationType>[] = [
 function OrganizationSubscribedTable() {
   const [success, setSuccess] = useState(false);
 
-  const [nameFilter, setNameFilter] = useState("");
-  columns[1].filter = setNameFilter;
-
   // getPersonOrganizations
   const { data, loading } = useQuery(
     GET_PERSON_ORGANIZATIONS_QUERY, {
-      variables: {
-        name_Icontains: nameFilter,
-      }
+      variables: {}
     }
   );
   let rows: OrganizationType[] = [];

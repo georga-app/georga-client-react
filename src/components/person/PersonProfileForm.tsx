@@ -16,7 +16,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 
-import Alert from "@/components/shared/Alert";
+import { useSnackbar } from "@/provider/Snackbar";
 import FormFieldError from "@/components/shared/FormFieldError";
 import FormError from "@/components/shared/FormError";
 
@@ -84,6 +84,7 @@ function PersonProfileForm() {
   const [success, setSuccess] = useState(false);
   const [changed, setChanged] = useState<{[id: string]: any}>({});
   const [errors, setErrors] = useState<PersonProfileFormErrors>({});
+  const snackbar = useSnackbar();
 
   // fields
   const [firstName, setFirstName] = useState("");
@@ -138,6 +139,7 @@ function PersonProfileForm() {
           setErrors({});
           setChanged({});
           setSuccess(true);
+          snackbar.showSnackbar("Profile updated", 'success');
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
           response.errors.forEach(error => {
@@ -400,13 +402,6 @@ function PersonProfileForm() {
       >
         {updatePersonProfileLoading ? "Saving..." : "Save"}
       </Button>
-
-      {/* Feedback */}
-      <Snackbar open={success} autoHideDuration={3000} onClose={handleSuccess}>
-        <Alert onClose={handleSuccess} severity="success" sx={{ width: '100%' }}>
-          Profile updated
-        </Alert>
-      </Snackbar>
 
     </form>
   )

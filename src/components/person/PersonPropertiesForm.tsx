@@ -13,7 +13,7 @@ import FormControl from "@mui/material/FormControl";
 import Snackbar from '@mui/material/Snackbar';
 import TextField from '@mui/material/TextField';
 
-import Alert from "@/components/shared/Alert";
+import { useSnackbar } from "@/provider/Snackbar";
 import FormFieldError from "@/components/shared/FormFieldError";
 import FormError from "@/components/shared/FormError";
 
@@ -194,6 +194,7 @@ function PersonPropertiesForm({
   const [success, setSuccess] = useState(false);
   const [changed, setChanged] = useState<PersonPropertyGroupDataType>({});
   const [errors, setErrors] = useState<PersonPropertiesFormErrors>({});
+  const snackbar = useSnackbar();
 
   // fields
   const [propertyGroups, setPropertyGroups] = useState<PersonPropertyGroupType[]>();
@@ -264,6 +265,7 @@ function PersonPropertiesForm({
           setErrors({});
           setChanged({});
           setSuccess(true);
+          snackbar.showSnackbar("Organization updated", 'success');
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
           response.errors.forEach(error => {
@@ -335,13 +337,6 @@ function PersonPropertiesForm({
       >
         {updatePropertiesLoading ? "Saving..." : "Save"}
       </Button>
-
-      {/* Feedback */}
-      <Snackbar open={success} autoHideDuration={3000} onClose={handleSuccess}>
-        <Alert onClose={handleSuccess} severity="success" sx={{ width: '100%' }}>
-          Qualifications updated
-        </Alert>
-      </Snackbar>
 
     </form>
   )

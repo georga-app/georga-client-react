@@ -13,7 +13,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import "@fontsource/roboto";
 
-import { NextAppDirEmotionCacheProvider } from '@/theme/EmotionCache';
+import { NextAppDirEmotionCacheProvider as CacheProvider } from '@/theme/EmotionCache';
 import Header from '@/theme/Header';
 import Footer from '@/theme/Footer';
 
@@ -60,7 +60,7 @@ function Theme({
     setNotifications(!notifications);
   }
   return (
-    <NextAppDirEmotionCacheProvider options={{ key: 'mui' }}>
+    <CacheProvider options={{ key: 'mui' }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -69,7 +69,7 @@ function Theme({
         </Box>
         <Footer />
       </ThemeProvider>
-    </NextAppDirEmotionCacheProvider>
+    </CacheProvider>
   );
 }
 

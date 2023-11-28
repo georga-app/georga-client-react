@@ -6,6 +6,7 @@ import { StrictMode } from "react";
 
 import GraphQLClient from '@/provider/GraphQLClient';
 import { UserContextProvider as User } from '@/provider/User';
+import { SnackbarProvider as Snackbar } from "@/provider/Snackbar";
 import Theme from '@/theme';
 
 export const metadata = {
@@ -25,7 +26,9 @@ function Layout({
           <GraphQLClient>
             <User>
               <Theme>
-                {children}
+                <Snackbar>
+                  {children}
+                </Snackbar>
               </Theme>
             </User>
           </GraphQLClient>
