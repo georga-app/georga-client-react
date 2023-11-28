@@ -12,6 +12,7 @@ import AccountSecurityIcon from '@mui/icons-material/Security';
 
 // Actions
 import ActionClearIcon from '@mui/icons-material/Clear';
+import ActionCloseIcon from '@mui/icons-material/Close';
 import ActionCreateIcon from '@mui/icons-material/Add';
 import ActionDeleteIcon from '@mui/icons-material/Delete';
 import ActionDeselectIcon from '@mui/icons-material/Deselect';
@@ -54,6 +55,7 @@ export {
   AccountSecurityIcon,
 
   ActionClearIcon,
+  ActionCloseIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
   ActionDeselectIcon,

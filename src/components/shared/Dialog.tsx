@@ -11,8 +11,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+
+import { ActionCloseIcon } from '@/theme/Icons';
 
 function ResponsiveDialog({
   id,
@@ -44,6 +47,18 @@ function ResponsiveDialog({
           {title}
         </DialogTitle>
       }
+      <IconButton
+        aria-label="close"
+        onClick={() => setOpen(false)}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <ActionCloseIcon />
+      </IconButton>
       <DialogContent>
         {description &&
           <DialogContentText>
