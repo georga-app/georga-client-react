@@ -19,7 +19,7 @@ type DataTableAction<T> = {
   icon: React.ReactNode,
   priority: number,
   action: (rows: T[], event: React.MouseEvent<HTMLElement>) => void,
-  available: (rows: T[], numSelected: number) => boolean,
+  available: (rows: T[]) => boolean,
 }
 
 type DataTableActions<T> = DataTableAction<T>[]

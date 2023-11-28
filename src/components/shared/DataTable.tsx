@@ -530,7 +530,7 @@ function DataTable<T>({
 
   // actions
   const availableActions: DataTableActions<T> = actions
-    .filter(x => x.available([], numSelected))
+    .filter(x => x.available(getSelectedRows()))
     .sort((x, y) => x.priority - y.priority);
 
   // context menu
