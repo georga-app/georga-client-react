@@ -233,7 +233,9 @@ function DataTableToolbar<T>({
     const numSlots = 5;
     const numActionSlots = numSlots - Number(filterable) - Number(selectable);
     showActionMenu = availableActions.length > numActionSlots;
-    promotedActions = availableActions.slice(0, showActionMenu ? numActionSlots - 1 : -1);
+    promotedActions = availableActions;
+    if ( showActionMenu )
+      promotedActions = promotedActions.slice(0, numActionSlots - 1);
   }
 
   // actions menu
