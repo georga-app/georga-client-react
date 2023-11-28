@@ -19,6 +19,7 @@ import FormError from "@/components/shared/FormError";
 
 import { gql } from '@/__generated__/gql';
 import { PersonPropertyGroupType, PersonPropertyType } from '@/__generated__/graphql';
+import { UpdatePersonProfilePropertiesMutation } from '@/__generated__/graphql';
 import { PersonPropertiesFormErrors } from "@/types/FormErrors";
 import { onlyType } from "@/types/Util";
 
@@ -188,8 +189,12 @@ function PersonPropertyGroupField({
 
 function PersonPropertiesForm({
   organizationId,
+  onSuccess = () => undefined,
+  onError = () => undefined,
 }: {
   organizationId: string,
+  onSuccess?: (data: UpdatePersonProfilePropertiesMutation) => void,
+  onError?: (data: UpdatePersonProfilePropertiesMutation) => void,
 }) {
   const [success, setSuccess] = useState(false);
   const [changed, setChanged] = useState<PersonPropertyGroupDataType>({});
@@ -266,6 +271,7 @@ function PersonPropertiesForm({
           setChanged({});
           setSuccess(true);
           snackbar.showSnackbar("Organization updated", 'success');
+          onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
           response.errors.forEach(error => {
@@ -273,6 +279,7 @@ function PersonPropertiesForm({
           });
           setErrors(fieldErrors);
           updatePersonPropertiesReset();
+          onError(data);
         }
       },
       onError: error => {

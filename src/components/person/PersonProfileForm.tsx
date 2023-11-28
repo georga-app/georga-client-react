@@ -22,6 +22,7 @@ import FormError from "@/components/shared/FormError";
 
 import { gql } from '@/__generated__/gql';
 import { PersonType, GetPersonProfileQuery } from '@/__generated__/graphql';
+import { UpdatePersonProfileMutation } from '@/__generated__/graphql';
 import { PersonProfileFormErrors } from "@/types/FormErrors";
 
 const GET_PERSON_PROFILE_QUERY = gql(`
@@ -80,7 +81,13 @@ const UPDATE_PERSON_PROFILE_MUTATION = gql(`
   }
 `);
 
-function PersonProfileForm() {
+function PersonProfileForm({
+  onSuccess = () => undefined,
+  onError = () => undefined,
+}: {
+  onSuccess?: (data: UpdatePersonProfileMutation) => void,
+  onError?: (data: UpdatePersonProfileMutation) => void,
+}) {
   const [success, setSuccess] = useState(false);
   const [changed, setChanged] = useState<{[id: string]: any}>({});
   const [errors, setErrors] = useState<PersonProfileFormErrors>({});
@@ -140,6 +147,7 @@ function PersonProfileForm() {
           setChanged({});
           setSuccess(true);
           snackbar.showSnackbar("Profile updated", 'success');
+          onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
           response.errors.forEach(error => {
@@ -147,6 +155,7 @@ function PersonProfileForm() {
           });
           setErrors(fieldErrors);
           updatePersonProfileReset();
+          onError(data);
         }
       },
       onError: error => {
