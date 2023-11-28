@@ -6,7 +6,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useQuery, useMutation } from '@apollo/client';
 
-import FilterListIcon from '@mui/icons-material/FilterList';
+import { ActionCreateIcon } from '@/theme/Icons';
+import { ActionDeleteIcon } from '@/theme/Icons';
+import { ActionEditIcon } from '@/theme/Icons';
+import { ActionPublishIcon } from '@/theme/Icons';
 
 import DataTable from '@/components/shared/DataTable'
 
@@ -70,39 +73,25 @@ function OrganizationTable() {
 
   let actions: DataTableActions<OrganizationType> = [
     {
-      icon: <FilterListIcon />,
-      name: 'Action 1',
-      priority: 10,
-      action: (rows, event) => {console.log("action 1", rows)},
-      available: () => true,
-    },
-    {
-      icon: <FilterListIcon />,
-      name: 'Action 2',
-      priority: 30,
-      action: () => undefined,
-      available: () => true,
-    },
-    {
-      icon: <FilterListIcon />,
-      name: 'Action 3',
+      name: 'Edit',
+      icon: <ActionEditIcon />,
       priority: 20,
-      action: () => undefined,
-      available: (rows, num) => !!num,
+      action: (rows, event) => {},
+      available: (rows) => (rows.length == 1),
     },
     {
-      icon: <FilterListIcon />,
-      name: 'Action 4',
-      priority: 1,
-      action: () => undefined,
-      available: () => false,
+      name: 'Delete',
+      icon: <ActionDeleteIcon />,
+      priority: 30,
+      action: (rows, event) => {},
+      available: (rows) => (rows.length > 0),
     },
     {
-      icon: <FilterListIcon />,
-      name: 'Action 5',
-      priority: 100,
-      action: () => undefined,
-      available: () => true,
+      name: 'Publish',
+      icon: <ActionPublishIcon />,
+      priority: 40,
+      action: (rows, event) => {},
+      available: (rows) => false,
     },
   ];
 
