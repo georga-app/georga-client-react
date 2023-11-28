@@ -20,7 +20,7 @@ import FormError from "@/components/shared/FormError";
 import { gql } from '@/__generated__/gql';
 import { PersonPropertyGroupType, PersonPropertyType } from '@/__generated__/graphql';
 import { PersonPropertiesFormErrors } from "@/types/FormErrors";
-import { onlyType } from "@/types/Filter";
+import { onlyType } from "@/types/Util";
 
 const LIST_PERSON_PROPERTY_GROUPS_QUERY = gql(`
   query ListPersonPropertyGroups (
