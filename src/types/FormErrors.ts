@@ -4,6 +4,13 @@
  */
 import { ApolloError } from '@apollo/client/errors';
 
+type OrganizationFormErrors = {
+  form?: ApolloError["message"],
+  name?: string[],
+  description?: string[],
+  icon?: string[],
+}
+
 type PersonRegisterFormErrors = {
   form?: ApolloError["message"],
   email?: string[],
@@ -34,6 +41,7 @@ type PersonPropertiesFormErrors = {
 }
 
 export type {
+  OrganizationFormErrors,
   PersonRegisterFormErrors,
   PersonLoginFormErrors,
   PersonProfileFormErrors,

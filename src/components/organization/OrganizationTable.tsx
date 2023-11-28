@@ -4,14 +4,15 @@
  */
 import { useState } from 'react';
 import Image from 'next/image';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
-import { ActionCreateIcon } from '@/theme/Icons';
+import OrganizationForm from '@/components/organization/OrganizationForm';
+import DataTable from '@/components/shared/DataTable'
+import Dialog from '@/components/shared/Dialog'
+
 import { ActionDeleteIcon } from '@/theme/Icons';
 import { ActionEditIcon } from '@/theme/Icons';
 import { ActionPublishIcon } from '@/theme/Icons';
-
-import DataTable from '@/components/shared/DataTable'
 
 import { gql } from '@/__generated__/gql';
 import { OrganizationType } from '@/__generated__/graphql'
@@ -57,7 +58,8 @@ let columns: DataTableColumn<OrganizationType>[] = [
 
 
 function OrganizationTable() {
-  const [success, setSuccess] = useState(false);
+  const [editId, setEditId] = useState('');
+  const [editOpen, setEditOpen] = useState(false);
 
   // getPersonOrganizations
   const { data, loading } = useQuery(
@@ -76,7 +78,10 @@ function OrganizationTable() {
       name: 'Edit',
       icon: <ActionEditIcon />,
       priority: 20,
-      action: (rows, event) => {},
+      action: (rows, event) => {
+        setEditId(rows[0].id);
+        setEditOpen(true);
+      },
       available: (rows) => (rows.length == 1),
     },
     {
@@ -95,7 +100,7 @@ function OrganizationTable() {
     },
   ];
 
-  return (
+  return <>
     <DataTable
       title="Organizations"
       columns={columns}
@@ -103,7 +108,17 @@ function OrganizationTable() {
       rowKey={rowKey}
       actions={actions}
     />
-  );
+    {editId &&
+      <Dialog
+        open={editOpen}
+        setOpen={setEditOpen}
+        title="Edit Organization"
+        id="edit-organization"
+      >
+        <OrganizationForm organizationId={editId} />
+      </Dialog>
+    }
+  </>;
 }
 
 export default OrganizationTable;

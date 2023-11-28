@@ -15,6 +15,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 const documents = {
     "\n  subscription TestSubscription {\n    testSubscription {\n      message\n      time\n    }\n  }\n": types.TestSubscriptionDocument,
     "\n  mutation TestSubscriptionEvent (\n    $message: String!\n  ) {\n    testSubscriptionEvent(\n      message: $message\n    ) {\n      response\n    }\n  }\n": types.TestSubscriptionEventDocument,
+    "\n  query GetOrganizations (\n    $id: ID!\n  ) {\n    listOrganizations (\n      id: $id\n    ) {\n      edges {\n        node {\n          id\n          createdAt\n          modifiedAt\n          name\n          description\n          icon\n        }\n      }\n    }\n  }\n": types.GetOrganizationsDocument,
+    "\n  mutation UpdateOrganization (\n    $id: ID!\n    $name: String\n    $description: String\n    $icon: String\n  ) {\n    updateOrganization (\n      input: {\n        id: $id\n        name: $name\n        description: $description\n        icon: $icon\n      }\n    ) {\n      organization {\n        id\n      }\n      errors {\n        field\n        messages\n      }\n    }\n  }\n": types.UpdateOrganizationDocument,
     "\n  query GetPersonOrganizationsProfile (\n    $name_Icontains: String\n  ) {\n    getPersonProfile {\n      organizationsSubscribed (\n        name_Icontains: $name_Icontains\n      ) {\n        edges {\n          node {\n            id\n            name\n            description\n            icon\n          }\n        }\n      }\n    }\n  }\n": types.GetPersonOrganizationsProfileDocument,
     "\n  query ListOrganizations {\n    listOrganizations {\n      edges {\n        node {\n          id\n          name\n          icon\n          description\n        }\n      }\n    }\n  }\n": types.ListOrganizationsDocument,
     "\n  mutation ActivatePerson(\n    $token: String!\n  ) {\n    activatePerson(\n      input: {\n        token: $token\n      }\n    ) {\n      email\n      errors {\n        field\n        messages\n      }\n    }\n  }\n": types.ActivatePersonDocument,
@@ -50,6 +52,14 @@ export function gql(source: "\n  subscription TestSubscription {\n    testSubscr
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation TestSubscriptionEvent (\n    $message: String!\n  ) {\n    testSubscriptionEvent(\n      message: $message\n    ) {\n      response\n    }\n  }\n"): (typeof documents)["\n  mutation TestSubscriptionEvent (\n    $message: String!\n  ) {\n    testSubscriptionEvent(\n      message: $message\n    ) {\n      response\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetOrganizations (\n    $id: ID!\n  ) {\n    listOrganizations (\n      id: $id\n    ) {\n      edges {\n        node {\n          id\n          createdAt\n          modifiedAt\n          name\n          description\n          icon\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetOrganizations (\n    $id: ID!\n  ) {\n    listOrganizations (\n      id: $id\n    ) {\n      edges {\n        node {\n          id\n          createdAt\n          modifiedAt\n          name\n          description\n          icon\n        }\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation UpdateOrganization (\n    $id: ID!\n    $name: String\n    $description: String\n    $icon: String\n  ) {\n    updateOrganization (\n      input: {\n        id: $id\n        name: $name\n        description: $description\n        icon: $icon\n      }\n    ) {\n      organization {\n        id\n      }\n      errors {\n        field\n        messages\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateOrganization (\n    $id: ID!\n    $name: String\n    $description: String\n    $icon: String\n  ) {\n    updateOrganization (\n      input: {\n        id: $id\n        name: $name\n        description: $description\n        icon: $icon\n      }\n    ) {\n      organization {\n        id\n      }\n      errors {\n        field\n        messages\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
