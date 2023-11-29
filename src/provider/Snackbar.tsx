@@ -59,7 +59,7 @@ const useSnackbar = (): SnackBarContextType => {
   const context = useContext(SnackbarContext);
 
   if (!context) {
-    throw new Error('useSnackBar must be used within an SnackBarProvider');
+    throw new Error('useSnackbar must be used within an SnackbarProvider');
   }
 
   return context;

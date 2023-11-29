@@ -5,6 +5,7 @@
 import { StrictMode } from "react";
 
 import GraphQLClient from '@/provider/GraphQLClient';
+import { DialogProvider as Dialog } from "@/provider/Dialog";
 import { UserContextProvider as User } from '@/provider/User';
 import { SnackbarProvider as Snackbar } from "@/provider/Snackbar";
 import Theme from '@/theme';
@@ -27,7 +28,9 @@ function Layout({
             <User>
               <Theme>
                 <Snackbar>
-                  {children}
+                  <Dialog>
+                    {children}
+                  </Dialog>
                 </Snackbar>
               </Theme>
             </User>

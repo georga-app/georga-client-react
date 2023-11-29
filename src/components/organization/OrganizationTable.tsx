@@ -7,8 +7,8 @@ import Image from 'next/image';
 import { useQuery } from '@apollo/client';
 
 import OrganizationForm from '@/components/organization/OrganizationForm';
-import DataTable from '@/components/shared/DataTable'
-import Dialog from '@/components/shared/Dialog'
+import DataTable from '@/components/shared/DataTable';
+import { useDialog } from '@/provider/Dialog';
 
 import { ActionDeleteIcon } from '@/theme/Icons';
 import { ActionEditIcon } from '@/theme/Icons';
@@ -58,8 +58,7 @@ let columns: DataTableColumn<OrganizationType>[] = [
 
 
 function OrganizationTable() {
-  const [editId, setEditId] = useState('');
-  const [editOpen, setEditOpen] = useState(false);
+  const dialog = useDialog();
 
   // getPersonOrganizations
   const { data, loading } = useQuery(
@@ -73,14 +72,17 @@ function OrganizationTable() {
       .map((edge) => edge?.node)
       .filter((node): node is OrganizationType => node !== undefined);
 
+  // actions
   let actions: DataTableActions<OrganizationType> = [
     {
       name: 'Edit',
       icon: <ActionEditIcon />,
       priority: 20,
       action: (rows, event) => {
-        setEditId(rows[0].id);
-        setEditOpen(true);
+        dialog.showDialog(
+          <OrganizationForm organizationId={rows[0].id} />,
+          "Edit Organization"
+        )
       },
       available: (rows) => (rows.length == 1),
     },
@@ -100,7 +102,7 @@ function OrganizationTable() {
     },
   ];
 
-  return <>
+  return (
     <DataTable
       title="Organizations"
       columns={columns}
@@ -108,17 +110,7 @@ function OrganizationTable() {
       rowKey={rowKey}
       actions={actions}
     />
-    {editId &&
-      <Dialog
-        open={editOpen}
-        setOpen={setEditOpen}
-        title="Edit Organization"
-        id="edit-organization"
-      >
-        <OrganizationForm organizationId={editId} />
-      </Dialog>
-    }
-  </>;
+  );
 }
 
 export default OrganizationTable;
