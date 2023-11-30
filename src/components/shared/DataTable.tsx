@@ -63,8 +63,8 @@ function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key,
 ): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string },
+  a: { [key in Key]: any },
+  b: { [key in Key]: any },
 ) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -519,10 +519,15 @@ function DataTable<T>({
         });
         return result;
       }, []);
-      return stableSort(filteredRows as Array<any>, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage,
-      )},
+      // return filteredRows;
+      // const sortedRows = stableSort(filteredRows as Array<any>, getComparator(order, orderBy))
+      const sortedRows = stableSort(filteredRows, getComparator(order, orderBy))
+        .slice(
+          page * rowsPerPage,
+          page * rowsPerPage + rowsPerPage,
+        )
+      return sortedRows;
+    },
     [order, orderBy, page, rows, rowsPerPage, filter, filterColumns],
   );
   const numVisible = visibleRows.length;
@@ -609,13 +614,13 @@ function DataTable<T>({
                         selected={isItemSelected}
                       >
                         {columns.map((column, index) => {
-                          let content = row[column.id];
+                          let content = row[column.id] as string | number;
                           return (
                             <TableCell
                               key={column.id as string}
                               sx={{ cursor: 'default' }}
                             >
-                              {column.content ? column.content(content) : content as string}
+                              {column.content ? column.content(content, row) : content}
                             </TableCell>
                           );
                         })}

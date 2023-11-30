@@ -41,7 +41,7 @@ let columns: DataTableColumn<OrganizationType>[] = [
     label: 'Logo',
     sortable: false,
     filterable: false,
-    content: content =>
+    content: (content, row) =>
       <Image
         alt="logo"
         src={'data:image/png;base64,' + content as string}
