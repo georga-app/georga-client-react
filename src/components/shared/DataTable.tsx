@@ -416,7 +416,7 @@ function DataTableToolbar<T>({
   );
 };
 
-function DataTable<T>({
+function DataTable<T extends {}>({
   columns,
   rows,
   rowKey,
@@ -606,7 +606,6 @@ function DataTable<T>({
                                  handleClick(event, row[rowKey] as string)}
                         onContextMenu={(event: React.MouseEvent<HTMLElement>) =>
                                         handleContextMenu(event, row[rowKey] as string)}
-                        // onContextMenu={handleContextMenu}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
@@ -614,13 +613,14 @@ function DataTable<T>({
                         selected={isItemSelected}
                       >
                         {columns.map((column, index) => {
-                          let content = row[column.id] as string | number;
+                          const data = row[column.id as keyof T];
+                          const content = column.content ? column.content(data, row) : String(data);
                           return (
                             <TableCell
                               key={column.id as string}
                               sx={{ cursor: 'default' }}
                             >
-                              {column.content ? column.content(content, row) : content}
+                              {content}
                             </TableCell>
                           );
                         })}

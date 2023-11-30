@@ -11,7 +11,7 @@ interface DataTableColumn<T> {
   align?: "center" | "left" | "right" | "inherit" | "justify" | undefined,
   sortable?: boolean,
   filterable?: boolean,
-  content?: (content: string | number, row?: T) => React.ReactNode | string,
+  content?: (data: T[keyof T], row: T) => React.ReactNode,
 }
 
 type DataTableAction<T> = {
