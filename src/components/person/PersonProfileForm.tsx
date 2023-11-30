@@ -201,7 +201,7 @@ function PersonProfileForm({
 
       {/* Fields */}
       <Input
-        key="firstName"
+        id="firstName"
         value={firstName}
         setValue={setFirstName}
         label="First Name"
@@ -209,7 +209,7 @@ function PersonProfileForm({
         errors={errors.firstName}
       />
       <Input
-        key="lastName"
+        id="lastName"
         value={lastName}
         setValue={setLastName}
         label="Last Name"
@@ -217,7 +217,7 @@ function PersonProfileForm({
         errors={errors.lastName}
       />
       <Input
-        key="street"
+        id="street"
         value={street}
         setValue={setStreet}
         label="Street"
@@ -225,7 +225,7 @@ function PersonProfileForm({
         errors={errors.street}
       />
       <Input
-        key="number"
+        id="number"
         value={number}
         setValue={setNumber}
         label="Number"
@@ -233,7 +233,7 @@ function PersonProfileForm({
         errors={errors.number}
       />
       <Input
-        key="postalCode"
+        id="postalCode"
         value={postalCode}
         setValue={setPostalCode}
         label="Postal Code"
@@ -241,7 +241,7 @@ function PersonProfileForm({
         errors={errors.postalCode}
       />
       <Input
-        key="city"
+        id="city"
         value={city}
         setValue={setCity}
         label="City"
@@ -249,7 +249,7 @@ function PersonProfileForm({
         errors={errors.city}
       />
       <Input
-        key="privatePhone"
+        id="privatePhone"
         value={privatePhone}
         setValue={setPrivatePhone}
         label="Private Phone"
@@ -257,7 +257,7 @@ function PersonProfileForm({
         errors={errors.privatePhone}
       />
       <Input
-        key="mobilePhone"
+        id="mobilePhone"
         value={mobilePhone}
         setValue={setMobilePhone}
         label="Mobile Phone"
@@ -265,7 +265,7 @@ function PersonProfileForm({
         errors={errors.mobilePhone}
       />
       <Input
-        key="occupation"
+        id="occupation"
         value={occupation}
         setValue={setOccupation}
         label="Occupation"
@@ -273,7 +273,7 @@ function PersonProfileForm({
         errors={errors.occupation}
       />
       <Switch
-        key="onlyJobRelatedTopics"
+        id="onlyJobRelatedTopics"
         value={onlyJobRelatedTopics}
         setValue={setOnlyJobRelatedTopics}
         label="Only Job Related Topics"

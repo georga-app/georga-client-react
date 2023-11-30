@@ -14,7 +14,7 @@ import FormFieldError from "@/components/shared/FormFieldError";
 import { FormFieldError as FormFieldErrorType } from '@/types/FormErrors';
 
 function Input({
-  key,
+  id,
   value,
   setValue,
   errors,
@@ -23,17 +23,15 @@ function Input({
   required,
   handleChanged,
 }: {
-  key: string,
+  id: string,
   value: any,
   setValue: React.Dispatch<React.SetStateAction<any>>,
   errors: FormFieldErrorType | undefined,
   label?: string,
   type?: string,
   required?: boolean,
-  handleChanged?: (key: string, oldValue: typeof value, newValue: typeof value) => void,
+  handleChanged?: (id: string, oldValue: typeof value, newValue: typeof value) => void,
 }) {
-  if (key == 'form')
-    return
   return (
     <FormControl
       margin="normal"
@@ -46,13 +44,13 @@ function Input({
         <InputLabel htmlFor={key}>{label}</InputLabel>
       }
       <MuiInput
-        id={key}
+        id={id}
         value={value}
         type={type}
         onChange={(event) => {
           if( handleChanged )
-            handleChanged(key, value, event.target.value);
           setValue(event.target.value);
+            handleChanged(id, value, event.target.value);
         }}
       />
       {errors &&
@@ -63,7 +61,7 @@ function Input({
 }
 
 function Switch({
-  key,
+  id,
   value,
   setValue,
   errors,
@@ -72,17 +70,15 @@ function Switch({
   required,
   handleChanged,
 }: {
-  key: string,
+  id: string,
   value: boolean,
   setValue: React.Dispatch<React.SetStateAction<any>>,
   errors: FormFieldErrorType | undefined,
   label: string,
   type?: string,
   required?: boolean,
-  handleChanged?: (key: string, oldValue: typeof value, newValue: typeof value) => void,
+  handleChanged?: (id: string, oldValue: typeof value, newValue: typeof value) => void,
 }) {
-  if (key == 'form')
-    return
   return (
     <FormControl
       margin="normal"
@@ -98,7 +94,7 @@ function Switch({
             checked={value}
             onChange={(event) => {
               if( handleChanged )
-                handleChanged(key, value, event.target.checked);
+                handleChanged(id, value, event.target.checked);
               setValue(event.target.checked);
             }}
             inputProps={{ 'aria-label': 'controlled' }}

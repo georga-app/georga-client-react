@@ -112,7 +112,7 @@ function PersonRegisterForm() {
 
         {/* Fields */}
         <Input
-          key="email"
+          id="email"
           value={email}
           setValue={setEmail}
           label="Email"
@@ -121,7 +121,7 @@ function PersonRegisterForm() {
           errors={errors.email}
         />
         <Input
-          key="password"
+          id="password"
           value={password}
           setValue={setPassword}
           label="Password"

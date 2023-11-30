@@ -260,7 +260,7 @@ function OrganizationForm({
 
       {/* Fields */}
       <Input
-        key="name"
+        id="name"
         value={name}
         setValue={setName}
         label="Name"
@@ -269,7 +269,7 @@ function OrganizationForm({
         required
       />
       <Input
-        key="description"
+        id="description"
         value={description}
         setValue={setDescription}
         label="Description"
@@ -277,7 +277,7 @@ function OrganizationForm({
         errors={errors.description}
       />
       <Input
-        key="icon"
+        id="icon"
         value={icon}
         setValue={setIcon}
         label="Icon"
