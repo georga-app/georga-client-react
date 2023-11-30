@@ -115,7 +115,6 @@ function OrganizationForm({
   const snackbar = useSnackbar();
 
   // states
-  const [success, setSuccess] = useState(false);
   const [changed, setChanged] = useState<{[id: string]: any}>({});
   const [errors, setErrors] = useState<Errors>({});
 
@@ -139,7 +138,6 @@ function OrganizationForm({
           updateOrganizationReset();
           setErrors({});
           setChanged({});
-          setSuccess(true);
           snackbar.showSnackbar("Organization created", 'success');
           onSuccess(data);
         } else {
@@ -199,7 +197,6 @@ function OrganizationForm({
           updateOrganizationReset();
           setErrors({});
           setChanged({});
-          setSuccess(true);
           snackbar.showSnackbar("Organization updated", 'success');
           onSuccess(data);
         } else {
@@ -251,13 +248,6 @@ function OrganizationForm({
       });
   }
 
-  // success
-  const handleSuccess = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway')
-      return;
-    setSuccess(false);
-  };
-
   // return
   if (edit) {
     if (getOrganizationError)
@@ -273,13 +263,16 @@ function OrganizationForm({
         key="name"
         value={name}
         setValue={setName}
+        label="Name"
         handleChanged={handleChanged}
         errors={errors.name}
+        required
       />
       <Input
         key="description"
         value={description}
         setValue={setDescription}
+        label="Description"
         handleChanged={handleChanged}
         errors={errors.description}
       />
@@ -287,6 +280,7 @@ function OrganizationForm({
         key="icon"
         value={icon}
         setValue={setIcon}
+        label="Icon"
         handleChanged={handleChanged}
         errors={errors.icon}
       />

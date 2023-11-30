@@ -7,22 +7,20 @@
 import { useState, useContext } from "react";
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation } from '@apollo/client';
-import { gql } from '@/__generated__/gql';
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 
 import { LoginIcon } from "@/theme/Icons"
 
 import UserContext from "@/provider/User";
-import FormFieldError from "@/components/shared/FormFieldError";
-import FormError from "@/components/shared/FormError";
+import Form from "@/components/shared/Form";
+import { Input } from "@/components/shared/FormFields";
 
-import { PersonLoginFormErrors } from "@/types/FormErrors";
+import { gql } from '@/__generated__/gql';
+import { TokenAuthMutationVariables } from '@/__generated__/graphql';
+import { FormErrors } from "@/types/FormErrors";
 
 const TOKEN_AUTH_MUTATION = gql(`
   mutation TokenAuth (
@@ -43,6 +41,8 @@ const TOKEN_AUTH_MUTATION = gql(`
   }
 `);
 
+type Errors = FormErrors<TokenAuthMutationVariables>;
+
 function PersonLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -52,7 +52,7 @@ function PersonLoginForm() {
   const emailPreset = searchParams.get('email') || '';
   const [email, setEmail] = useState(emailPreset);
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<PersonLoginFormErrors>({});
+  const [errors, setErrors] = useState<Errors>({});
 
   // tokenAuthMutation
   const [login, { loading, reset }] = useMutation(
@@ -91,39 +91,29 @@ function PersonLoginForm() {
         <Typography variant="button">Login</Typography>
 
         {/* Form */}
-        <form onSubmit={event => handleSubmit(event)}>
-          <FormError error={errors?.form}/>
-          <FormControl
-            margin="normal"
-            variant="standard"
+        <Form handleSubmit={handleSubmit} error={errors.form}>
+
+          {/* Fields */}
+          <Input
+            key="email"
+            value={email}
+            setValue={setEmail}
+            label="Email"
+            type="email"
             required
-            fullWidth
-            // error={Boolean(errors.email)}
-          >
-            <InputLabel htmlFor="email">Email</InputLabel>
-            <Input
-              id="email"
-              type="email"
-              onChange={event => setEmail(event.target.value)}
-              value={email}
-            />
-            {/* <FormFieldError error={errors.email}/> */}
-          </FormControl>
-          <FormControl
-            margin="normal"
-            variant="standard"
+            errors={errors.email}
+          />
+          <Input
+            key="password"
+            value={password}
+            setValue={setPassword}
+            label="Password"
+            type="password"
             required
-            fullWidth
-            // error={Boolean(errors.password)}
-          >
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input
-              id="password"
-              type="password"
-              onChange={event => setPassword(event.target.value)}
-            />
-            {/* <FormFieldError error={errors.password}/> */}
-          </FormControl>
+            errors={errors.password}
+          />
+
+          {/* Controls */}
           <Button
             type="submit"
             fullWidth
@@ -139,7 +129,7 @@ function PersonLoginForm() {
             {loading ? "Logging in..." : "Login"}
           </Button>
 
-        </form>
+        </Form>
     </>
   );
 }

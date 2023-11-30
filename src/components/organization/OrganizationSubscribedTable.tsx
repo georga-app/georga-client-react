@@ -55,8 +55,6 @@ let columns: DataTableColumn<OrganizationType>[] = [
 
 
 function OrganizationSubscribedTable() {
-  const [success, setSuccess] = useState(false);
-
   // getPersonOrganizations
   const { data, loading } = useQuery(
     GET_PERSON_ORGANIZATIONS_QUERY, {
@@ -69,6 +67,7 @@ function OrganizationSubscribedTable() {
       .map((edge) => edge?.node)
       .filter((node): node is OrganizationType => node !== undefined);
 
+  // return
   return (
     <DataTable
       columns={columns}

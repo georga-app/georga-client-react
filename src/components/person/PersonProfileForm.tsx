@@ -5,25 +5,19 @@
 import { useState } from "react";
 import { useQuery, useMutation } from '@apollo/client';
 
-import Autocomplete from '@mui/material/Autocomplete';
 import Button from "@mui/material/Button";
-import Checkbox from '@mui/material/Checkbox';
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
-import Snackbar from '@mui/material/Snackbar';
-import Switch from '@mui/material/Switch';
-import TextField from '@mui/material/TextField';
 
+import Form from "@/components/shared/Form";
+import { Input, Switch } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
-import FormFieldError from "@/components/shared/FormFieldError";
-import FormError from "@/components/shared/FormError";
 
 import { gql } from '@/__generated__/gql';
-import { PersonType, GetPersonProfileQuery } from '@/__generated__/graphql';
-import { UpdatePersonProfileMutation } from '@/__generated__/graphql';
-import { PersonProfileFormErrors } from "@/types/FormErrors";
+import {
+  GetPersonProfileQuery,
+  UpdatePersonProfileMutation,
+  UpdatePersonProfileMutationVariables,
+} from '@/__generated__/graphql';
+import { FormErrors } from "@/types/FormErrors";
 
 const GET_PERSON_PROFILE_QUERY = gql(`
   query GetPersonProfile {
@@ -81,6 +75,8 @@ const UPDATE_PERSON_PROFILE_MUTATION = gql(`
   }
 `);
 
+type Errors = FormErrors<UpdatePersonProfileMutationVariables>;
+
 function PersonProfileForm({
   onSuccess = () => undefined,
   onError = () => undefined,
@@ -88,10 +84,12 @@ function PersonProfileForm({
   onSuccess?: (data: UpdatePersonProfileMutation) => void,
   onError?: (data: UpdatePersonProfileMutation) => void,
 }) {
-  const [success, setSuccess] = useState(false);
-  const [changed, setChanged] = useState<{[id: string]: any}>({});
-  const [errors, setErrors] = useState<PersonProfileFormErrors>({});
+  // context
   const snackbar = useSnackbar();
+
+  // states
+  const [changed, setChanged] = useState<{[id: string]: any}>({});
+  const [errors, setErrors] = useState<Errors>({});
 
   // fields
   const [firstName, setFirstName] = useState("");
@@ -145,7 +143,6 @@ function PersonProfileForm({
           updatePersonProfileReset();
           setErrors({});
           setChanged({});
-          setSuccess(true);
           snackbar.showSnackbar("Profile updated", 'success');
           onSuccess(data);
         } else {
@@ -194,208 +191,95 @@ function PersonProfileForm({
     });
   }
 
-  // success
-  const handleSuccess = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway')
-      return;
-    setSuccess(false);
-  };
-
   // return
   if (getPersonProfileError)
     return <div>Error</div>;
   if (!getPersonProfileCalled || getPersonProfileLoading)
     return <div>Loading...</div>;
   return (
-    <form onSubmit={handleSubmit}>
-
-      {/* Errors */}
-      <FormError error={errors.form}/>
+    <Form handleSubmit={handleSubmit} error={errors.form}>
 
       {/* Fields */}
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.firstName)}
-        fullWidth
-      >
-        <InputLabel htmlFor="firstName">First Name</InputLabel>
-        <Input
-          id="firstName"
-          value={firstName}
-          onChange={(event) => {
-            handleChanged('firstName', firstName, event.target.value);
-            setFirstName(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.firstName}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.lastName)}
-        fullWidth
-      >
-        <InputLabel htmlFor="lastName">Last Name</InputLabel>
-        <Input
-          id="lastName"
-          value={lastName}
-          onChange={(event) => {
-            handleChanged('lastName', lastName, event.target.value);
-            setLastName(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.lastName}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.street)}
-        fullWidth
-      >
-        <InputLabel htmlFor="street">Street</InputLabel>
-        <Input
-          id="street"
-          value={street}
-          onChange={(event) => {
-            handleChanged('street', street, event.target.value);
-            setStreet(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.street}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.number)}
-        fullWidth
-      >
-        <InputLabel htmlFor="number">Street Number</InputLabel>
-        <Input
-          id="number"
-          value={number}
-          onChange={(event) => {
-            handleChanged('number', number, event.target.value);
-            setNumber(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.number}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.postalCode)}
-        fullWidth
-      >
-        <InputLabel htmlFor="postalCode">Postal Code</InputLabel>
-        <Input
-          id="postalCode"
-          value={postalCode}
-          onChange={(event) => {
-            handleChanged('postalCode', postalCode, event.target.value);
-            setPostalCode(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.postalCode}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.city)}
-        fullWidth
-      >
-        <InputLabel htmlFor="city">City</InputLabel>
-        <Input
-          id="city"
-          value={city}
-          onChange={(event) => {
-            handleChanged('city', city, event.target.value);
-            setCity(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.city}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.privatePhone)}
-        fullWidth
-      >
-        <InputLabel htmlFor="privatePhone">Private Phone</InputLabel>
-        <Input
-          id="privatePhone"
-          value={privatePhone}
-          onChange={(event) => {
-            handleChanged('privatePhone', privatePhone, event.target.value);
-            setPrivatePhone(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.privatePhone}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.mobilePhone)}
-        fullWidth
-      >
-        <InputLabel htmlFor="mobilePhone">Mobile Phone</InputLabel>
-        <Input
-          id="mobilePhone"
-          value={mobilePhone}
-          onChange={(event) => {
-            handleChanged('mobilePhone', mobilePhone, event.target.value);
-            setMobilePhone(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.mobilePhone}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.occupation)}
-        fullWidth
-      >
-        <InputLabel htmlFor="occupation">Occupation</InputLabel>
-        <Input
-          id="occupation"
-          value={occupation}
-          onChange={(event) => {
-            handleChanged('occupation', occupation, event.target.value);
-            setOccupation(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.occupation}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.occupation)}
-        fullWidth
-      >
-        <FormControlLabel
-          label="Only Job Related Topics"
-          control={
-            <Switch
-              checked={onlyJobRelatedTopics}
-              onChange={(event) => {
-                handleChanged('onlyJobRelatedTopics', onlyJobRelatedTopics, event.target.checked);
-                setOnlyJobRelatedTopics(event.target.checked);
-              }}
-              inputProps={{ 'aria-label': 'controlled' }}
-            />
-          }
-        />
-        <FormFieldError error={errors.occupation}/>
-      </FormControl>
+      <Input
+        key="firstName"
+        value={firstName}
+        setValue={setFirstName}
+        label="First Name"
+        handleChanged={handleChanged}
+        errors={errors.firstName}
+      />
+      <Input
+        key="lastName"
+        value={lastName}
+        setValue={setLastName}
+        label="Last Name"
+        handleChanged={handleChanged}
+        errors={errors.lastName}
+      />
+      <Input
+        key="street"
+        value={street}
+        setValue={setStreet}
+        label="Street"
+        handleChanged={handleChanged}
+        errors={errors.street}
+      />
+      <Input
+        key="number"
+        value={number}
+        setValue={setNumber}
+        label="Number"
+        handleChanged={handleChanged}
+        errors={errors.number}
+      />
+      <Input
+        key="postalCode"
+        value={postalCode}
+        setValue={setPostalCode}
+        label="Postal Code"
+        handleChanged={handleChanged}
+        errors={errors.postalCode}
+      />
+      <Input
+        key="city"
+        value={city}
+        setValue={setCity}
+        label="City"
+        handleChanged={handleChanged}
+        errors={errors.city}
+      />
+      <Input
+        key="privatePhone"
+        value={privatePhone}
+        setValue={setPrivatePhone}
+        label="Private Phone"
+        handleChanged={handleChanged}
+        errors={errors.privatePhone}
+      />
+      <Input
+        key="mobilePhone"
+        value={mobilePhone}
+        setValue={setMobilePhone}
+        label="Mobile Phone"
+        handleChanged={handleChanged}
+        errors={errors.mobilePhone}
+      />
+      <Input
+        key="occupation"
+        value={occupation}
+        setValue={setOccupation}
+        label="Occupation"
+        handleChanged={handleChanged}
+        errors={errors.occupation}
+      />
+      <Switch
+        key="onlyJobRelatedTopics"
+        value={onlyJobRelatedTopics}
+        setValue={setOnlyJobRelatedTopics}
+        label="Only Job Related Topics"
+        handleChanged={handleChanged}
+        errors={errors.onlyJobRelatedTopics}
+      />
 
       {/* Controls */}
       <Button
@@ -412,7 +296,7 @@ function PersonProfileForm({
         {updatePersonProfileLoading ? "Saving..." : "Save"}
       </Button>
 
-    </form>
+    </Form>
   )
 }
 

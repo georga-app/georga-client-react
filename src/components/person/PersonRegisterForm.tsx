@@ -5,7 +5,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useMutation } from '@apollo/client';
-import { gql } from '@/__generated__/gql';
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -14,18 +13,17 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import FormControl from "@mui/material/FormControl";
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 
-import { RegisterIcon } from "@/themes/Icons"
-import { RegisterSuccessIcon } from "@/themes/Icons"
+import { RegisterIcon } from "@/theme/Icons"
+import { RegisterSuccessIcon } from "@/theme/Icons"
 
-import FormFieldError from "@/components/shared/FormFieldError";
-import FormError from "@/components/shared/FormError";
+import Form from "@/components/shared/Form";
+import { Input } from "@/components/shared/FormFields";
 
-import { PersonRegisterFormErrors } from "@/types/FormErrors";
+import { gql } from '@/__generated__/gql';
+import { RegisterPersonMutationVariables } from '@/__generated__/graphql';
+import { FormErrors } from "@/types/FormErrors";
 
 
 const REGISTER_PERSON_MUTATION = gql(`
@@ -48,6 +46,8 @@ const REGISTER_PERSON_MUTATION = gql(`
   }
 `);
 
+type Errors = FormErrors<RegisterPersonMutationVariables>;
+
 function PersonRegisterForm() {
   const [open, setOpen] = useState(false);
 
@@ -55,7 +55,7 @@ function PersonRegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [errors, setErrors] = useState<PersonRegisterFormErrors>({});
+  const [errors, setErrors] = useState<Errors>({});
 
   // registerPersonMutation
   const [registerPerson, {
@@ -108,45 +108,27 @@ function PersonRegisterForm() {
       <Typography variant="button">Register</Typography>
 
       {/* Form */}
-      <form onSubmit={handleSubmit}>
-
-        {/* Errors */}
-        <FormError error={errors.form}/>
+      <Form handleSubmit={handleSubmit} error={errors.form}>
 
         {/* Fields */}
-        <FormControl
-          margin="normal"
-          variant="standard"
-          error={Boolean(errors.email)}
-          fullWidth
+        <Input
+          key="email"
+          value={email}
+          setValue={setEmail}
+          label="Email"
+          type="email"
           required
-        >
-          <InputLabel htmlFor="email">Email</InputLabel>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={event => setEmail(event.target.value)}
-          />
-          <FormFieldError error={errors.email}/>
-        </FormControl>
-
-        <FormControl
-          margin="normal"
-          variant="standard"
-          error={Boolean(errors.password)}
-          fullWidth
+          errors={errors.email}
+        />
+        <Input
+          key="password"
+          value={password}
+          setValue={setPassword}
+          label="Password"
+          type="password"
           required
-        >
-          <InputLabel htmlFor="password">Password</InputLabel>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={event => setPassword(event.target.value)}
-          />
-          <FormFieldError error={errors.password}/>
-        </FormControl>
+          errors={errors.password}
+        />
 
         {/* Controls */}
         <Button
@@ -165,7 +147,7 @@ function PersonRegisterForm() {
         </Button>
 
         {/* Feedback */}
-        <Dialog open={open} /*disablebackdropclick="true"*/>
+        <Dialog open={open}>
           <DialogTitle>
             <RegisterSuccessIcon sx={{
               paddingY: "2px",
@@ -191,7 +173,7 @@ function PersonRegisterForm() {
           </DialogActions>
         </Dialog>
 
-      </form>
+      </Form>
     </>
   )
 }

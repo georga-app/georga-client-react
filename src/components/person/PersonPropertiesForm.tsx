@@ -10,17 +10,19 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import FormControl from "@mui/material/FormControl";
-import Snackbar from '@mui/material/Snackbar';
 import TextField from '@mui/material/TextField';
 
 import { useSnackbar } from "@/provider/Snackbar";
+import Form from "@/components/shared/Form";
 import FormFieldError from "@/components/shared/FormFieldError";
-import FormError from "@/components/shared/FormError";
 
 import { gql } from '@/__generated__/gql';
-import { PersonPropertyGroupType, PersonPropertyType } from '@/__generated__/graphql';
-import { UpdatePersonProfilePropertiesMutation } from '@/__generated__/graphql';
-import { PersonPropertiesFormErrors } from "@/types/FormErrors";
+import {
+  PersonPropertyGroupType,
+  UpdatePersonProfilePropertiesMutation,
+  UpdatePersonProfilePropertiesMutationVariables,
+} from '@/__generated__/graphql';
+import { FormErrors } from "@/types/FormErrors";
 import { onlyType } from "@/types/Util";
 
 const LIST_PERSON_PROPERTY_GROUPS_QUERY = gql(`
@@ -127,7 +129,6 @@ function PersonPropertyGroupField({
     <FormControl
       key={group.id + '-control'}
       margin="normal"
-      // error={Boolean(errors.firstName)}
       fullWidth
     >
       <Autocomplete
@@ -186,6 +187,7 @@ function PersonPropertyGroupField({
   )
 }
 
+type Errors = FormErrors<UpdatePersonProfilePropertiesMutationVariables>;
 
 function PersonPropertiesForm({
   organizationId,
@@ -196,10 +198,12 @@ function PersonPropertiesForm({
   onSuccess?: (data: UpdatePersonProfilePropertiesMutation) => void,
   onError?: (data: UpdatePersonProfilePropertiesMutation) => void,
 }) {
-  const [success, setSuccess] = useState(false);
-  const [changed, setChanged] = useState<PersonPropertyGroupDataType>({});
-  const [errors, setErrors] = useState<PersonPropertiesFormErrors>({});
+  // context
   const snackbar = useSnackbar();
+
+  // states
+  const [changed, setChanged] = useState<PersonPropertyGroupDataType>({});
+  const [errors, setErrors] = useState<Errors>({});
 
   // fields
   const [propertyGroups, setPropertyGroups] = useState<PersonPropertyGroupType[]>();
@@ -269,8 +273,7 @@ function PersonPropertiesForm({
           updatePersonPropertiesReset();
           setErrors({});
           setChanged({});
-          setSuccess(true);
-          snackbar.showSnackbar("Organization updated", 'success');
+          snackbar.showSnackbar("Qualifications updated", 'success');
           onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
@@ -303,19 +306,11 @@ function PersonPropertiesForm({
     });
   }
 
-  // success
-  const handleSuccess = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway')
-      return;
-    setSuccess(false);
-  };
-
   // return
   return (
-    <form onSubmit={handleSubmit}>
+    <Form handleSubmit={handleSubmit} error={errors.form}>
 
       {/* Errors */}
-      <FormError error={errors.form}/>
       <FormFieldError error={errors.properties}/>
 
       {/* Fields */}
@@ -345,7 +340,7 @@ function PersonPropertiesForm({
         {updatePropertiesLoading ? "Saving..." : "Save"}
       </Button>
 
-    </form>
+    </Form>
   )
 
 }

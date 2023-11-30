@@ -13,7 +13,7 @@ function Form({
 }: {
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void,
   error: FormErrorType | undefined,
-  children: JSX.Element[],
+  children: React.ReactNode,
 }) {
   return (
     <form onSubmit={handleSubmit}>
