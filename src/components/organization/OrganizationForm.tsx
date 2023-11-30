@@ -6,16 +6,10 @@ import { useState } from "react";
 import { useQuery, useMutation } from '@apollo/client';
 
 import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
-import Snackbar from '@mui/material/Snackbar';
-// import TextField from '@mui/material/TextField';
 
+import Form from "@/components/shared/Form";
+import { Input } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
-import FormFieldError from "@/components/shared/FormFieldError";
-import FormError from "@/components/shared/FormError";
 
 import { gql } from '@/__generated__/gql';
 import { OrganizationType, ListOrganizationsQuery } from '@/__generated__/graphql';
@@ -182,65 +176,30 @@ function OrganizationForm({
   if (!getOrganizationCalled || getOrganizationLoading)
     return <div>Loading...</div>;
   return (
-    <form onSubmit={handleSubmit}>
-
-      {/* Errors */}
-      <FormError error={errors.form}/>
+    <Form handleSubmit={handleSubmit} error={errors.form}>
 
       {/* Fields */}
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.name)}
-        fullWidth
-      >
-        <InputLabel htmlFor="name">Name</InputLabel>
-        <Input
-          id="name"
-          value={name}
-          onChange={(event) => {
-            handleChanged('name', name, event.target.value);
-            setName(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.name}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.description)}
-        fullWidth
-      >
-        <InputLabel htmlFor="description">Description</InputLabel>
-        <Input
-          id="description"
-          value={description}
-          onChange={(event) => {
-            handleChanged('description', description, event.target.value);
-            setDescription(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.description}/>
-      </FormControl>
-
-      <FormControl
-        margin="normal"
-        variant="standard"
-        error={Boolean(errors.icon)}
-        fullWidth
-      >
-        <InputLabel htmlFor="icon">Icon</InputLabel>
-        <Input
-          id="icon"
-          value={icon}
-          onChange={(event) => {
-            handleChanged('icon', icon, event.target.value);
-            setIcon(event.target.value);
-          }}
-        />
-        <FormFieldError error={errors.icon}/>
-      </FormControl>
+      <Input
+        key="name"
+        value={name}
+        setValue={setName}
+        handleChanged={handleChanged}
+        errors={errors.name}
+      />
+      <Input
+        key="description"
+        value={description}
+        setValue={setDescription}
+        handleChanged={handleChanged}
+        errors={errors.description}
+      />
+      <Input
+        key="icon"
+        value={icon}
+        setValue={setIcon}
+        handleChanged={handleChanged}
+        errors={errors.icon}
+      />
 
       {/* Controls */}
       <Button
@@ -256,9 +215,8 @@ function OrganizationForm({
       >
         {updateOrganizationLoading ? "Saving..." : "Save"}
       </Button>
-
-    </form>
-  )
+    </Form>
+  );
 }
 
 export default OrganizationForm;
