@@ -4,46 +4,9 @@
  */
 import { ApolloError } from '@apollo/client/errors';
 
-type OrganizationFormErrors = {
-  form?: ApolloError["message"],
-  name?: string[],
-  description?: string[],
-  icon?: string[],
-}
+type FormErrors<T> = Partial<Record<keyof T, string[]>>
+                     & { form?: ApolloError['message']  };
+type FormError = ApolloError['message']
+type FormFieldError = string[]
 
-type PersonRegisterFormErrors = {
-  form?: ApolloError["message"],
-  email?: string[],
-  password?: string[],
-}
-
-type PersonLoginFormErrors = {
-  form?: ApolloError["message"],
-}
-
-type PersonProfileFormErrors = {
-  form?: ApolloError["message"],
-  firstName?: string[],
-  lastName?: string[],
-  street?: string[],
-  number?: string[],
-  postalCode?: string[],
-  city?: string[],
-  privatePhone?: string[],
-  mobilePhone?: string[],
-  occupation?: string[],
-  onlyJobRelatedTopics?: string[],
-}
-
-type PersonPropertiesFormErrors = {
-  form?: ApolloError["message"],
-  properties?: string[],
-}
-
-export type {
-  OrganizationFormErrors,
-  PersonRegisterFormErrors,
-  PersonLoginFormErrors,
-  PersonProfileFormErrors,
-  PersonPropertiesFormErrors,
-};
+export type { FormErrors, FormError, FormFieldError };

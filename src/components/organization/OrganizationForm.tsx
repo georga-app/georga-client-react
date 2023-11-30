@@ -18,6 +18,8 @@ import {
   UpdateOrganizationMutation,
   UpdateOrganizationMutationVariables,
 } from '@/__generated__/graphql';
+import { FormErrors } from "@/types/FormErrors";
+
 const CREATE_ORGANIZATION_MUTATION = gql(`
   mutation CreateOrganization (
     $name: String!
@@ -89,11 +91,21 @@ const UPDATE_ORGANIZATION_MUTATION = gql(`
   }
 `);
 
+type Data = CreateOrganizationMutation
+            | UpdateOrganizationMutation;
+type Errors = FormErrors<
+  CreateOrganizationMutationVariables
+  | UpdateOrganizationMutationVariables
+>;
+
 function OrganizationForm({
   organizationId = '',
   onSuccess = () => undefined,
   onError = () => undefined,
 }: {
+  organizationId?: string,
+  onSuccess?: (data: Data) => void,
+  onError?: (data: Data) => void,
 }) {
   // mode
   const create = !(organizationId);
@@ -105,7 +117,7 @@ function OrganizationForm({
   // states
   const [success, setSuccess] = useState(false);
   const [changed, setChanged] = useState<{[id: string]: any}>({});
-  const [errors, setErrors] = useState<OrganizationFormErrors>({});
+  const [errors, setErrors] = useState<Errors>({});
 
   // fields
   const [name, setName] = useState("");
