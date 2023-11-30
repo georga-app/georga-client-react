@@ -21,15 +21,17 @@ function Input({
   label,
   type,
   required,
+  disabled,
   handleChanged,
 }: {
   id: string,
   value: any,
-  setValue: React.Dispatch<React.SetStateAction<any>>,
-  errors: FormFieldErrorType | undefined,
+  setValue?: React.Dispatch<React.SetStateAction<any>>,
+  errors?: FormFieldErrorType | undefined,
   label?: string,
   type?: string,
   required?: boolean,
+  disabled?: boolean,
   handleChanged?: (id: string, oldValue: typeof value, newValue: typeof value) => void,
 }) {
   return (
@@ -39,9 +41,10 @@ function Input({
       fullWidth
       error={Boolean(errors)}
       required={required}
+      disabled={disabled}
     >
       {label &&
-        <InputLabel htmlFor={key}>{label}</InputLabel>
+        <InputLabel htmlFor={id}>{label}</InputLabel>
       }
       <MuiInput
         id={id}
@@ -49,8 +52,9 @@ function Input({
         type={type}
         onChange={(event) => {
           if( handleChanged )
-          setValue(event.target.value);
             handleChanged(id, value, event.target.value);
+          if ( setValue )
+            setValue(event.target.value);
         }}
       />
       {errors &&

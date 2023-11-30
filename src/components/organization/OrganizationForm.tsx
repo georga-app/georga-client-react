@@ -45,7 +45,7 @@ const CREATE_ORGANIZATION_MUTATION = gql(`
 `);
 
 const GET_ORGANIZATION_QUERY = gql(`
-  query GetOrganizations (
+  query GetOrganization (
     $id: ID!
   ) {
     listOrganizations (
@@ -56,6 +56,7 @@ const GET_ORGANIZATION_QUERY = gql(`
           id
           createdAt
           modifiedAt
+          state
           name
           description
           icon
@@ -122,7 +123,9 @@ function OrganizationForm({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [icon, setIcon] = useState("");
-  // const [state, setState] = useState("");
+  const [state, setState] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
+  const [modifiedAt, setModifiedAt] = useState("");
 
   // createOrganization
   const [ createOrganization, {
@@ -179,6 +182,9 @@ function OrganizationForm({
         setName(organization.name);
         setDescription(organization.description || '');
         setIcon(organization.icon || '');
+        setState(organization.state || '');
+        setCreatedAt(organization.createdAt);
+        setModifiedAt(organization.modifiedAt);
       },
     },
   );
@@ -213,7 +219,7 @@ function OrganizationForm({
         setErrors({form: error.message});
       },
       refetchQueries: [
-        "ListOrganizations"
+        "GetOrganization"
       ]
     }
   );
@@ -283,6 +289,24 @@ function OrganizationForm({
         label="Icon"
         handleChanged={handleChanged}
         errors={errors.icon}
+      />
+      <Input
+        id="createdAt"
+        value={new Date(createdAt).toLocaleString()}
+        label="Created At"
+        disabled
+      />
+      <Input
+        id="modifiedAt"
+        value={new Date(modifiedAt).toLocaleString()}
+        label="Modified At"
+        disabled
+      />
+      <Input
+        id="state"
+        value={state}
+        label="State"
+        disabled
       />
 
       {/* Controls */}
