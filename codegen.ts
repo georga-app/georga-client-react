@@ -11,7 +11,7 @@ const config: CodegenConfig = {
   schema: process.env.NEXT_PUBLIC_GRAPHQL_HTTP_ENDPOINT,
   documents: ['src/**/*.tsx'],
   generates: {
-    './src/__generated__/': {
+    './src/types/__generated__/': {
       preset: 'client',
       plugins: [],
       presetConfig: {

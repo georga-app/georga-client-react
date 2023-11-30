@@ -11,13 +11,13 @@ import Form from "@/components/shared/Form";
 import { Input } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
 
-import { gql } from '@/__generated__/gql';
+import { gql } from '@/types/__generated__/gql';
 import {
   CreateOrganizationMutation,
   CreateOrganizationMutationVariables,
   UpdateOrganizationMutation,
   UpdateOrganizationMutationVariables,
-} from '@/__generated__/graphql';
+} from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
 
 const CREATE_ORGANIZATION_MUTATION = gql(`

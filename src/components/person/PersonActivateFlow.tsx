@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { useMutation } from '@apollo/client';
-import { gql } from '@/__generated__/gql';
+import { gql } from '@/types/__generated__/gql';
 
 const ACTIVATE_PERSON_MUTATION = gql(`
   mutation ActivatePerson(

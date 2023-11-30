@@ -15,8 +15,8 @@ import { ActionDeleteIcon } from '@/theme/Icons';
 import { ActionEditIcon } from '@/theme/Icons';
 import { ActionPublishIcon } from '@/theme/Icons';
 
-import { gql } from '@/__generated__/gql';
-import { OrganizationType } from '@/__generated__/graphql'
+import { gql } from '@/types/__generated__/gql';
+import { OrganizationType } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
 const LIST_ORGANIZATIONS_QUERY = gql(`

@@ -7,8 +7,8 @@
 import { useState } from "react";
 import { useMutation, useSubscription } from '@apollo/client';
 import { ApolloError } from '@apollo/client/errors';
-import { gql } from '@/__generated__/gql';
-import { TestSubscription } from '@/__generated__/graphql';
+import { gql } from '@/types/__generated__/gql';
+import { TestSubscription } from '@/types/__generated__/graphql';
 
 import Avatar from '@mui/material/Avatar';
 import Button from "@mui/material/Button";

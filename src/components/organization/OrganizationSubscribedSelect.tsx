@@ -13,7 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from '@mui/material/Select';
 import Typography from "@mui/material/Typography";
 
-import { OrganizationType } from '@/__generated__/graphql';
+import { OrganizationType } from '@/types/__generated__/graphql';
 
 import { GET_PERSON_ORGANIZATIONS_QUERY } from "@/components/organization/OrganizationSubscribedTable"
 

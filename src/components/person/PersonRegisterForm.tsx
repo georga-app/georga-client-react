@@ -21,8 +21,8 @@ import { RegisterSuccessIcon } from "@/theme/Icons"
 import Form from "@/components/shared/Form";
 import { Input } from "@/components/shared/FormFields";
 
-import { gql } from '@/__generated__/gql';
-import { RegisterPersonMutationVariables } from '@/__generated__/graphql';
+import { gql } from '@/types/__generated__/gql';
+import { RegisterPersonMutationVariables } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
 
 

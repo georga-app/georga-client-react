@@ -2,7 +2,7 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import { GeorgaOrganizationStateChoices } from '@/__generated__/graphql';
+import { GeorgaOrganizationStateChoices } from '@/types/__generated__/graphql';
 
 // organization
 const organizationStateTransitions: {

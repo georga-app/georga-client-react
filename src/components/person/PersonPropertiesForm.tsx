@@ -16,12 +16,12 @@ import { useSnackbar } from "@/provider/Snackbar";
 import Form from "@/components/shared/Form";
 import FormFieldError from "@/components/shared/FormFieldError";
 
-import { gql } from '@/__generated__/gql';
+import { gql } from '@/types/__generated__/gql';
 import {
   PersonPropertyGroupType,
   UpdatePersonProfilePropertiesMutation,
   UpdatePersonProfilePropertiesMutationVariables,
-} from '@/__generated__/graphql';
+} from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
 import { onlyType } from "@/types/Util";
 

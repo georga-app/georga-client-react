@@ -4,12 +4,12 @@
  */
 import { useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { gql } from '@/__generated__/gql';
 
 import DataTable from '@/components/shared/DataTable'
 
+import { gql } from '@/types/__generated__/gql';
+import { PersonType } from '@/types/__generated__/graphql'
 import { DataTableColumn } from '@/types/DataTable'
-import { PersonType } from '@/__generated__/graphql'
 
 const ALL_PERSONS_QUERY = gql(`
   query ListPersons (

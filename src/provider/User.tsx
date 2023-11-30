@@ -7,7 +7,7 @@
 import { createContext, useState } from 'react';
 
 import AdminLevel from '@/types/AdminLevel';
-import { TokenAuthMutation } from '@/__generated__/graphql';
+import { TokenAuthMutation } from '@/types/__generated__/graphql';
 
 // see https://developer.school/snippets/react/localstorage-is-not-defined-nextjs
 let localStorage: Storage = (typeof window !== "undefined") ? window.localStorage : {

@@ -8,8 +8,8 @@ import { useQuery, useMutation } from '@apollo/client';
 
 import DataTable from '@/components/shared/DataTable'
 
-import { gql } from '@/__generated__/gql';
-import { OrganizationType } from '@/__generated__/graphql'
+import { gql } from '@/types/__generated__/gql';
+import { OrganizationType } from '@/types/__generated__/graphql'
 import { DataTableColumn } from '@/types/DataTable'
 
 const GET_PERSON_ORGANIZATIONS_QUERY = gql(`

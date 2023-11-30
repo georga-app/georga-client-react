@@ -11,12 +11,12 @@ import Form from "@/components/shared/Form";
 import { Input, Switch } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
 
-import { gql } from '@/__generated__/gql';
+import { gql } from '@/types/__generated__/gql';
 import {
   GetPersonProfileQuery,
   UpdatePersonProfileMutation,
   UpdatePersonProfileMutationVariables,
-} from '@/__generated__/graphql';
+} from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
 
 const GET_PERSON_PROFILE_QUERY = gql(`

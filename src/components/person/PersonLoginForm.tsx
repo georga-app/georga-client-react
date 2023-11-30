@@ -18,8 +18,8 @@ import UserContext from "@/provider/User";
 import Form from "@/components/shared/Form";
 import { Input } from "@/components/shared/FormFields";
 
-import { gql } from '@/__generated__/gql';
-import { TokenAuthMutationVariables } from '@/__generated__/graphql';
+import { gql } from '@/types/__generated__/gql';
+import { TokenAuthMutationVariables } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
 
 const TOKEN_AUTH_MUTATION = gql(`
