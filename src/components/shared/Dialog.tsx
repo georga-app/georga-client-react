@@ -66,7 +66,6 @@ function ResponsiveDialog({
           </DialogContentText>
         }
         {cloneElement(children, {
-          // additionalButtons: []
           onSuccess: () => {setOpen(false)}
         })}
       </DialogContent>

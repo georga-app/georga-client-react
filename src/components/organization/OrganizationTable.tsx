@@ -10,6 +10,7 @@ import OrganizationForm from '@/components/organization/OrganizationForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 
+import { ActionCreateIcon } from '@/theme/Icons';
 import { ActionDeleteIcon } from '@/theme/Icons';
 import { ActionEditIcon } from '@/theme/Icons';
 import { ActionPublishIcon } from '@/theme/Icons';
@@ -78,27 +79,20 @@ function OrganizationTable() {
       name: 'Edit',
       icon: <ActionEditIcon />,
       priority: 20,
-      action: (rows, event) => {
+      action: (selected, event) => {
         dialog.showDialog(
-          <OrganizationForm organizationId={rows[0].id} />,
+          <OrganizationForm organizationId={selected[0].id} />,
           "Edit Organization"
         )
       },
-      available: (rows) => (rows.length == 1),
-    },
-    {
-      name: 'Delete',
-      icon: <ActionDeleteIcon />,
-      priority: 30,
-      action: (rows, event) => {},
-      available: (rows) => (rows.length > 0),
+      available: (selected) => (selected.length == 1),
     },
     {
       name: 'Publish',
       icon: <ActionPublishIcon />,
       priority: 40,
-      action: (rows, event) => {},
-      available: (rows) => false,
+      action: (selected, event) => {},
+      available: (selected) => false,
     },
   ];
 

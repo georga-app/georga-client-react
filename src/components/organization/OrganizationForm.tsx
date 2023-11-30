@@ -12,9 +12,35 @@ import { Input } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
 
 import { gql } from '@/__generated__/gql';
-import { OrganizationType, ListOrganizationsQuery } from '@/__generated__/graphql';
-import { UpdateOrganizationMutation } from '@/__generated__/graphql';
-import { OrganizationFormErrors } from "@/types/FormErrors";
+import {
+  CreateOrganizationMutation,
+  CreateOrganizationMutationVariables,
+  UpdateOrganizationMutation,
+  UpdateOrganizationMutationVariables,
+} from '@/__generated__/graphql';
+const CREATE_ORGANIZATION_MUTATION = gql(`
+  mutation CreateOrganization (
+    $name: String!
+    $description: String
+    $icon: String
+  ) {
+    createOrganization (
+      input: {
+        name: $name
+        description: $description
+        icon: $icon
+      }
+    ) {
+      organization {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`);
 
 const GET_ORGANIZATION_QUERY = gql(`
   query GetOrganizations (
@@ -64,24 +90,64 @@ const UPDATE_ORGANIZATION_MUTATION = gql(`
 `);
 
 function OrganizationForm({
-  organizationId,
+  organizationId = '',
   onSuccess = () => undefined,
   onError = () => undefined,
 }: {
-  organizationId: string,
-  onSuccess?: (data: UpdateOrganizationMutation) => void,
-  onError?: (data: UpdateOrganizationMutation) => void,
 }) {
+  // mode
+  const create = !(organizationId);
+  const edit = (organizationId);
+
+  // context
+  const snackbar = useSnackbar();
+
+  // states
   const [success, setSuccess] = useState(false);
   const [changed, setChanged] = useState<{[id: string]: any}>({});
   const [errors, setErrors] = useState<OrganizationFormErrors>({});
-  const snackbar = useSnackbar();
 
   // fields
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [icon, setIcon] = useState("");
   // const [state, setState] = useState("");
+
+  // createOrganization
+  const [ createOrganization, {
+    loading: createOrganizationLoading,
+    reset: createOrganizationReset
+  }] = useMutation(
+    CREATE_ORGANIZATION_MUTATION, {
+      onCompleted: data => {
+        const response = data.createOrganization;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          updateOrganizationReset();
+          setErrors({});
+          setChanged({});
+          setSuccess(true);
+          snackbar.showSnackbar("Organization created", 'success');
+          onSuccess(data);
+        } else {
+          var fieldErrors: {[fieldId: string]: string[]} = {};
+          response.errors.forEach(error => {
+            fieldErrors[error.field] = error.messages
+          });
+          setErrors(fieldErrors);
+          updateOrganizationReset();
+          onError(data);
+        }
+      },
+      onError: error => {
+        setErrors({form: error.message});
+      },
+      refetchQueries: [
+        "ListOrganizations"
+      ]
+    }
+  );
 
   // getOrganization
   const {
@@ -91,6 +157,7 @@ function OrganizationForm({
     error: getOrganizationError
   } = useQuery(
     GET_ORGANIZATION_QUERY, {
+      skip: create,
       variables: {
         id: organizationId
       },
@@ -153,14 +220,23 @@ function OrganizationForm({
   // submit
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    updateOrganization({
-      variables: {
-        id: organizationId,
-        name: name,
-        description: description,
-        icon: icon,
-      }
-    });
+    if (create)
+      createOrganization({
+        variables: {
+          name: name,
+          description: description,
+          icon: icon,
+        }
+      });
+    if (edit)
+      updateOrganization({
+        variables: {
+          id: organizationId,
+          name: name,
+          description: description,
+          icon: icon,
+        }
+      });
   }
 
   // success
@@ -171,10 +247,12 @@ function OrganizationForm({
   };
 
   // return
-  if (getOrganizationError)
-    return <div>Error</div>;
-  if (!getOrganizationCalled || getOrganizationLoading)
-    return <div>Loading...</div>;
+  if (edit) {
+    if (getOrganizationError)
+      return <div>Error</div>;
+    if (!getOrganizationCalled || getOrganizationLoading)
+      return <div>Loading...</div>;
+  }
   return (
     <Form handleSubmit={handleSubmit} error={errors.form}>
 
@@ -209,11 +287,13 @@ function OrganizationForm({
         color="secondary"
         sx={{ marginTop: 1 }}
         disabled={
-          updateOrganizationLoading
-          || Object.keys(changed).length === 0
+          Object.keys(changed).length === 0
+          || (edit && updateOrganizationLoading)
+          || (create && createOrganizationLoading)
         }
       >
-        {updateOrganizationLoading ? "Saving..." : "Save"}
+        {edit && (updateOrganizationLoading ? "Saving..." : "Save")}
+        {create && (createOrganizationLoading ? "Creating..." : "Create")}
       </Button>
     </Form>
   );
