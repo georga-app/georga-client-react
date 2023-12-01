@@ -26,6 +26,14 @@ type DataTableAction<T> = {
     toolbar?: boolean,
     context?: boolean,
   }
+  state?: {
+    transitions: {
+      key: string,
+      sources: { [source: string]: string[] },
+      targets: { [source: string]: string[] },
+    },
+    target: string,
+  }
 }
 
 type DataTableActions<T> = DataTableAction<T>[]

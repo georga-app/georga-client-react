@@ -11,8 +11,10 @@ import Box from '@mui/material/Box';
 import OrganizationForm from '@/components/organization/OrganizationForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
+import { organizationState } from '@/app/states';
 
 import {
+  ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
   ActionEditIcon,
@@ -30,6 +32,7 @@ const LIST_ORGANIZATIONS_QUERY = gql(`
       edges {
         node {
           id
+          state
           name
           icon
           description
@@ -87,9 +90,21 @@ function OrganizationTable() {
   // actions
   const actions: DataTableActions<OrganizationType> = [
     {
+      name: 'Create',
+      icon: <ActionCreateIcon />,
+      priority: 10,
+      action: (selected, event) => {
+        dialog.showDialog(
+          <OrganizationForm />,
+          "Create Organization"
+        )
+      },
+      available: (selected) => (selected.length == 0),
+    },
+    {
       name: 'Edit',
       icon: <ActionEditIcon />,
-      priority: 10,
+      priority: 20,
       action: (selected, event) => {
         dialog.showDialog(
           <OrganizationForm organizationId={selected[0].id} />,
@@ -102,17 +117,46 @@ function OrganizationTable() {
       }
     },
     {
+      name: 'Delete',
+      icon: <ActionDeleteIcon />,
+      priority: 30,
+      action: (selected, event) => {},
+      available: (selected) => (selected.length > 0),
+    },
+    {
       name: 'Publish',
       icon: <ActionPublishIcon />,
       priority: 100,
       action: (selected, event) => {},
-      available: (selected) => false,
+      available: (selected) => (
+        selected.length > 0
+        && organizationState.sources.PUBLISHED.includes(selected[0].state)
+      ),
+      state: {
+        transitions: organizationState,
+        target: 'PUBLISHED'
+      }
+    },
+    {
+      name: 'Archive',
+      icon: <ActionArchiveIcon />,
+      priority: 110,
+      action: (selected, event) => {},
+      available: (selected) => (
+        selected.length > 0
+        && organizationState.sources.ARCHIVED.includes(selected[0].state)
+      ),
+      state: {
+        transitions: organizationState,
+        target: 'ARCHIVED'
+      }
     },
     {
       name: 'Enter',
       icon: <NavigationForwardIcon />,
       priority: 1000,
       action: (selected, event) => {},
+      available: (selected) => (selected.length == 1),
       display: {
         toolbar: false,
         row: true,

@@ -144,13 +144,7 @@ function DataTableHead<T>({
 
         {/* row actions */}
         {rowActions &&
-          <TableCell
-            // key={headCell.id as string}
-            // align={headCell.align ? headCell.align : 'left'}
-            // padding={headCell.disablePadding ? 'none' : 'normal'}
-            // sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ userSelect: 'none' }}
-          >
+          <TableCell sx={{ userSelect: 'none' }}>
             Actions
           </TableCell>
         }
