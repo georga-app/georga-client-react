@@ -13,7 +13,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import ThreeColumns from '@/theme/layouts/ThreeColumns';
+import TwoColumns from '@/theme/layouts/TwoColumns';
 import HeaderNav from '@/components/shared/HeaderNav';
 
 import { MenuItem } from '@/types/Menus';
@@ -54,11 +54,18 @@ function Item({
 
 function Account() {
   return (
-    <ThreeColumns
+    <TwoColumns
       bg='admin'
-      middle={
-        <Container sx={{ width: { xs: "auto", sm: 600 }, }}>
-          <HeaderNav title="Account" back="/"/>
+      right={
+        <Container sx={{
+          width: { xs: "auto", sm: 600 },
+          margin: 0,
+          paddingX: { xs: 0, sm: 0 },
+        }}>
+          <HeaderNav
+            currentLabel="Account"
+            backUrl="/"
+          />
           <Stack spacing={0}>
             {menus.backend.account.map((page) => page.type !== 'link' ? '' : (
               <Item key={page.path} page={page} />

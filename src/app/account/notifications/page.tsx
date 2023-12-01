@@ -2,25 +2,21 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import ThreeColumns from '@/theme/layouts/ThreeColumns';
+import TwoColumns from '@/theme/layouts/TwoColumns';
+
 import HeaderNav from '@/components/shared/HeaderNav';
 
 function Notifications() {
   return (
-    <ThreeColumns
+    <TwoColumns
       bg='admin'
-      left={
-        <></>
-      }
-      middle={
-        <>
-          <HeaderNav title="Notifications" back="/account" />
-          <p>Notifications</p>
-        </>
-      }
-      right={
-        <></>
-      }
+      right=<>
+        <HeaderNav
+          currentLabel="Notifications"
+          backUrl="/account"
+        />
+        <p>Notifications</p>
+      </>
     />
   );
 }

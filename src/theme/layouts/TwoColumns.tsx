@@ -20,10 +20,17 @@ function TwoColumns({
   return (
     <Box sx={{
       flexGrow: 1,
-      paddingY: 2,
+      paddingBottom: 2,
       backgroundColor: 'background.' + bg,
     }}>
-      <Container maxWidth="lg" sx={{ paddingY: 4 }}>
+      <Container
+        maxWidth="lg"
+        sx={{
+          paddingX: { xs: 0, sm: '24px' },
+          paddingTop: { xs: 1, sm: 2 },
+          paddingBottom: 4
+        }}
+      >
         <Grid container sx={{
           height: '100%',
           flexGrow: 1,

@@ -4,7 +4,7 @@
  */
 'use client';
 
-import ThreeColumns from '@/theme/layouts/ThreeColumns';
+import TwoColumns from '@/theme/layouts/TwoColumns';
 
 import Paper from '@mui/material/Paper';
 
@@ -13,20 +13,15 @@ import OrganizationSubscribedTable from '@/components/organization/OrganizationS
 
 function Organizations() {
   return (
-    <ThreeColumns
+    <TwoColumns
       bg='admin'
-      left={
-        <></>
-      }
-      middle={
-        <>
-          <HeaderNav title="Organizations" back="/account" />
-          <OrganizationSubscribedTable />
-        </>
-      }
-      right={
-        <></>
-      }
+      right=<>
+        <HeaderNav
+          currentLabel="Organizations"
+          backUrl="/account"
+        />
+        <OrganizationSubscribedTable />
+      </>
     />
   );
 }

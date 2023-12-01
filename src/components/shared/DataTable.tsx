@@ -10,7 +10,6 @@ import { useMemo } from "react";
 import { MouseEvent } from "react";
 import { ChangeEvent } from "react";
 
-import { alpha } from '@mui/material/styles';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
@@ -33,6 +32,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 
+import { alpha, SxProps, Theme } from '@mui/material/styles';
 import { visuallyHidden } from '@mui/utils';
 
 import { ActionClearIcon } from '@/theme/Icons'
@@ -160,6 +160,7 @@ function DataTableToolbarAction({
   badge = undefined,
   ariaControls,
   ariaHaspopup,
+  sx = [],
 }: {
   icon: React.ReactNode,
   onClick?: (event: React.MouseEvent<HTMLElement>) => void,
@@ -167,6 +168,7 @@ function DataTableToolbarAction({
   badge?: number | undefined,
   ariaControls?: React.ComponentProps<'button'>['aria-controls'],
   ariaHaspopup?: React.ComponentProps<'button'>['aria-haspopup'],
+  sx?: SxProps<Theme>,
 }) {
   return (
     <Tooltip title={tooltip}>
@@ -174,7 +176,13 @@ function DataTableToolbarAction({
         aria-controls={ariaControls}
         aria-haspopup={ariaHaspopup}
         onClick={onClick}
-        sx={{ marginX: { xs: 1.5, sm: 0.5 }, marginY: { xs: 1, sm: 0.5 } }}
+        sx={[
+          {
+            marginX: { xs: 1.5, sm: 0.5 },
+            marginY: { xs: 1, sm: 0.5 },
+          },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
       >
         <Badge badgeContent={badge} color="primary">
           {icon}
@@ -635,7 +643,10 @@ function DataTable<T extends {}>({
                           return (
                             <TableCell
                               key={column.id as string}
-                              sx={{ cursor: 'default' }}
+                              sx={{
+                                cursor: 'default',
+                                width: columns[colIndex].grow ? '100%' : 'auto',
+                              }}
                             >
                               {content}
                             </TableCell>
@@ -657,6 +668,19 @@ function DataTable<T extends {}>({
                                   onClick={event => {
                                     event.stopPropagation();
                                     action.action([row], event)
+                                  }}
+                                  sx={{
+                                    paddingRight: {
+                                      xs: actIndex == visibleContextActions.length ? 0 : '8px',
+                                      sm: '8px'
+                                    },
+                                    marginRight: {
+                                      xs: actIndex == visibleContextActions.length ? 0 : 0.5,
+                                      sm: 0.5
+                                    },
+                                    marginLeft: { xs: 0.5 },
+                                    marginY: { xs: 0.5 },
+                                    color: isItemSelected ? '#777' : '#aaa',
                                   }}
                                 />
                               )}

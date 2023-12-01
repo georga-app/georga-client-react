@@ -4,21 +4,30 @@
  */
 'use client';
 
+import HeaderNav from '@/components/shared/HeaderNav';
+
 import TwoColumns from '@/theme/layouts/TwoColumns';
 import OrganizationTable from '@/components/organization/OrganizationTable';
 
 function Organizations() {
-  return (
+  return <>
     <TwoColumns
       bg='admin'
       left={
         <></>
       }
-      right={
+      right=<>
+        <HeaderNav
+          currentLabel="Organizations"
+          backUrl="/"
+          backLabel="Home"
+          forwardUrl="/projects"
+          forwardLabel="Projekte"
+        />
         <OrganizationTable />
-      }
+      </>
     />
-  );
+  </>;
 }
 
 export default Organizations;

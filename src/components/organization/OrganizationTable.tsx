@@ -55,7 +55,6 @@ let columns: DataTableColumn<OrganizationType>[] = [
         <Image
           alt="logo"
           src={'data:image/png;base64,' + data as string}
-          // sizes='100vw'
           height={0}
           width={0}
           style={{ width: '100%', height: 'auto' }}
@@ -166,7 +165,6 @@ function OrganizationTable() {
 
   return (
     <DataTable
-      title="Organizations"
       columns={columns}
       rows={rows}
       rowKey={rowKey}

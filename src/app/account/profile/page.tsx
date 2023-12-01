@@ -15,17 +15,15 @@ function Profile() {
   return (
     <TwoColumns
       bg='admin'
-      left={
-        <></>
-      }
-      right={
-        <>
-          <HeaderNav title="Profile" back="/account" />
-          <Paper sx= {{ padding: { xs: 2, sm: 5 } }}>
-            <PersonProfileForm />
-          </Paper>
-        </>
-      }
+      right=<>
+        <HeaderNav
+          currentLabel="Profile"
+          backUrl="/account"
+        />
+        <Paper sx= {{ padding: { xs: 2, sm: 5 } }}>
+          <PersonProfileForm />
+        </Paper>
+      </>
     />
   );
 }
