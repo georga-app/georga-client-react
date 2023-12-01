@@ -2,13 +2,23 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import OneColumn from '@/theme/layouts/OneColumn';
+import HeaderNav from '@/components/shared/HeaderNav';
+
+import TwoColumns from '@/theme/layouts/TwoColumns';
 
 function Participants() {
   return (
-    <OneColumn bg='admin'>
-      Participants
-    </OneColumn>
+    <TwoColumns
+      bg='admin'
+      right=<>
+        <HeaderNav
+          currentLabel="Participants"
+          backUrl="/admin/shifts"
+          backLabel="Shifts"
+        />
+        Participants
+      </>
+    />
   );
 }
 

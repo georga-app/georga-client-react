@@ -2,13 +2,25 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import OneColumn from '@/theme/layouts/OneColumn';
+import HeaderNav from '@/components/shared/HeaderNav';
+
+import TwoColumns from '@/theme/layouts/TwoColumns';
 
 function Shifts() {
   return (
-    <OneColumn bg='admin'>
-      Shifts
-    </OneColumn>
+    <TwoColumns
+      bg='admin'
+      right=<>
+        <HeaderNav
+          currentLabel="Shifts"
+          backUrl="/admin/tasks"
+          backLabel="Tasks"
+          forwardUrl="/admin/participants"
+          forwardLabel="Participants"
+        />
+        Shifts
+      </>
+    />
   );
 }
 

@@ -21,7 +21,7 @@ function Organizations() {
           currentLabel="Organizations"
           backUrl="/"
           backLabel="Home"
-          forwardUrl="/projects"
+          forwardUrl="/admin/projects"
           forwardLabel="Projekte"
         />
         <OrganizationTable />
