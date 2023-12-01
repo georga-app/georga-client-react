@@ -37,6 +37,7 @@ import MenuUserIcon from '@mui/icons-material/AccountCircle';
 
 // Navigation
 import NavigationBackIcon from '@mui/icons-material/ArrowBackIosNew';
+import NavigationForwardIcon from '@mui/icons-material/ArrowForwardIos';
 
 // Register
 import RegisterIcon from "@mui/icons-material/Gavel";
@@ -76,6 +77,7 @@ export {
   MenuUserIcon,
 
   NavigationBackIcon,
+  NavigationForwardIcon,
 
   RegisterIcon,
   RegisterSuccessIcon,

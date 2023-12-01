@@ -94,6 +94,7 @@ function DataTableHead<T>({
   orderBy,
   rowCount,
   columns,
+  rowActions,
 }: {
   numSelected: number,
   onRequestSort: (event: React.MouseEvent<unknown>,
@@ -102,6 +103,7 @@ function DataTableHead<T>({
   orderBy: string,
   rowCount: number,
   columns: DataTableColumn<T>[],
+  rowActions: boolean,
 }) {
   const createSortHandler =
     (property: keyof T) => (event: React.MouseEvent<unknown>) => {
@@ -113,13 +115,15 @@ function DataTableHead<T>({
   return (
     <TableHead>
       <TableRow>
+
+        {/* columns */}
         {columns.map((headCell: DataTableColumn<T>) => (
           <TableCell
             key={headCell.id as string}
             align={headCell.align ? headCell.align : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ userSelect: 'none' }}
+            sx={{ userSelect: 'none', width: headCell.grow ? '100%' : 'auto' }}
           >
             {headCell.sortable
               ? <TableSortLabel
@@ -137,6 +141,19 @@ function DataTableHead<T>({
             : headCell.label}
           </TableCell>
         ))}
+
+        {/* row actions */}
+        {rowActions &&
+          <TableCell
+            // key={headCell.id as string}
+            // align={headCell.align ? headCell.align : 'left'}
+            // padding={headCell.disablePadding ? 'none' : 'normal'}
+            // sortDirection={orderBy === headCell.id ? order : false}
+            sx={{ userSelect: 'none' }}
+          >
+            Actions
+          </TableCell>
+        }
       </TableRow>
     </TableHead>
   );
@@ -227,15 +244,17 @@ function DataTableToolbar<T>({
   };
 
   // actions
-  let promotedActions: DataTableActions<T> = [];
+  const visibleToolbarActions: DataTableActions<T> = availableActions
+    .filter(x => x.display?.toolbar !== undefined ? x.display.toolbar : true);
+  let promotedToolbarActions: DataTableActions<T> = [];
   let showActionMenu = false;
   if ( Object.keys(actions).length ) {
     const numSlots = 5;
     const numActionSlots = numSlots - Number(filterable) - Number(selectable);
-    showActionMenu = availableActions.length > numActionSlots;
-    promotedActions = availableActions;
+    showActionMenu = visibleToolbarActions.length > numActionSlots;
+    promotedToolbarActions = visibleToolbarActions;
     if ( showActionMenu )
-      promotedActions = promotedActions.slice(0, numActionSlots - 1);
+      promotedToolbarActions = promotedToolbarActions.slice(0, numActionSlots - 1);
   }
 
   // actions menu
@@ -365,7 +384,7 @@ function DataTableToolbar<T>({
         <Box flexGrow={1} />
 
         {/* actions */}
-        {promotedActions && promotedActions.map((action, index) =>
+        {promotedToolbarActions && promotedToolbarActions.map((action, index) =>
           <DataTableToolbarAction
             key={'promoted-action-' + index}
             icon={action.icon}
@@ -396,8 +415,8 @@ function DataTableToolbar<T>({
             open={Boolean(anchorElActions)}
             onClose={handleCloseActionsMenu}
           >
-            {availableActions.map((action, index) => [
-              index == promotedActions.length && <Divider key='divider' />,
+            {visibleToolbarActions.map((action, index) => [
+              index == promotedToolbarActions.length && <Divider key='divider' />,
               <MenuItem
                 key={'toolbar-available-action-' + index}
                 onClick={event => {
@@ -519,8 +538,6 @@ function DataTable<T extends {}>({
         });
         return result;
       }, []);
-      // return filteredRows;
-      // const sortedRows = stableSort(filteredRows as Array<any>, getComparator(order, orderBy))
       const sortedRows = stableSort(filteredRows, getComparator(order, orderBy))
         .slice(
           page * rowsPerPage,
@@ -535,8 +552,12 @@ function DataTable<T extends {}>({
 
   // actions
   const availableActions: DataTableActions<T> = actions
-    .filter(x => x.available(getSelectedRows()))
+    .filter(x => x.available ? x.available(getSelectedRows()) : true)
     .sort((x, y) => x.priority - y.priority);
+  const visibleContextActions: DataTableActions<T> = availableActions
+    .filter(x => x.display?.context !== undefined ? x.display.context : true);
+  const visibleRowActions: DataTableActions<T> = actions
+    .filter(x => x.display?.row !== undefined ? x.display.row : false);
 
   // context menu
   const handleCloseContextMenu = () => {
@@ -592,12 +613,13 @@ function DataTable<T extends {}>({
                   orderBy={orderBy as string}
                   onRequestSort={handleRequestSort}
                   rowCount={rows.length}
+                  rowActions={Boolean(visibleRowActions.length)}
                 />
               }
 
               {/* body */}
               <TableBody>
-                {visibleRows.map((row, index) => {
+                {visibleRows.map((row, rowIndex) => {
                     const isItemSelected = isSelected(row[rowKey] as string);
                     return (
                       <TableRow
@@ -612,7 +634,8 @@ function DataTable<T extends {}>({
                         key={row[rowKey] as string}
                         selected={isItemSelected}
                       >
-                        {columns.map((column, index) => {
+                        {/* columns */}
+                        {columns.map((column, colIndex) => {
                           const data = row[column.id as keyof T];
                           const content = column.content ? column.content(data, row) : String(data);
                           return (
@@ -624,6 +647,28 @@ function DataTable<T extends {}>({
                             </TableCell>
                           );
                         })}
+
+                        {/* row actions */}
+                        {visibleRowActions &&
+                          <TableCell
+                            key={'row-' + rowIndex + '-actions'}
+                            sx={{ cursor: 'default' }}
+                          >
+                            <Box sx={{ display: 'flex' }}>
+                              {visibleRowActions.map((action, actIndex) =>
+                                <DataTableToolbarAction
+                                  key={'row-' + rowIndex + '-action-' + actIndex}
+                                  icon={action.icon}
+                                  tooltip={action.name}
+                                  onClick={event => {
+                                    event.stopPropagation();
+                                    action.action([row], event)
+                                  }}
+                                />
+                              )}
+                            </Box>
+                          </TableCell>
+                        }
                       </TableRow>
                     );
                   })}
@@ -667,9 +712,9 @@ function DataTable<T extends {}>({
                 : undefined
             }
           >
-            {availableActions.map((action, index) => (
+            {visibleContextActions.map((action, index) => (
               <MenuItem
-                key={'context-available-action-' + index}
+                key={'context-action-' + index}
                 onClick={event => {
                   action.action(getSelectedRows(), event); handleCloseContextMenu();
                 }}

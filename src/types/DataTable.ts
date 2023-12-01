@@ -9,6 +9,7 @@ interface DataTableColumn<T> {
   id: keyof T,
   label: string,
   align?: "center" | "left" | "right" | "inherit" | "justify" | undefined,
+  grow?: boolean,
   sortable?: boolean,
   filterable?: boolean,
   content?: (data: T[keyof T], row: T) => React.ReactNode,
@@ -19,7 +20,12 @@ type DataTableAction<T> = {
   icon: React.ReactNode,
   priority: number,
   action: (rows: T[], event: React.MouseEvent<HTMLElement>) => void,
-  available: (rows: T[]) => boolean,
+  available?: (rows: T[]) => boolean,
+  display?: {
+    row?: boolean,
+    toolbar?: boolean,
+    context?: boolean,
+  }
 }
 
 type DataTableActions<T> = DataTableAction<T>[]

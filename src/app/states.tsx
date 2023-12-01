@@ -13,10 +13,8 @@ const organizationStateTransitions: {
   ARCHIVED: ['DELETED'],
   DELETED: [],
 }
-const organisazionStateStates = GeorgaOrganizationStateChoices;
 
 
 export {
-  organisazionStateStates,
   organizationStateTransitions,
 };
