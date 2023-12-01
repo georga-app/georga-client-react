@@ -671,11 +671,11 @@ function DataTable<T extends {}>({
                                   }}
                                   sx={{
                                     paddingRight: {
-                                      xs: actIndex == visibleContextActions.length ? 0 : '8px',
+                                      xs: actIndex == visibleRowActions.length - 1 ? 0 : '8px',
                                       sm: '8px'
                                     },
                                     marginRight: {
-                                      xs: actIndex == visibleContextActions.length ? 0 : 0.5,
+                                      xs: actIndex == visibleRowActions.length - 1 ? 0 : 0.5,
                                       sm: 0.5
                                     },
                                     marginLeft: { xs: 0.5 },
