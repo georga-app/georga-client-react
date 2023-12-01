@@ -32,6 +32,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 
+import { ResponsiveStyleValue } from '@mui/system';
 import { alpha, SxProps, Theme } from '@mui/material/styles';
 import { visuallyHidden } from '@mui/utils';
 
@@ -117,30 +118,45 @@ function DataTableHead<T>({
       <TableRow>
 
         {/* columns */}
-        {columns.map((headCell: DataTableColumn<T>) => (
-          <TableCell
-            key={headCell.id as string}
-            align={headCell.align ? headCell.align : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ userSelect: 'none', width: headCell.grow ? '100%' : 'auto' }}
-          >
-            {headCell.sortable
-              ? <TableSortLabel
-                  active={orderBy === headCell.id}
-                  direction={orderBy === headCell.id ? order : 'asc'}
-                  onClick={createSortHandler(headCell.id)}
-                >
-                  {headCell.label}
-                  {orderBy === headCell.id ? (
-                    <Box component="span" sx={visuallyHidden}>
-                      {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                    </Box>
-                  ) : null}
-                </TableSortLabel>
-            : headCell.label}
-          </TableCell>
-        ))}
+        {columns.map((headCell: DataTableColumn<T>) => {
+          let sx: SxProps<Theme> = {
+            width: 'auto',
+            display: {},
+          }
+          if ( headCell.grow )
+            sx.width = '100%';
+          if ( headCell.shrink )
+            sx.width = 0;
+          const breakpoint = headCell.display;
+          if ( breakpoint ) {
+            sx.display = { xs: 'none' };
+            sx.display[breakpoint] = 'table-cell';
+          }
+          return (
+            <TableCell
+              key={headCell.id as string}
+              align={headCell.align ? headCell.align : 'left'}
+              padding={headCell.disablePadding ? 'none' : 'normal'}
+              sortDirection={orderBy === headCell.id ? order : false}
+              sx={[{ userSelect: 'none'}, ... [sx]]}
+            >
+              {headCell.sortable
+                ? <TableSortLabel
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : 'asc'}
+                    onClick={createSortHandler(headCell.id)}
+                  >
+                    {headCell.label}
+                    {orderBy === headCell.id ? (
+                      <Box component="span" sx={visuallyHidden}>
+                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                      </Box>
+                    ) : null}
+                  </TableSortLabel>
+              : headCell.label}
+            </TableCell>
+          );
+        })}
 
         {/* row actions */}
         {rowActions &&
@@ -640,13 +656,24 @@ function DataTable<T extends {}>({
                         {columns.map((column, colIndex) => {
                           const data = row[column.id as keyof T];
                           const content = column.content ? column.content(data, row) : String(data);
+                          let sx: SxProps<Theme> = {
+                            width: 'auto',
+                            display: {},
+                          }
+                          if ( columns[colIndex].grow )
+                            sx.width = '100%';
+                          if ( columns[colIndex].shrink )
+                            sx.width = 0;
+                          const breakpoint = columns[colIndex].display;
+                          if ( breakpoint ) {
+                            sx.display = { xs: 'none' };
+                            sx.display[breakpoint] = 'table-cell';
+                          }
                           return (
                             <TableCell
                               key={column.id as string}
-                              sx={{
-                                cursor: 'default',
-                                width: columns[colIndex].grow ? '100%' : 'auto',
-                              }}
+                              // sx={{ cursor: 'default', width: width }}
+                              sx={[{ cursor: 'default' }, ... [sx] ]}
                             >
                               {content}
                             </TableCell>
@@ -657,7 +684,7 @@ function DataTable<T extends {}>({
                         {visibleRowActions &&
                           <TableCell
                             key={'row-' + rowIndex + '-actions'}
-                            sx={{ cursor: 'default' }}
+                            sx={{ cursor: 'default', width: 0 }}
                           >
                             <Box sx={{ display: 'flex' }}>
                               {visibleRowActions.map((action, actIndex) =>
@@ -692,7 +719,10 @@ function DataTable<T extends {}>({
                   })}
                 {visibleRows.length == 0 &&
                   <TableRow style={{ height: (dense ? 33 : 53) * 2 }} >
-                    <TableCell colSpan={columns.length} sx={{ textAlign: 'center' }}>
+                    <TableCell
+                      colSpan={columns.length + (visibleRowActions ? 1 : 0)}
+                      sx={{ textAlign: 'center' }}
+                    >
                       No data to display.
                     </TableCell>
                   </TableRow>

@@ -10,6 +10,8 @@ interface DataTableColumn<T> {
   label: string,
   align?: "center" | "left" | "right" | "inherit" | "justify" | undefined,
   grow?: boolean,
+  shrink?: boolean,
+  display?: "xs" | "sm" | "md" | "lg",
   sortable?: boolean,
   filterable?: boolean,
   content?: (data: T[keyof T], row: T) => React.ReactNode,

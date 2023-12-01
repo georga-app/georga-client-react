@@ -48,6 +48,7 @@ let columns: DataTableColumn<OrganizationType>[] = [
   {
     id: 'icon',
     label: 'Logo',
+    shrink: true,
     sortable: false,
     filterable: false,
     content: (data, row) =>
@@ -64,7 +65,13 @@ let columns: DataTableColumn<OrganizationType>[] = [
   {
     id: 'name',
     label: 'Name',
-    grow: true,
+    sortable: true,
+    filterable: true,
+  },
+  {
+    id: 'description',
+    label: 'Description',
+    display: 'sm',
     sortable: true,
     filterable: true,
   },
