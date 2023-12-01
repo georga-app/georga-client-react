@@ -2,7 +2,7 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import { GeorgaOrganizationStateChoices } from '@/types/__generated__/graphql';
+import { OrganizationType, GeorgaOrganizationStateChoices } from '@/types/__generated__/graphql';
 
 // organization
 type organizationStateTransitionsType = {
@@ -15,7 +15,7 @@ const organizationStateTransitions: organizationStateTransitionsType = {
   DELETED: [],
 }
 const organizationState: {
-  key: string,
+  key: keyof OrganizationType,
   sources: organizationStateTransitionsType,
   targets: organizationStateTransitionsType,
 } = {
