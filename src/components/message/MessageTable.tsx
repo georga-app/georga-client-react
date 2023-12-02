@@ -3,18 +3,22 @@
  * Repository: https://github.com/georga-app/georga-client-react
  */
 import { useState } from 'react';
-import Image from 'next/image';
 import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
-import OrganizationForm from '@/components/organization/OrganizationForm';
+// import PersonForm from '@/components/person/PersonForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
-import { organizationState } from '@/app/states';
-
 import {
+  messageState,
+  messageEmailDelivery,
+  messagePushDelivery,
+  messageSmsDelivery,
+} from '@/app/states';
+
+import {  // TODO
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -24,19 +28,37 @@ import {
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { OrganizationType } from '@/types/__generated__/graphql'
+import { MessageType } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
-const LIST_ORGANIZATIONS_QUERY = gql(`
-  query ListOrganizations {
-    listOrganizations {
+const LIST_MESSAGES_QUERY = gql(`
+  query ListMessages {
+    listMessages {
       edges {
         node {
-          id
+          title
+          priority
+          category
           state
-          name
-          icon
-          description
+          delivery
+          scope {
+            __typename
+            ... on OrganizationType {
+              ... OrganizationParts
+            }
+            ... on ProjectType {
+              ... ProjectParts
+            }
+            ... on OperationType {
+              ... OperationParts
+            }
+            ... on TaskType {
+              ... TaskParts
+            }
+            ... on ShiftType {
+              ... ShiftParts
+            }
+          }
         }
       }
     }
@@ -45,67 +67,72 @@ const LIST_ORGANIZATIONS_QUERY = gql(`
 
 // columns
 const rowKey = 'id';
-let columns: DataTableColumn<OrganizationType>[] = [
+let columns: DataTableColumn<MessageType>[] = [
   {
-    id: 'icon',
-    label: 'Logo',
-    shrink: true,
-    sortable: false,
-    filterable: false,
-    content: (data, row) =>
-      <Box sx={{ width: { xs: 40, sm: 90 } }}>
-        <Image
-          alt="logo"
-          src={'data:image/png;base64,' + data as string}
-          height={0}
-          width={0}
-          style={{ width: '100%', height: 'auto' }}
-        />
-      </Box>
-  },
-  {
-    id: 'name',
-    label: 'Name',
+    id: 'category',
+    label: 'Category',
     sortable: true,
     filterable: true,
   },
   {
-    id: 'description',
-    label: 'Description',
+    id: 'title',
+    label: 'Title',
+    sortable: true,
+    filterable: true,
+  },
+  {
+    id: 'delivery',
+    label: 'Delivery',
     display: 'sm',
     sortable: true,
     filterable: true,
   },
+  {
+    id: 'state',
+    label: 'State',
+    display: 'sm',
+    sortable: true,
+    filterable: true,
+  },
+  {
+    id: 'priority',
+    label: 'Priority',
+    display: 'sm',
+    sortable: true,
+    filterable: true,
+  },
+  // TODO
 ]
 
 
-function OrganizationTable() {
+function MessageTable() {
   // provider
   const dialog = useDialog();
   const filter = useFilter();
 
   // get
   const { data, loading } = useQuery(
-    LIST_ORGANIZATIONS_QUERY, {
+    LIST_MESSAGES_QUERY, {
       variables: {}
     }
   );
-  let rows: OrganizationType[] = [];
-  if (!loading && data?.listOrganizations?.edges)
-    rows = data.listOrganizations.edges
+  let rows: MessageType[] = [];
+  if (!loading && data?.listMessages?.edges)
+    rows = data.listMessages.edges
       .map((edge) => edge?.node)
-      .filter((node): node is OrganizationType => node !== undefined);
+      .filter((node): node is MessageType => node !== undefined);
 
   // actions
-  const actions: DataTableActions<OrganizationType> = [
+  const actions: DataTableActions<MessageType> = [
     {
       name: 'Create',
       icon: <ActionCreateIcon />,
       priority: 10,
       action: (selected, event) => {
         dialog.showDialog(
-          <OrganizationForm />,
-          "Create Organization"
+          // <MessageForm />,
+          <></>,
+          "Create Message"
         )
       },
       available: (selected) => (selected.length == 0),
@@ -116,8 +143,9 @@ function OrganizationTable() {
       priority: 20,
       action: (selected, event) => {
         dialog.showDialog(
-          <OrganizationForm organizationId={selected[0].id} />,
-          "Edit Organization"
+          // <MessageForm messageId={selected[0].id} />,
+          <></>,
+          "Edit Message"
         )
       },
       available: (selected) => (selected.length == 1),
@@ -139,10 +167,10 @@ function OrganizationTable() {
       action: (selected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && organizationState.sources.PUBLISHED.includes(selected[0].state)
+        && messageState.sources.PUBLISHED.includes(selected[0].state)
       ),
       state: {
-        transitions: organizationState,
+        transitions: messageState,
         target: 'PUBLISHED'
       }
     },
@@ -153,26 +181,14 @@ function OrganizationTable() {
       action: (selected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && organizationState.sources.ARCHIVED.includes(selected[0].state)
+        && messageState.sources.ARCHIVED.includes(selected[0].state)
       ),
       state: {
-        transitions: organizationState,
+        transitions: messageState,
         target: 'ARCHIVED'
       }
     },
-    {
-      name: 'Projects',
-      icon: <NavigationForwardIcon />,
-      priority: 1000,
-      action: (selected, event) => {
-        filter.setFilter(selected[0]);
-      },
-      available: (selected) => (selected.length == 1),
-      display: {
-        toolbar: false,
-        row: true,
-      }
-    },
+    // TODO
   ];
 
   return (
@@ -185,4 +201,4 @@ function OrganizationTable() {
   );
 }
 
-export default OrganizationTable;
+export default MessageTable;

@@ -3,18 +3,17 @@
  * Repository: https://github.com/georga-app/georga-client-react
  */
 import { useState } from 'react';
-import Image from 'next/image';
 import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
-import OrganizationForm from '@/components/organization/OrganizationForm';
+// import ProjectForm from '@/components/project/ProjectForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
-import { organizationState } from '@/app/states';
+import { projectState } from '@/app/states';
 
-import {
+import {  // TODO
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -24,18 +23,17 @@ import {
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { OrganizationType } from '@/types/__generated__/graphql'
+import { ProjectType } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
-const LIST_ORGANIZATIONS_QUERY = gql(`
-  query ListOrganizations {
-    listOrganizations {
+const LIST_PROJECTS_QUERY = gql(`
+  query ListProjects {
+    listProjects {
       edges {
         node {
           id
           state
           name
-          icon
           description
         }
       }
@@ -45,24 +43,7 @@ const LIST_ORGANIZATIONS_QUERY = gql(`
 
 // columns
 const rowKey = 'id';
-let columns: DataTableColumn<OrganizationType>[] = [
-  {
-    id: 'icon',
-    label: 'Logo',
-    shrink: true,
-    sortable: false,
-    filterable: false,
-    content: (data, row) =>
-      <Box sx={{ width: { xs: 40, sm: 90 } }}>
-        <Image
-          alt="logo"
-          src={'data:image/png;base64,' + data as string}
-          height={0}
-          width={0}
-          style={{ width: '100%', height: 'auto' }}
-        />
-      </Box>
-  },
+let columns: DataTableColumn<ProjectType>[] = [
   {
     id: 'name',
     label: 'Name',
@@ -79,33 +60,34 @@ let columns: DataTableColumn<OrganizationType>[] = [
 ]
 
 
-function OrganizationTable() {
+function ProjectTable() {
   // provider
   const dialog = useDialog();
   const filter = useFilter();
 
   // get
   const { data, loading } = useQuery(
-    LIST_ORGANIZATIONS_QUERY, {
+    LIST_PROJECTS_QUERY, {
       variables: {}
     }
   );
-  let rows: OrganizationType[] = [];
-  if (!loading && data?.listOrganizations?.edges)
-    rows = data.listOrganizations.edges
+  let rows: ProjectType[] = [];
+  if (!loading && data?.listProjects?.edges)
+    rows = data.listProjects.edges
       .map((edge) => edge?.node)
-      .filter((node): node is OrganizationType => node !== undefined);
+      .filter((node): node is ProjectType => node !== undefined);
 
   // actions
-  const actions: DataTableActions<OrganizationType> = [
+  const actions: DataTableActions<ProjectType> = [
     {
       name: 'Create',
       icon: <ActionCreateIcon />,
       priority: 10,
       action: (selected, event) => {
         dialog.showDialog(
-          <OrganizationForm />,
-          "Create Organization"
+          // <ProjectForm />,
+          <></>,
+          "Create Project"
         )
       },
       available: (selected) => (selected.length == 0),
@@ -116,8 +98,9 @@ function OrganizationTable() {
       priority: 20,
       action: (selected, event) => {
         dialog.showDialog(
-          <OrganizationForm organizationId={selected[0].id} />,
-          "Edit Organization"
+          // <ProjectForm projectId={selected[0].id} />,
+          <></>,
+          "Edit Project"
         )
       },
       available: (selected) => (selected.length == 1),
@@ -139,10 +122,10 @@ function OrganizationTable() {
       action: (selected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && organizationState.sources.PUBLISHED.includes(selected[0].state)
+        && projectState.sources.PUBLISHED.includes(selected[0].state)
       ),
       state: {
-        transitions: organizationState,
+        transitions: projectState,
         target: 'PUBLISHED'
       }
     },
@@ -153,15 +136,15 @@ function OrganizationTable() {
       action: (selected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && organizationState.sources.ARCHIVED.includes(selected[0].state)
+        && projectState.sources.ARCHIVED.includes(selected[0].state)
       ),
       state: {
-        transitions: organizationState,
+        transitions: projectState,
         target: 'ARCHIVED'
       }
     },
     {
-      name: 'Projects',
+      name: 'Operations',
       icon: <NavigationForwardIcon />,
       priority: 1000,
       action: (selected, event) => {
@@ -185,4 +168,4 @@ function OrganizationTable() {
   );
 }
 
-export default OrganizationTable;
+export default ProjectTable;

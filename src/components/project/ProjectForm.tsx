@@ -127,7 +127,7 @@ function OrganizationForm({
   const [createdAt, setCreatedAt] = useState("");
   const [modifiedAt, setModifiedAt] = useState("");
 
-  // create
+  // createOrganization
   const [ createOrganization, {
     loading: createOrganizationLoading,
     reset: createOrganizationReset
@@ -162,7 +162,7 @@ function OrganizationForm({
     }
   );
 
-  // get
+  // getOrganization
   const {
     called: getOrganizationCalled,
     loading: getOrganizationLoading,
@@ -189,7 +189,7 @@ function OrganizationForm({
     },
   );
 
-  // update
+  // updateOrganization
   const [ updateOrganization, {
     loading: updateOrganizationLoading,
     reset: updateOrganizationReset

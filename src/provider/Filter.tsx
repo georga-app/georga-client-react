@@ -12,12 +12,14 @@ import { FilterObjectType, FilterContextType } from '@/types/Filter';
 
 const GET_FILTER_OBJECT_FRAGMENTS = gql(`
   fragment OrganizationParts on OrganizationType {
+    id
     name
     description
     organizationState: state
     icon
   }
   fragment ProjectParts on ProjectType {
+    id
     name
     description
     projectState: state
@@ -26,6 +28,7 @@ const GET_FILTER_OBJECT_FRAGMENTS = gql(`
     }
   }
   fragment OperationParts on OperationType {
+    id
     name
     description
     operationState: state
@@ -34,6 +37,7 @@ const GET_FILTER_OBJECT_FRAGMENTS = gql(`
     }
   }
   fragment TaskParts on TaskType {
+    id
     name
     description
     taskState: state
@@ -44,6 +48,7 @@ const GET_FILTER_OBJECT_FRAGMENTS = gql(`
     }
   }
   fragment ShiftParts on ShiftType {
+    id
     state
     startTime
     shiftEndTime: endTime
@@ -60,7 +65,6 @@ const GET_FILTER_OBJECT_QUERY = gql(`
     node (
       id: $id
     ) {
-      id
       __typename
       ... on OrganizationType {
         ... OrganizationParts

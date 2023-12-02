@@ -7,11 +7,11 @@ import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
-// import PersonForm from '@/components/person/PersonForm';
+// import ParticipantForm from '@/components/project/ParticipantForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
-// import { personState } from '@/app/states';
+import { participantAcceptance, participantAdminAcceptance } from '@/app/states';
 
 import {  // TODO
   ActionArchiveIcon,
@@ -23,25 +23,20 @@ import {  // TODO
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { PersonType } from '@/types/__generated__/graphql'
+import { ParticipantType } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
-const LIST_PERSONS_QUERY = gql(`
-  query ListPersons {
-    listPersons {
+const LIST_PARTICIPANTS_QUERY = gql(`
+  query ListParticipants {
+    listParticipants {
       edges {
         node {
-          email
-          firstName
-          lastName
-          dateJoined
-          organizationsSubscribed {
-            edges {
-              node {
-                id
-                name
-              }
-            }
+          id
+          acceptance
+          adminAcceptance
+          person {
+            firstName
+            lastName
           }
         }
       }
@@ -51,23 +46,24 @@ const LIST_PERSONS_QUERY = gql(`
 
 // columns
 const rowKey = 'id';
-let columns: DataTableColumn<PersonType>[] = [
+let columns: DataTableColumn<ParticipantType>[] = [
   {
-    id: 'firstName',
-    label: 'First Name',
+    id: 'person',
+    label: 'Person',
+    sortable: true,
+    filterable: true,
+    content: (data, row) => data ? data.firstName + ' ' + data.lastName : ''
+  },
+  {
+    id: 'acceptance',
+    label: 'Acceptance',
     sortable: true,
     filterable: true,
   },
   {
-    id: 'lastName',
-    label: 'Last Name',
-    sortable: true,
-    filterable: true,
-  },
-  {
-    id: 'dateJoined',
-    label: 'Joined',
-    display: 'sm',
+    id: 'adminAcceptance',
+    label: 'Admin Acceptance',
+    // display: 'sm',
     sortable: true,
     filterable: true,
   },
@@ -75,25 +71,25 @@ let columns: DataTableColumn<PersonType>[] = [
 ]
 
 
-function PersonTable() {
+function ParticipantTable() {
   // provider
   const dialog = useDialog();
   const filter = useFilter();
 
   // get
   const { data, loading } = useQuery(
-    LIST_PERSONS_QUERY, {
+    LIST_PARTICIPANTS_QUERY, {
       variables: {}
     }
   );
-  let rows: PersonType[] = [];
-  if (!loading && data?.listPersons?.edges)
-    rows = data.listPersons.edges
+  let rows: ParticipantType[] = [];
+  if (!loading && data?.listParticipants?.edges)
+    rows = data.listParticipants.edges
       .map((edge) => edge?.node)
-      .filter((node): node is PersonType => node !== undefined);
+      .filter((node): node is ParticipantType => node !== undefined);
 
   // actions
-  const actions: DataTableActions<PersonType> = [
+  const actions: DataTableActions<ParticipantType> = [
     // TODO
     // {
     //   name: 'Create',
@@ -101,9 +97,9 @@ function PersonTable() {
     //   priority: 10,
     //   action: (selected, event) => {
     //     dialog.showDialog(
-    //       // <TaskForm />,
+    //       // <ParticipantForm />,
     //       <></>,
-    //       "Create Task"
+    //       "Create Shift"
     //     )
     //   },
     //   available: (selected) => (selected.length == 0),
@@ -114,9 +110,9 @@ function PersonTable() {
     //   priority: 20,
     //   action: (selected, event) => {
     //     dialog.showDialog(
-    //       // <TaskForm taskId={selected[0].id} />,
+    //       // <ParticipantForm shiftId={selected[0].id} />,
     //       <></>,
-    //       "Edit Task"
+    //       "Edit Shift"
     //     )
     //   },
     //   available: (selected) => (selected.length == 1),
@@ -138,10 +134,10 @@ function PersonTable() {
     //   action: (selected, event) => {},
     //   available: (selected) => (
     //     selected.length > 0
-    //     && taskState.sources.PUBLISHED.includes(selected[0].state)
+    //     && participantAcceptance.sources.PUBLISHED.includes(selected[0].state)
     //   ),
     //   state: {
-    //     transitions: taskState,
+    //     transitions: participantAcceptance,
     //     target: 'PUBLISHED'
     //   }
     // },
@@ -152,24 +148,11 @@ function PersonTable() {
     //   action: (selected, event) => {},
     //   available: (selected) => (
     //     selected.length > 0
-    //     && taskState.sources.ARCHIVED.includes(selected[0].state)
+    //     && participantAcceptance.sources.ARCHIVED.includes(selected[0].state)
     //   ),
     //   state: {
-    //     transitions: taskState,
+    //     transitions: participantAcceptance,
     //     target: 'ARCHIVED'
-    //   }
-    // },
-    // {
-    //   name: 'Operations',
-    //   icon: <NavigationForwardIcon />,
-    //   priority: 1000,
-    //   action: (selected, event) => {
-    //     filter.setFilter(selected[0]);
-    //   },
-    //   available: (selected) => (selected.length == 1),
-    //   display: {
-    //     toolbar: false,
-    //     row: true,
     //   }
     // },
   ];
@@ -184,4 +167,4 @@ function PersonTable() {
   );
 }
 
-export default PersonTable;
+export default ParticipantTable;

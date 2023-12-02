@@ -2,13 +2,29 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import OneColumn from '@/theme/layouts/OneColumn';
+'use client';
+
+import HeaderNav from '@/components/shared/HeaderNav';
+import QualificationTable from '@/components/qualification/QualificationTable';
+
+import TwoColumns from '@/theme/layouts/TwoColumns';
 
 function Qualifications() {
   return (
-    <OneColumn bg='admin'>
-      Qualifications
-    </OneColumn>
+    <TwoColumns
+      bg='admin'
+      left=<></>
+      right=<>
+        <HeaderNav
+          currentLabel="Qualifications"
+          backUrl="/admin/fields"
+          backLabel="Fields"
+          forwardUrl="/admin/resources"
+          forwardLabel="Resources"
+        />
+        <QualificationTable />
+      </>
+    />
   );
 }
 

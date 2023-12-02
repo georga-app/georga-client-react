@@ -64,8 +64,6 @@ const menus: Menus = {
           type: 'link', name: 'Fields', adminLevel: 'ORGANIZATION' },
       { path: '/admin/qualifications',
           type: 'link', name: 'Qualifications', adminLevel: 'ORGANIZATION' },
-      { path: '/admin/restrictions',
-          type: 'link', name: 'Restrictions', adminLevel: 'ORGANIZATION' },
       { path: '/admin/resources',
           type: 'link', name: 'Resources', adminLevel: 'ORGANIZATION' },
 

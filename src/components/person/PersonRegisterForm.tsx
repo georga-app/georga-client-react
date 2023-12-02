@@ -57,7 +57,7 @@ function PersonRegisterForm() {
 
   const [errors, setErrors] = useState<Errors>({});
 
-  // registerPersonMutation
+  // register
   const [registerPerson, {
     loading: registerLoading, reset: registerReset
   }] = useMutation(

@@ -71,7 +71,7 @@ let columns: DataTableColumn<OrganizationType>[] = [
 
 function OrganizationSubscribedTable() {
 
-  // getPersonOrganizations
+  // get
   const { data, loading } = useQuery(
     GET_PERSON_ORGANIZATIONS_QUERY, {
       variables: {}

@@ -5,9 +5,9 @@
 'use client';
 
 import HeaderNav from '@/components/shared/HeaderNav';
+import OrganizationTable from '@/components/organization/OrganizationTable';
 
 import TwoColumns from '@/theme/layouts/TwoColumns';
-import OrganizationTable from '@/components/organization/OrganizationTable';
 
 function Organizations() {
   return <>

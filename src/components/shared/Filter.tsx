@@ -50,7 +50,7 @@ function OrganizationInfo({ organization }: { organization: OrganizationType }) 
     </Link>
     {organization.description && <>
       <Divider sx={{ marginY: 1.5 }} />
-      <Typography variant="body2" sx={{ fontSize: '12px', color: '#666' }}>
+      <Typography variant="body2" sx={{ fontSize: '12px', color: '#999' }}>
         {organization.description}
       </Typography>
     </>}

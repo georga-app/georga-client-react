@@ -103,7 +103,7 @@ function PersonProfileForm({
   const [occupation, setOccupation] = useState("");
   const [onlyJobRelatedTopics, setOnlyJobRelatedTopics] = useState(false);
 
-  // getPersonProfile
+  // get
   const {
     called: getPersonProfileCalled,
     loading: getPersonProfileLoading,
@@ -129,7 +129,7 @@ function PersonProfileForm({
     },
   );
 
-  // updatePersonProfile
+  // update
   const [ updatePersonProfile, {
     loading: updatePersonProfileLoading,
     reset: updatePersonProfileReset

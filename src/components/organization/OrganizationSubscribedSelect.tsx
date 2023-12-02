@@ -26,7 +26,7 @@ function OrganizationSubscribedSelect({
 }) {
   const [organizations, setOrganizations] = useState<OrganizationType[]>([]);
 
-  // getPersonOrganizations
+  // get
   const { data, loading } = useQuery(GET_PERSON_ORGANIZATIONS_QUERY, {
     'onCompleted': data => {
       if (!data?.getPersonProfile?.organizationsSubscribed.edges) return;
