@@ -377,7 +377,6 @@ export type CreateShiftMutationInput = {
   endTime: Scalars['DateTime']['input'];
   enrollmentDeadline: Scalars['DateTime']['input'];
   startTime: Scalars['DateTime']['input'];
-  state: Scalars['String']['input'];
   task: Scalars['ID']['input'];
 };
 
@@ -916,6 +915,18 @@ export enum GeorgaMessageStateChoices {
 }
 
 /** An enumeration. */
+export enum GeorgaOperationStateChoices {
+  /** Archived */
+  Archived = 'ARCHIVED',
+  /** Deleted */
+  Deleted = 'DELETED',
+  /** Draft */
+  Draft = 'DRAFT',
+  /** Published */
+  Published = 'PUBLISHED'
+}
+
+/** An enumeration. */
 export enum GeorgaOrganizationStateChoices {
   /** Archived */
   Archived = 'ARCHIVED',
@@ -992,6 +1003,18 @@ export enum GeorgaPersonTitleChoices {
 }
 
 /** An enumeration. */
+export enum GeorgaProjectStateChoices {
+  /** Archived */
+  Archived = 'ARCHIVED',
+  /** Deleted */
+  Deleted = 'DELETED',
+  /** Draft */
+  Draft = 'DRAFT',
+  /** Published */
+  Published = 'PUBLISHED'
+}
+
+/** An enumeration. */
 export enum GeorgaRoleSpecificationNecessityChoices {
   /** Impossible */
   Impossible = 'IMPOSSIBLE',
@@ -1015,6 +1038,18 @@ export enum GeorgaShiftStateChoices {
   Draft = 'DRAFT',
   /** Finished */
   Finished = 'FINISHED',
+  /** Published */
+  Published = 'PUBLISHED'
+}
+
+/** An enumeration. */
+export enum GeorgaTaskStateChoices {
+  /** Archived */
+  Archived = 'ARCHIVED',
+  /** Deleted */
+  Deleted = 'DELETED',
+  /** Draft */
+  Draft = 'DRAFT',
   /** Published */
   Published = 'PUBLISHED'
 }
@@ -1624,6 +1659,7 @@ export type OperationType = Node & {
   name: Scalars['String']['output'];
   personAttributes?: Maybe<PersonToObjectTypeConnection>;
   project: ProjectType;
+  state: GeorgaOperationStateChoices;
 };
 
 
@@ -2139,6 +2175,7 @@ export type ProjectType = Node & {
   name: Scalars['String']['output'];
   organization: OrganizationType;
   personAttributes?: Maybe<PersonToObjectTypeConnection>;
+  state: GeorgaProjectStateChoices;
 };
 
 
@@ -3045,6 +3082,7 @@ export type TaskType = Node & {
   resourcesDesirable: ResourceTypeConnection;
   resourcesRequired: ResourceTypeConnection;
   startTime: Scalars['DateTime']['output'];
+  state: GeorgaTaskStateChoices;
 };
 
 
@@ -3445,7 +3483,6 @@ export type UpdateShiftMutationInput = {
   enrollmentDeadline?: InputMaybe<Scalars['DateTime']['input']>;
   id: Scalars['ID']['input'];
   startTime?: InputMaybe<Scalars['DateTime']['input']>;
-  state?: InputMaybe<Scalars['String']['input']>;
   task?: InputMaybe<Scalars['ID']['input']>;
 };
 
@@ -3622,7 +3659,55 @@ export type ListPersonsQueryVariables = Exact<{
 
 export type ListPersonsQuery = { __typename?: 'QueryType', listPersons?: { __typename?: 'PersonTypeConnection', edges: Array<{ __typename?: 'PersonTypeEdge', node?: { __typename?: 'PersonType', email: string, firstName: string, lastName: string, dateJoined: any } | null } | null> } | null };
 
+export type OrganizationPartsFragment = { __typename?: 'OrganizationType', name: string, description?: string | null, icon?: string | null, organizationState: GeorgaOrganizationStateChoices } & { ' $fragmentName'?: 'OrganizationPartsFragment' };
 
+export type ProjectPartsFragment = { __typename?: 'ProjectType', name: string, description?: string | null, projectState: GeorgaProjectStateChoices, organization: (
+    { __typename?: 'OrganizationType' }
+    & { ' $fragmentRefs'?: { 'OrganizationPartsFragment': OrganizationPartsFragment } }
+  ) } & { ' $fragmentName'?: 'ProjectPartsFragment' };
+
+export type OperationPartsFragment = { __typename?: 'OperationType', name: string, description?: string | null, operationState: GeorgaOperationStateChoices, project: (
+    { __typename?: 'ProjectType' }
+    & { ' $fragmentRefs'?: { 'ProjectPartsFragment': ProjectPartsFragment } }
+  ) } & { ' $fragmentName'?: 'OperationPartsFragment' };
+
+export type TaskPartsFragment = { __typename?: 'TaskType', name: string, description?: string | null, startTime: any, taskState: GeorgaTaskStateChoices, taskEndTime?: any | null, operation: (
+    { __typename?: 'OperationType' }
+    & { ' $fragmentRefs'?: { 'OperationPartsFragment': OperationPartsFragment } }
+  ) } & { ' $fragmentName'?: 'TaskPartsFragment' };
+
+export type ShiftPartsFragment = { __typename?: 'ShiftType', state: GeorgaShiftStateChoices, startTime: any, shiftEndTime: any, task: (
+    { __typename?: 'TaskType' }
+    & { ' $fragmentRefs'?: { 'TaskPartsFragment': TaskPartsFragment } }
+  ) } & { ' $fragmentName'?: 'ShiftPartsFragment' };
+
+export type GetFilterObjectQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetFilterObjectQuery = { __typename?: 'QueryType', node?: { __typename: 'ACEType', id: string } | { __typename: 'DeviceType', id: string } | { __typename: 'EquipmentType', id: string } | { __typename: 'LocationCategoryType', id: string } | { __typename: 'LocationType', id: string } | { __typename: 'MessageFilterType', id: string } | { __typename: 'MessageType', id: string } | (
+    { __typename: 'OperationType', id: string }
+    & { ' $fragmentRefs'?: { 'OperationPartsFragment': OperationPartsFragment } }
+  ) | (
+    { __typename: 'OrganizationType', id: string }
+    & { ' $fragmentRefs'?: { 'OrganizationPartsFragment': OrganizationPartsFragment } }
+  ) | { __typename: 'ParticipantType', id: string } | { __typename: 'PersonPropertyGroupType', id: string } | { __typename: 'PersonPropertyType', id: string } | { __typename: 'PersonToObjectType', id: string } | { __typename: 'PersonType', id: string } | (
+    { __typename: 'ProjectType', id: string }
+    & { ' $fragmentRefs'?: { 'ProjectPartsFragment': ProjectPartsFragment } }
+  ) | { __typename: 'ResourceType', id: string } | { __typename: 'RoleSpecificationType', id: string } | { __typename: 'RoleType', id: string } | (
+    { __typename: 'ShiftType', id: string }
+    & { ' $fragmentRefs'?: { 'ShiftPartsFragment': ShiftPartsFragment } }
+  ) | { __typename: 'TaskFieldType', id: string } | (
+    { __typename: 'TaskType', id: string }
+    & { ' $fragmentRefs'?: { 'TaskPartsFragment': TaskPartsFragment } }
+  ) | null };
+
+export const OrganizationPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrganizationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"organizationState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]} as unknown as DocumentNode<OrganizationPartsFragment, unknown>;
+export const ProjectPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProjectParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProjectType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"projectState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrganizationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"organizationState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]} as unknown as DocumentNode<ProjectPartsFragment, unknown>;
+export const OperationPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OperationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OperationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"operationState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProjectParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrganizationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"organizationState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProjectParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProjectType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"projectState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}}]}}]} as unknown as DocumentNode<OperationPartsFragment, unknown>;
+export const TaskPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TaskParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TaskType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"taskState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","alias":{"kind":"Name","value":"taskEndTime"},"name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"operation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OperationParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrganizationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"organizationState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProjectParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProjectType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"projectState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OperationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OperationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"operationState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProjectParts"}}]}}]}}]} as unknown as DocumentNode<TaskPartsFragment, unknown>;
+export const ShiftPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ShiftParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ShiftType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","alias":{"kind":"Name","value":"shiftEndTime"},"name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"task"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TaskParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrganizationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"organizationState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProjectParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProjectType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"projectState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OperationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OperationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"operationState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProjectParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TaskParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TaskType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"taskState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","alias":{"kind":"Name","value":"taskEndTime"},"name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"operation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OperationParts"}}]}}]}}]} as unknown as DocumentNode<ShiftPartsFragment, unknown>;
 export const TestSubscriptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"TestSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"time"}}]}}]}}]} as unknown as DocumentNode<TestSubscriptionSubscription, TestSubscriptionSubscriptionVariables>;
 export const TestSubscriptionEventDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestSubscriptionEvent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"message"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testSubscriptionEvent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"message"},"value":{"kind":"Variable","name":{"kind":"Name","value":"message"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"response"}}]}}]}}]} as unknown as DocumentNode<TestSubscriptionEventMutation, TestSubscriptionEventMutationVariables>;
 export const CreateOrganizationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateOrganization"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"description"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"icon"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOrganization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"description"},"value":{"kind":"Variable","name":{"kind":"Name","value":"description"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"icon"},"value":{"kind":"Variable","name":{"kind":"Name","value":"icon"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"messages"}}]}}]}}]}}]} as unknown as DocumentNode<CreateOrganizationMutation, CreateOrganizationMutationVariables>;
@@ -3639,3 +3724,4 @@ export const GetPersonProfilePropertiesDocument = {"kind":"Document","definition
 export const UpdatePersonProfilePropertiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdatePersonProfileProperties"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"properties"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updatePersonProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"properties"},"value":{"kind":"Variable","name":{"kind":"Name","value":"properties"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"person"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"messages"}}]}}]}}]}}]} as unknown as DocumentNode<UpdatePersonProfilePropertiesMutation, UpdatePersonProfilePropertiesMutationVariables>;
 export const RegisterPersonDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterPerson"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registerPerson"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"messages"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterPersonMutation, RegisterPersonMutationVariables>;
 export const ListPersonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListPersons"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email_Icontains"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listPersons"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email_Icontains"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email_Icontains"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"dateJoined"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ListPersonsQuery, ListPersonsQueryVariables>;
+export const GetFilterObjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetFilterObject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrganizationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProjectType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProjectParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OperationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OperationParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TaskType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TaskParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ShiftType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ShiftParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OrganizationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrganizationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"organizationState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProjectParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProjectType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"projectState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OrganizationParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"OperationParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OperationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"operationState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProjectParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TaskParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TaskType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","alias":{"kind":"Name","value":"taskState"},"name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","alias":{"kind":"Name","value":"taskEndTime"},"name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"operation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"OperationParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ShiftParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ShiftType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","alias":{"kind":"Name","value":"shiftEndTime"},"name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"task"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TaskParts"}}]}}]}}]} as unknown as DocumentNode<GetFilterObjectQuery, GetFilterObjectQueryVariables>;

@@ -22,8 +22,8 @@ let localStorage: Storage = (typeof window !== "undefined") ? window.localStorag
 const UserContext = createContext({
   isLoggedIn: false,
   hasAdminLevel: (level: AdminLevel | "ANY" = "ANY") => false as boolean,
-  login: function(data: TokenAuthMutation["tokenAuth"]) {},
-  logout: function() {},
+  login: (data: TokenAuthMutation["tokenAuth"]) => {},
+  logout: () => {},
 });
 
 function UserContextProvider({
@@ -33,25 +33,25 @@ function UserContextProvider({
 }) {
   const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem("userToken"));
 
-  function login(data: TokenAuthMutation["tokenAuth"]) {
+  const login = (data: TokenAuthMutation["tokenAuth"]) => {
     localStorage.setItem("userId", data?.id || "");
     localStorage.setItem("userToken", data?.token || "");
     localStorage.setItem("userAdminLevel", data?.adminLevel || "");
     setLoggedIn(true);
   }
-  function logout() {
+  const logout = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("userToken");
     localStorage.removeItem("userAdminLevel");
     setLoggedIn(false);
   }
-  function isLoggedIn() {
+  const isLoggedIn = () => {
     return loggedIn;
   }
-  function adminLevel() {
+  const adminLevel = () => {
     return localStorage.getItem("userAdminLevel") as AdminLevel || "NONE";
   }
-  function hasAdminLevel(level: AdminLevel | "ANY" = "ANY") {
+  const hasAdminLevel = (level: AdminLevel | "ANY" = "ANY") => {
     let levels: AdminLevel[] = []
     switch (level) {
       case "ANY":

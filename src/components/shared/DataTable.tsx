@@ -672,7 +672,6 @@ function DataTable<T extends {}>({
                           return (
                             <TableCell
                               key={column.id as string}
-                              // sx={{ cursor: 'default', width: width }}
                               sx={[{ cursor: 'default' }, ... [sx] ]}
                             >
                               {content}

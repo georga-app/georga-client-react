@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import OrganizationForm from '@/components/organization/OrganizationForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
+import { useFilter } from '@/provider/Filter';
 import { organizationState } from '@/app/states';
 
 import {
@@ -79,7 +80,9 @@ let columns: DataTableColumn<OrganizationType>[] = [
 
 
 function OrganizationTable() {
+  // provider
   const dialog = useDialog();
+  const filter = useFilter();
 
   // getPersonOrganizations
   const { data, loading } = useQuery(
@@ -158,10 +161,12 @@ function OrganizationTable() {
       }
     },
     {
-      name: 'Enter',
+      name: 'Projects',
       icon: <NavigationForwardIcon />,
       priority: 1000,
-      action: (selected, event) => {},
+      action: (selected, event) => {
+        filter.setFilter(selected[0]);
+      },
       available: (selected) => (selected.length == 1),
       display: {
         toolbar: false,

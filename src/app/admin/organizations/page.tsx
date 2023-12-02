@@ -13,16 +13,13 @@ function Organizations() {
   return <>
     <TwoColumns
       bg='admin'
-      left={
-        <></>
-      }
       right=<>
         <HeaderNav
           currentLabel="Organizations"
           backUrl="/"
           backLabel="Home"
           forwardUrl="/admin/projects"
-          forwardLabel="Projekte"
+          forwardLabel="Projects"
         />
         <OrganizationTable />
       </>

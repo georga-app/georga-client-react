@@ -6,8 +6,9 @@ import { StrictMode } from "react";
 
 import GraphQLClient from '@/provider/GraphQLClient';
 import { DialogProvider as Dialog } from "@/provider/Dialog";
-import { UserContextProvider as User } from '@/provider/User';
+import { FilterProvider as Filter } from "@/provider/Filter";
 import { SnackbarProvider as Snackbar } from "@/provider/Snackbar";
+import { UserContextProvider as User } from '@/provider/User';
 import Theme from '@/theme';
 
 export const metadata = {
@@ -27,11 +28,13 @@ function Layout({
           <GraphQLClient>
             <User>
               <Theme>
-                <Snackbar>
-                  <Dialog>
-                    {children}
-                  </Dialog>
-                </Snackbar>
+                <Filter>
+                  <Snackbar>
+                    <Dialog>
+                      {children}
+                    </Dialog>
+                  </Snackbar>
+                </Filter>
               </Theme>
             </User>
           </GraphQLClient>

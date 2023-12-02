@@ -8,8 +8,10 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2'; // TODO: switch when stable
 
+import Sidebar from '@/theme/Sidebar';
+
 function TwoColumns({
-  left = <></>,
+  left = <Sidebar />,
   right = <></>,
   bg = 'bright',
 }: {

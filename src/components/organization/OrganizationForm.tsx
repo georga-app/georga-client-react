@@ -290,24 +290,26 @@ function OrganizationForm({
         handleChanged={handleChanged}
         errors={errors.icon}
       />
-      <Input
-        id="createdAt"
-        value={new Date(createdAt).toLocaleString()}
-        label="Created At"
-        disabled
-      />
-      <Input
-        id="modifiedAt"
-        value={new Date(modifiedAt).toLocaleString()}
-        label="Modified At"
-        disabled
-      />
-      <Input
-        id="state"
-        value={state}
-        label="State"
-        disabled
-      />
+      {edit && <>
+        <Input
+          id="createdAt"
+          value={new Date(createdAt).toLocaleString()}
+          label="Created At"
+          disabled
+        />
+        <Input
+          id="modifiedAt"
+          value={new Date(modifiedAt).toLocaleString()}
+          label="Modified At"
+          disabled
+        />
+        <Input
+          id="state"
+          value={state}
+          label="State"
+          disabled
+        />
+      </>}
 
       {/* Controls */}
       <Button
