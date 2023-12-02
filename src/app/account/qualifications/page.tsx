@@ -20,6 +20,7 @@ function Qualifications() {
   return (
     <TwoColumns
       bg='admin'
+      left=<></>
       right=<>
         <HeaderNav
           currentLabel="Qualifications"

@@ -10,6 +10,7 @@ function Security() {
   return (
     <TwoColumns
       bg='admin'
+      left=<></>
       right=<>
         <HeaderNav
           currentLabel="Security"

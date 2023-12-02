@@ -550,7 +550,8 @@ function DataTable<T extends {}>({
     () => {
       const filteredRows = !filter ? rows : rows.reduce((result: typeof rows, row) => {
         filterColumns.every(column => {
-          if ( String(row[column]).toLowerCase().includes(filter.toLowerCase()) )
+          if ( String(row[column]).toLowerCase().includes(filter.toLowerCase())
+               && !result.includes(row) )
             return result.push(row);
           return true;
         });

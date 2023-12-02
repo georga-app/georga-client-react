@@ -15,6 +15,7 @@ function Profile() {
   return (
     <TwoColumns
       bg='admin'
+      left=<></>
       right=<>
         <HeaderNav
           currentLabel="Profile"

@@ -10,6 +10,7 @@ function Notifications() {
   return (
     <TwoColumns
       bg='admin'
+      left=<></>
       right=<>
         <HeaderNav
           currentLabel="Notifications"

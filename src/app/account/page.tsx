@@ -56,6 +56,7 @@ function Account() {
   return (
     <TwoColumns
       bg='admin'
+      left=<></>
       right={
         <Container sx={{
           width: { xs: "auto", sm: 600 },

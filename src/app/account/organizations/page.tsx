@@ -15,6 +15,7 @@ function Organizations() {
   return (
     <TwoColumns
       bg='admin'
+      left=<></>
       right=<>
         <HeaderNav
           currentLabel="Organizations"
