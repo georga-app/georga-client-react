@@ -2,14 +2,17 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import { useFilter } from '@/provider/Filter';
+import Link from 'next/link';
 
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
+
+import { useFilter } from '@/provider/Filter';
 
 import { ActionCloseIcon } from '@/theme/Icons';
 
@@ -31,12 +34,20 @@ import {
 
 function OrganizationInfo({ organization }: { organization: OrganizationType }) {
   return <>
-    <Typography variant="caption" sx={{ color: '#666' }}>
-      Organization:
-    </Typography>
-    <Typography variant="body1">
-      {organization.name}
-    </Typography>
+    <Link
+      href={'/admin/organizations'}
+      aria-label="organizations"
+      style={{ textDecoration: 'none' }}
+    >
+      <Box>
+        <Typography variant="caption" sx={{ color: '#666' }}>
+          Organization
+        </Typography>
+        <Typography variant="body1" sx={{ color: 'primary.dark' }}>
+          {organization.name}
+        </Typography>
+      </Box>
+    </Link>
     {organization.description && <>
       <Divider sx={{ marginY: 1.5 }} />
       <Typography variant="body2" sx={{ fontSize: '12px', color: '#666' }}>
