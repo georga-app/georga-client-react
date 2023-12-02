@@ -4,10 +4,10 @@
  */
 import { useFilter } from '@/provider/Filter';
 
-import Box from '@mui/material/Box';
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 
@@ -31,7 +31,7 @@ import {
 
 function OrganizationInfo({ organization }: { organization: OrganizationType }) {
   return <>
-    <Typography variant="caption">
+    <Typography variant="caption" sx={{ color: '#666' }}>
       Organization:
     </Typography>
     <Typography variant="body1">
@@ -82,15 +82,18 @@ function Filter() {
   if ( !filter.object )
     return <></>;
   return (
-    <Box sx={{
-      backgroundColor: 'background.brighter',
-      marginRight: 1,
-      marginTop: '54px',
-      paddingX: 2,
-      paddingY: 2,
-      textAlign: 'left',
-      position: 'relative',
-    }}>
+    <Paper
+      elevation={1}
+      sx={{
+        backgroundColor: 'background.brighter',
+        marginRight: 1,
+        marginTop: '54px',
+        paddingX: 2,
+        paddingY: 2,
+        textAlign: 'left',
+        position: 'relative',
+      }}
+    >
       <IconButton
         aria-label="remove filter"
         onClick={() => filter.unsetFilter()}
@@ -104,7 +107,7 @@ function Filter() {
         <ActionCloseIcon />
       </IconButton>
       <ObjectInfo object={filter.object} />
-    </Box>
+    </Paper>
   );
 }
 
