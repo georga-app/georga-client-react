@@ -2,7 +2,7 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import Link from 'next/link';
+import Link, { LinkProps } from "next/link";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -16,75 +16,157 @@ import { useFilter } from '@/provider/Filter';
 
 import { ActionCloseIcon } from '@/theme/Icons';
 
-import {
-  FilterObjectType,
-  isOrganization,
-  isProject,
-  isOperation,
-  isTask,
-  isShift,
-} from '@/types/Filter';
-import {
-  OrganizationType,
-  ProjectType,
-  OperationType,
-  TaskType,
-  ShiftType
-} from '@/types/__generated__/graphql'
+import { FilterObjectType } from '@/types/Filter';
 
-function OrganizationInfo({ organization }: { organization: OrganizationType }) {
+
+function Info({
+  label,
+  content,
+  url,
+  active=false,
+  divider=true,
+}: {
+  label: string,
+  content: React.ReactNode,
+  url: LinkProps['href'],
+  active?: boolean,
+  divider?: boolean,
+}) {
   return <>
+    {divider && active && <Divider sx={{ marginY: 1.5 }} />}
     <Link
-      href={'/admin/organizations'}
-      aria-label="organizations"
-      style={{ textDecoration: 'none' }}
+      href={url}
+      aria-label={label}
+      style={{ textDecoration: 'none', marginBottom: 1 }}
     >
-      <Box>
-        <Typography variant="caption" sx={{ color: '#666' }}>
-          Organization
+      <Box sx={{ marginBottom: 1 }}>
+        <Typography variant="caption" sx={{ color: active ? 'secondary.light' : '#aaa' }}>
+          {label}
         </Typography>
-        <Typography variant="body1" sx={{ color: 'primary.dark' }}>
-          {organization.name}
+        <Typography variant="body1" sx={{ color: active ? 'primary.main' : '#888' }}>
+          {content}
         </Typography>
       </Box>
     </Link>
-    {organization.description && <>
-      <Divider sx={{ marginY: 1.5 }} />
-      <Typography variant="body2" sx={{ fontSize: '12px', color: '#999' }}>
-        {organization.description}
-      </Typography>
-    </>}
-  </>
+  </>;
 }
 
-function ProjectInfo({ project }: { project: ProjectType }) {
-  return "Project";
-}
-
-function OperationInfo({ operation }: { operation: OperationType }) {
-  return "Operation";
-}
-
-function TaskInfo({ task }: { task: TaskType }) {
-  return "Task";
-}
-
-function ShiftInfo({ shift }: { shift: ShiftType }) {
-  return "Shift";
+function Description({ content }: { content: string }) {
+  return content && <>
+    <Typography variant="body2" sx={{ fontSize: '12px', color: '#999', marginTop: 2 }}>
+      {content}
+    </Typography>
+  </>;
 }
 
 function ObjectInfo({ object }: { object: FilterObjectType }) {
-  if ( isOrganization(object) )
-    return <OrganizationInfo organization={object} />;
-  if ( isProject(object) )
-    return <ProjectInfo project={object} />;
-  if ( isOperation(object) )
-    return <OperationInfo operation={object} />;
-  if ( isTask(object) )
-    return <TaskInfo task={object} />;
-  if ( isShift(object) )
-    return <ShiftInfo shift={object} />;
-  return <></>;
+  switch ( object?.__typename ) {
+
+    case "OrganizationType":
+      return <>
+        <Info
+          label="Organization"
+          content={object.name}
+          url="/admin/organizations"
+          active={true}
+          divider={false}
+        />
+        <Description content={object.description || ""} />
+      </>;
+
+    case "ProjectType":
+      return <>
+        <Info
+          label="Organization"
+          content={object.organization.name}
+          url="/admin/organizations"
+        />
+        <Info
+          label="Project"
+          content={object.name}
+          url="/admin/projects"
+          active={true}
+        />
+        <Description content={object.description || ""} />
+      </>;
+
+    case "OperationType":
+      return <>
+        <Info
+          label="Organization"
+          content={object.project.organization.name}
+          url="/admin/organizations"
+        />
+        <Info
+          label="Project"
+          content={object.project.name}
+          url="/admin/projects"
+        />
+        <Info
+          label="Operation"
+          content={object.name}
+          url="/admin/operations"
+          active={true}
+        />
+        <Description content={object.description || ""} />
+      </>;
+
+    case "TaskType":
+      return <>
+        <Info
+          label="Organization"
+          content={object.operation.project.organization.name}
+          url="/admin/organizations"
+        />
+        <Info
+          label="Project"
+          content={object.operation.project.name}
+          url="/admin/projects"
+        />
+        <Info
+          label="Operation"
+          content={object.operation.name}
+          url="/admin/operations"
+        />
+        <Info
+          label="Task"
+          content={object.name}
+          url="/admin/tasks"
+          active={true}
+        />
+        <Description content={object.description || ""} />
+      </>;
+
+    case "ShiftType":
+      return <>
+        <Info
+          label="Organization"
+          content={object.task.operation.project.organization.name}
+          url="/admin/organizations"
+        />
+        <Info
+          label="Project"
+          content={object.task.operation.project.name}
+          url="/admin/projects"
+        />
+        <Info
+          label="Operation"
+          content={object.task.operation.name}
+          url="/admin/operations"
+        />
+        <Info
+          label="Task"
+          content={object.task.name}
+          url="/admin/tasks"
+        />
+        <Info
+          label="Shift"
+          content={object.startTime + "-" + object.endTime}
+          url="/admin/shifts"
+          active={true}
+        />
+      </>;
+  }
 }
 
 function Filter() {
@@ -96,7 +178,9 @@ function Filter() {
     <Paper
       elevation={1}
       sx={{
-        backgroundColor: 'background.brighter',
+        backgroundColor: 'background.bright',
+        border: '1px dashed',
+        borderColor: 'secondary.light',
         marginRight: 1,
         marginTop: '54px',
         paddingX: 2,

@@ -17,7 +17,7 @@ function Persons() {
       right=<>
         <HeaderNav
           currentLabel="Persons"
-          backUrl="/admin/home"
+          backUrl="/"
           backLabel="Home"
           forwardUrl="/admin/messages"
           forwardLabel="Messages"

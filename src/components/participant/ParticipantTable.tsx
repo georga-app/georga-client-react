@@ -23,12 +23,24 @@ import {  // TODO
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { ParticipantType } from '@/types/__generated__/graphql'
+import { ParticipantType, ListParticipantsQueryVariables } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
 const LIST_PARTICIPANTS_QUERY = gql(`
-  query ListParticipants {
-    listParticipants {
+  query ListParticipants (
+    $shift: ID
+    $task: ID
+    $operation: ID
+    $project: ID
+    $organization: ID
+  ) {
+    listParticipants (
+      role_Shift: $shift
+      role_Shift_Task: $task
+      role_Shift_Task_Operation: $operation
+      role_Shift_Task_Operation_Project: $project
+      role_Shift_Task_Operation_Project_Organization: $organization
+    ) {
       edges {
         node {
           id
@@ -75,6 +87,21 @@ function ParticipantTable() {
   // provider
   const dialog = useDialog();
   const filter = useFilter();
+
+  // filter
+  let filterVariables: ListParticipantsQueryVariables = {}
+  switch ( filter?.object?.__typename ) {
+    case "OrganizationType":
+      filterVariables.organization = filter.object.id; break;
+    case "ProjectType":
+      filterVariables.project = filter.object.id; break
+    case "OperationType":
+      filterVariables.operation = filter.object.id; break
+    case "TaskType":
+      filterVariables.task = filter.object.id; break
+    case "ShiftType":
+      filterVariables.shift = filter.object.id; break
+  }
 
   // get
   const { data, loading } = useQuery(

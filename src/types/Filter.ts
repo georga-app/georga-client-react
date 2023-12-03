@@ -19,25 +19,25 @@ type FilterObjectType = OrganizationType
 
 type FilterContextType = {
   object: FilterObjectType
-  setFilter: (object: FilterObjectType) => void,
+  setFilter: (objectId: string) => void,
   unsetFilter: () => void,
   hasFilter: boolean,
 }
 
 function isOrganization(object: any): object is OrganizationType {
-    return object?.__typename === "OrganizationType";
+  return object?.__typename === "OrganizationType";
 }
 function isProject(object: any): object is ProjectType {
-    return object?.__typename === "ProjectType";
+  return object?.__typename === "ProjectType";
 }
 function isOperation(object: any): object is OperationType {
-    return object?.__typename === "OperationType";
+  return object?.__typename === "OperationType";
 }
 function isTask(object: any): object is TaskType {
-    return object?.__typename === "TaskType";
+  return object?.__typename === "TaskType";
 }
 function isShift(object: any): object is ShiftType {
-    return object?.__typename === "ShiftType";
+  return object?.__typename === "ShiftType";
 }
 
 export type { FilterObjectType, FilterContextType };

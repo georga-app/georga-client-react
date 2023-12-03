@@ -3,6 +3,7 @@
  * Repository: https://github.com/georga-app/georga-client-react
  */
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
@@ -23,12 +24,20 @@ import {  // TODO
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { TaskType } from '@/types/__generated__/graphql'
+import { TaskType, ListTasksQueryVariables } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
 const LIST_TASKS_QUERY = gql(`
-  query ListTasks {
-    listTasks {
+  query ListTasks (
+    $operation: ID
+    $project: ID
+    $organization: ID
+  ) {
+    listTasks (
+      operation: $operation
+      operation_Project: $project
+      operation_Project_Organization: $organization
+    ) {
       edges {
         node {
           id
@@ -71,11 +80,27 @@ function TaskTable() {
   // provider
   const dialog = useDialog();
   const filter = useFilter();
+  const router = useRouter();
+
+  // filter
+  let filterVariables: ListTasksQueryVariables = {}
+  switch ( filter?.object?.__typename ) {
+    case "OrganizationType":
+      filterVariables.organization = filter.object.id; break;
+    case "ProjectType":
+      filterVariables.project = filter.object.id; break
+    case "OperationType":
+      filterVariables.operation = filter.object.id; break
+    case "TaskType":
+      filterVariables.operation = filter.object.operation.id; break
+    case "ShiftType":
+      filterVariables.operation = filter.object.task.operation.id; break
+  }
 
   // get
   const { data, loading } = useQuery(
     LIST_TASKS_QUERY, {
-      variables: {}
+      variables: filterVariables
     }
   );
   let rows: TaskType[] = [];
@@ -155,7 +180,8 @@ function TaskTable() {
       icon: <NavigationForwardIcon />,
       priority: 1000,
       action: (selected, event) => {
-        filter.setFilter(selected[0]);
+        filter.setFilter(selected[0].id);
+        router.push("/admin/shifts");
       },
       available: (selected) => (selected.length == 1),
       display: {

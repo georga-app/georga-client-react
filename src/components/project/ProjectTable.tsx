@@ -3,6 +3,7 @@
  * Repository: https://github.com/georga-app/georga-client-react
  */
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
@@ -23,12 +24,16 @@ import {  // TODO
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { ProjectType } from '@/types/__generated__/graphql'
+import { ProjectType, ListProjectsQueryVariables } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
 const LIST_PROJECTS_QUERY = gql(`
-  query ListProjects {
-    listProjects {
+  query ListProjects (
+    $organization: ID
+  ) {
+    listProjects (
+      organization: $organization
+    ) {
       edges {
         node {
           id
@@ -64,11 +69,27 @@ function ProjectTable() {
   // provider
   const dialog = useDialog();
   const filter = useFilter();
+  const router = useRouter();
+
+  // filter
+  let filterVariables: ListProjectsQueryVariables = {}
+  switch ( filter?.object?.__typename ) {
+    case "OrganizationType":
+      filterVariables.organization = filter.object.id; break;
+    case "ProjectType":
+      filterVariables.organization = filter.object.organization.id; break
+    case "OperationType":
+      filterVariables.organization = filter.object.project.organization.id; break
+    case "TaskType":
+      filterVariables.organization = filter.object.operation.project.organization.id; break
+    case "ShiftType":
+      filterVariables.organization = filter.object.task.operation.project.organization.id; break
+  }
 
   // get
   const { data, loading } = useQuery(
     LIST_PROJECTS_QUERY, {
-      variables: {}
+      variables: filterVariables
     }
   );
   let rows: ProjectType[] = [];
@@ -148,7 +169,8 @@ function ProjectTable() {
       icon: <NavigationForwardIcon />,
       priority: 1000,
       action: (selected, event) => {
-        filter.setFilter(selected[0]);
+        filter.setFilter(selected[0].id);
+        router.push("/admin/operations");
       },
       available: (selected) => (selected.length == 1),
       display: {

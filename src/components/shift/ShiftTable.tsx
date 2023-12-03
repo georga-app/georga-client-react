@@ -3,6 +3,7 @@
  * Repository: https://github.com/georga-app/georga-client-react
  */
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
@@ -23,12 +24,22 @@ import {  // TODO
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { ShiftType } from '@/types/__generated__/graphql'
+import { ShiftType, ListShiftsQueryVariables } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
 const LIST_SHIFTS_QUERY = gql(`
-  query ListShifts {
-    listShifts {
+  query ListShifts (
+    $task: ID
+    $operation: ID
+    $project: ID
+    $organization: ID
+  ) {
+    listShifts (
+      task: $task
+      task_Operation: $operation
+      task_Operation_Project: $project
+      task_Operation_Project_Organization: $organization
+    ) {
       edges {
         node {
           id
@@ -66,11 +77,27 @@ function ShiftTable() {
   // provider
   const dialog = useDialog();
   const filter = useFilter();
+  const router = useRouter();
+
+  // filter
+  let filterVariables: ListShiftsQueryVariables = {}
+  switch ( filter?.object?.__typename ) {
+    case "OrganizationType":
+      filterVariables.organization = filter.object.id; break;
+    case "ProjectType":
+      filterVariables.project = filter.object.id; break
+    case "OperationType":
+      filterVariables.operation = filter.object.id; break
+    case "TaskType":
+      filterVariables.task = filter.object.id; break
+    case "ShiftType":
+      filterVariables.task = filter.object.task.id; break
+  }
 
   // get
   const { data, loading } = useQuery(
     LIST_SHIFTS_QUERY, {
-      variables: {}
+      variables: filterVariables
     }
   );
   let rows: ShiftType[] = [];
@@ -150,7 +177,8 @@ function ShiftTable() {
       icon: <NavigationForwardIcon />,
       priority: 1000,
       action: (selected, event) => {
-        filter.setFilter(selected[0]);
+        filter.setFilter(selected[0].id);
+        router.push("/admin/participants");
       },
       available: (selected) => (selected.length == 1),
       display: {

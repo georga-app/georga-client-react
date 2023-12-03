@@ -17,7 +17,7 @@ function Messages() {
       right=<>
         <HeaderNav
           currentLabel="Messages"
-          backUrl="/admin/home"
+          backUrl="/"
           backLabel="Home"
           forwardUrl="/admin/persons"
           forwardLabel="Persons"

@@ -97,7 +97,7 @@ let localStorage: Storage = (typeof window !== "undefined") ? window.localStorag
 
 const FilterContext = createContext<FilterContextType>({
   object: undefined,
-  setFilter: object => {},
+  setFilter: string => {},
   unsetFilter: () => {},
   hasFilter: false,
 });
@@ -107,6 +107,7 @@ function FilterProvider({
 }: {
   children: React.ReactNode
 }) {
+  const [filterObjectId, setFilterObjectId] = useState("");
   const [filterObject, setFilterObject] = useState<FilterObjectType>(undefined);
 
   // getFilterObject
@@ -118,14 +119,14 @@ function FilterProvider({
       },
       onCompleted: data => {
         if (!data.node) return;
-        setFilter(data.node as FilterObjectType);
+        setFilterObject(data.node as FilterObjectType);
       },
     },
   );
 
-  const setFilter = (object: FilterObjectType) => {
-    localStorage.setItem("globalFilter", object?.id || "")
-    setFilterObject(object);
+  const setFilter = (objectId: string) => {
+    localStorage.setItem("globalFilter", objectId || "")
+    setFilterObjectId(objectId);
   }
   const unsetFilter = () => {
     localStorage.removeItem("globalFilter");
@@ -137,7 +138,7 @@ function FilterProvider({
 
   let filter = {
     object: filterObject,
-    setFilter: (object: FilterObjectType) => setFilter(object),
+    setFilter: (objectId: string) => setFilter(objectId),
     unsetFilter: () => unsetFilter(),
     hasFilter: hasFilter(),
   }

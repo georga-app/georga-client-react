@@ -2,7 +2,8 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useQuery } from '@apollo/client';
 
@@ -83,6 +84,7 @@ function OrganizationTable() {
   // provider
   const dialog = useDialog();
   const filter = useFilter();
+  const router = useRouter();
 
   // get
   const { data, loading } = useQuery(
@@ -165,7 +167,8 @@ function OrganizationTable() {
       icon: <NavigationForwardIcon />,
       priority: 1000,
       action: (selected, event) => {
-        filter.setFilter(selected[0]);
+        filter.setFilter(selected[0].id);
+        router.push("/admin/projects");
       },
       available: (selected) => (selected.length == 1),
       display: {
