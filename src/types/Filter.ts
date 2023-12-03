@@ -4,17 +4,22 @@
  */
 import {
   OrganizationType,
+  OrganizationPartsFragment,
   ProjectType,
+  ProjectPartsFragment,
   OperationType,
+  OperationPartsFragment,
   TaskType,
-  ShiftType
+  TaskPartsFragment,
+  ShiftType,
+  ShiftPartsFragment,
 } from '@/types/__generated__/graphql'
 
-type FilterObjectType = OrganizationType
-                        | ProjectType
-                        | OperationType
-                        | TaskType
-                        | ShiftType
+type FilterObjectType =   (OrganizationType & OrganizationPartsFragment)
+                        | (ProjectType & ProjectPartsFragment)
+                        | (OperationType & OperationPartsFragment)
+                        | (TaskType & TaskPartsFragment)
+                        | (ShiftType & ShiftPartsFragment)
                         | undefined;
 
 type FilterContextType = {

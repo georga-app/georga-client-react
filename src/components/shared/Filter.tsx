@@ -161,7 +161,11 @@ function ObjectInfo({ object }: { object: FilterObjectType }) {
         />
         <Info
           label="Shift"
-          content={object.startTime + "-" + object.endTime}
+          content=<>
+            {new Date(object.startTime).toLocaleString()}
+            -
+            {new Date(object.shiftEndTime).toLocaleString()}
+          </>
           url="/admin/shifts"
           active={true}
         />

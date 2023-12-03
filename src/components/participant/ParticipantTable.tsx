@@ -106,7 +106,7 @@ function ParticipantTable() {
   // get
   const { data, loading } = useQuery(
     LIST_PARTICIPANTS_QUERY, {
-      variables: {}
+      variables: filterVariables
     }
   );
   let rows: ParticipantType[] = [];
