@@ -41,24 +41,6 @@ const LIST_MESSAGES_QUERY = gql(`
           category
           state
           delivery
-          scope {
-            __typename
-            ... on OrganizationType {
-              ... OrganizationParts
-            }
-            ... on ProjectType {
-              ... ProjectParts
-            }
-            ... on OperationType {
-              ... OperationParts
-            }
-            ... on TaskType {
-              ... TaskParts
-            }
-            ... on ShiftType {
-              ... ShiftParts
-            }
-          }
         }
       }
     }
