@@ -4,7 +4,7 @@
  */
 'use client';
 
-import PersonActivateFlow from '@/components/person/ActivateFlow';
+import PersonActivateFlow from '@/components/person/PersonActivateFlow';
 
 function Activate({
   params
