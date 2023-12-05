@@ -57,6 +57,13 @@ let columns: DataTableColumn<MessageType>[] = [
     filterable: true,
   },
   {
+    id: 'priority',
+    label: 'Priority',
+    display: 'sm',
+    sortable: true,
+    filterable: true,
+  },
+  {
     id: 'title',
     label: 'Title',
     sortable: true,
@@ -72,13 +79,6 @@ let columns: DataTableColumn<MessageType>[] = [
   {
     id: 'state',
     label: 'State',
-    display: 'sm',
-    sortable: true,
-    filterable: true,
-  },
-  {
-    id: 'priority',
-    label: 'Priority',
     display: 'sm',
     sortable: true,
     filterable: true,
