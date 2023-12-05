@@ -69,7 +69,7 @@ const menus: Menus = {
 
       { type: 'divider', adminLevel: 'ORGANIZATION' },
       { path: '/admin/persons',
-          type: 'link', name: 'Persons', adminLevel: 'ORGANIZATION' },
+          type: 'link', name: 'Staff', adminLevel: 'ORGANIZATION' },
       { path: '/admin/messages',
           type: 'link', name: 'Messages', adminLevel: 'ORGANIZATION' },
     ],
