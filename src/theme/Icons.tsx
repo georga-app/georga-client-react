@@ -51,6 +51,9 @@ import SocialGitHubIcon from "@mui/icons-material/GitHub";
 import SocialLinkIcon from "@mui/icons-material/Link";
 import SocialTwitterIcon from "@mui/icons-material/Twitter";
 
+// Other
+import ConstructionIcon from "@mui/icons-material/Engineering";
+
 export {
   AccountProfileIcon,
   AccountOrganizationsIcon,
@@ -91,4 +94,6 @@ export {
   SocialGitHubIcon,
   SocialLinkIcon,
   SocialTwitterIcon,
+
+  ConstructionIcon,
 }
