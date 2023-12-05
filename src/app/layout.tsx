@@ -7,6 +7,7 @@ import { StrictMode } from "react";
 import GraphQLClient from '@/provider/GraphQLClient';
 import { DialogProvider as Dialog } from "@/provider/Dialog";
 import { FilterProvider as Filter } from "@/provider/Filter";
+import { LocalizationProvider as Localization } from "@/provider/Localization";
 import { SnackbarProvider as Snackbar } from "@/provider/Snackbar";
 import { UserContextProvider as User } from '@/provider/User';
 import Theme from '@/theme';
@@ -25,19 +26,21 @@ function Layout({
     <html lang="en">
       <body>
         <StrictMode>
-          <GraphQLClient>
-            <User>
-              <Theme>
-                <Filter>
-                  <Snackbar>
-                    <Dialog>
-                      {children}
-                    </Dialog>
-                  </Snackbar>
-                </Filter>
-              </Theme>
-            </User>
-          </GraphQLClient>
+          <Localization>
+            <GraphQLClient>
+              <User>
+                <Theme>
+                  <Filter>
+                    <Snackbar>
+                      <Dialog>
+                        {children}
+                      </Dialog>
+                    </Snackbar>
+                  </Filter>
+                </Theme>
+              </User>
+            </GraphQLClient>
+          </Localization>
         </StrictMode>
       </body>
     </html>
