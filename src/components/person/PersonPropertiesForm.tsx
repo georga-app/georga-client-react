@@ -346,3 +346,5 @@ function PersonPropertiesForm({
 }
 
 export default PersonPropertiesForm;
+export { PersonPropertyGroupField, LIST_PERSON_PROPERTY_GROUPS_QUERY }
+export type { PersonPropertyGroupDataType }

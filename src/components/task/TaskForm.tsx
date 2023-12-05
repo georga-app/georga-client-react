@@ -7,12 +7,26 @@ import dayjs, { Dayjs } from "dayjs";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from '@apollo/client';
 
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import InputLabel from "@mui/material/InputLabel";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 
 import Form from "@/components/shared/Form";
 import { Input, Autocomplete, DateTimePicker } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
 import { useFilter } from '@/provider/Filter';
+import { useDialog } from '@/provider/Dialog';
+
+import {
+  PersonPropertyGroupField,
+  PersonPropertyGroupDataType,
+  LIST_PERSON_PROPERTY_GROUPS_QUERY
+} from "@/components/person/PersonPropertiesForm";
 
 import { LIST_TASKS_QUERY, filterVariables } from "@/components/task/TaskTable"
 import { LIST_OPERATIONS_QUERY } from "@/components/operation/OperationTable"
@@ -27,10 +41,12 @@ import {
   RoleType,
   TaskType,
   TaskFieldType,
+  PersonPropertyGroupType,
   UpdateTaskMutation,
   UpdateTaskMutationVariables,
 } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
+import { onlyType } from "@/types/Util";
 
 const CREATE_TASK_MUTATION = gql(`
   mutation CreateTask (
@@ -143,6 +159,140 @@ type Errors = FormErrors<
   | UpdateTaskMutationVariables
 >;
 
+function RoleForm({
+  organizationId,
+  role,
+  roles,
+  setRoles,
+  onSuccess = () => undefined,
+}: {
+  organizationId: string,
+  role?: number
+  roles: TempRoleType,
+  setRoles: React.Dispatch<React.SetStateAction<TempRoleType>>,
+  onSuccess?: () => void,
+}) {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [quantity, setQuantity] = useState<number>();
+
+  const [propertyGroups, setPropertyGroups] = useState<PersonPropertyGroupType[]>();
+  const [properties, setProperties] = useState<PersonPropertyGroupDataType>({});
+
+  const [changed, setChanged] = useState<PersonPropertyGroupDataType>({});
+
+  useEffect(() => {
+    if (role) {
+      setName(roles[role]?.name || "")
+      setDescription(roles[role]?.description || "")
+      setQuantity(roles[role]?.quantity || 0)
+      setProperties(roles[role]?.properties || {})
+    }
+  }, [role, roles]);
+
+  const {
+    called: listPersonPropertyGroupsCalled,
+    loading: listPersonPropertyGroupsLoading,
+    data: listPersonPropertyGroupsData,
+    error: listPersonPropertyGroupsError
+  } = useQuery(
+    LIST_PERSON_PROPERTY_GROUPS_QUERY, {
+      skip: !organizationId,
+      variables: {
+        organization: organizationId
+      },
+      onCompleted: data => {
+        if (!data.listPersonPropertyGroups) return;
+        const groups = data.listPersonPropertyGroups.edges
+          .map(edge => edge?.node)
+          .filter(onlyType);
+        setPropertyGroups(groups as PersonPropertyGroupType[]);
+      },
+    },
+  );
+
+  return (
+    <Form handleSubmit={() => {}} error={undefined}>
+
+      <Input
+        id="name"
+        value={name}
+        setValue={setName}
+        label="Name"
+        // handleChanged={handleChanged}
+        // errors={errors.name}
+        required
+      />
+      <Input
+        id="description"
+        value={description}
+        setValue={setDescription}
+        label="Description"
+        // multiline={true}
+        // handleChanged={handleChanged}
+        // errors={errors.description}
+      />
+      <Input
+        id="quantity"
+        value={quantity}
+        setValue={setQuantity}
+        type="number"
+        label="Quantity"
+        // handleChanged={handleChanged}
+        // errors={errors.description}
+      />
+
+      <InputLabel sx={{ marginTop: 2, marginBottom: 1 }}>Role Specification</InputLabel>
+      {propertyGroups?.map(group =>
+        <PersonPropertyGroupField
+          key={group.id}
+          group={group}
+          properties={properties}
+          setProperties={setProperties}
+          changed={changed}
+          setChanged={setChanged}
+        />
+      )}
+
+      <Button
+        fullWidth
+        variant="contained"
+        color="secondary"
+        sx={{ marginTop: 1 }}
+        onClick={() => {
+          const newData = {
+            name: name,
+            description: description,
+            quantity: quantity || 0,
+            properties: {...properties},
+          }
+          if (role) {
+            roles[role] = newData;
+          } else {
+            roles.push(newData);
+          }
+          setRoles(roles)
+          onSuccess()
+        }}
+        // disabled={
+        //   Object.keys(changed).length === 0
+        // }
+      >
+        {"Save"}
+      </Button>
+    </Form>
+  );
+}
+
+type TempRoleType = [
+  {
+    name: string,
+    description: string,
+    quantity: number,
+    properties: PersonPropertyGroupDataType,
+  }?
+]
+
 function TaskForm({
   id = '',
   onSuccess = () => undefined,
@@ -159,6 +309,7 @@ function TaskForm({
   const edit = (id);
 
   // context
+  const dialog = useDialog();
   const snackbar = useSnackbar();
   const filter = useFilter();
 
@@ -175,7 +326,8 @@ function TaskForm({
   const [description, setDescription] = useState("");
   const [startTime, setStartTime] = useState<string | Dayjs>("");
   const [endTime, setEndTime] = useState<string | Dayjs>("");
-  // const [roleSet, setRoleSet] = useState<RoleType[]>([]);
+  // const [roles, setRoles] = useState<RoleType[]>([]);
+  const [roles, setRoles] = useState<TempRoleType>([]);
   const [createdAt, setCreatedAt] = useState("");
   const [modifiedAt, setModifiedAt] = useState("");
 
@@ -365,6 +517,15 @@ function TaskForm({
     <Form handleSubmit={handleSubmit} error={errors.form}>
 
       {/* Fields */}
+      <Input
+        id="name"
+        value={name}
+        setValue={setName}
+        label="Name"
+        handleChanged={handleChanged}
+        errors={errors.name}
+        required
+      />
       {create &&
         <Autocomplete
           id="operation"
@@ -389,15 +550,7 @@ function TaskForm({
         errors={errors.field}
         required
       />
-      <Input
-        id="name"
-        value={name}
-        setValue={setName}
-        label="Name"
-        handleChanged={handleChanged}
-        errors={errors.name}
-        required
-      />
+      {/*
       <DateTimePicker
         id="starttime"
         value={startTime}
@@ -416,6 +569,7 @@ function TaskForm({
         errors={errors.endTime}
         required
       />
+      */}
       <Input
         id="description"
         value={description}
@@ -425,6 +579,44 @@ function TaskForm({
         handleChanged={handleChanged}
         errors={errors.description}
       />
+
+      <InputLabel sx={{ marginTop: 2, marginBottom: 1 }}>Roles</InputLabel>
+      {roles.map((role, index) =>
+        <Chip
+          key={'rolespec-' + index}
+          variant="filled"
+          sx={{ margin: 0.5 }}
+          label={<Box sx={{ display: 'flex' }}>
+            <Typography sx={{ color: "#777", marginRight: '5px' }}>{role?.quantity} x</Typography>
+            <Typography>{role?.name}</Typography>
+          </Box>}
+          onClick={() => dialog.showDialog(
+            <RoleForm
+              organizationId={operation?.project.organization.id || ""}
+              role={index}
+              roles={roles}
+              setRoles={setRoles}
+            />,
+            "Edit Role"
+          )}
+        />
+      )}
+      <Box sx={{ marginY: 1 }}>
+        <Button
+          variant="outlined"
+          onClick={() => dialog.showDialog(
+            <RoleForm
+              organizationId={operation?.project.organization.id || ""}
+              roles={roles}
+              setRoles={setRoles}
+            />,
+            "Add Role"
+          )}
+        >
+          Add Role
+        </Button>
+      </Box>
+
       {edit && <>
         <Input
           id="operation"
