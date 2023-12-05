@@ -83,7 +83,7 @@ function TaskFieldTable() {
       name: 'Create',
       icon: <ActionCreateIcon />,
       priority: 10,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         dialog.showDialog(
           // <TaskFieldForm />,
           <></>,
@@ -96,7 +96,7 @@ function TaskFieldTable() {
       name: 'Edit',
       icon: <ActionEditIcon />,
       priority: 20,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         dialog.showDialog(
           // <TaskFieldForm taskFieldId={selected[0].id} />,
           <></>,
@@ -112,7 +112,7 @@ function TaskFieldTable() {
       name: 'Delete',
       icon: <ActionDeleteIcon />,
       priority: 30,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (selected.length > 0),
     },
   ];
@@ -128,3 +128,4 @@ function TaskFieldTable() {
 }
 
 export default TaskFieldTable;
+export { LIST_TASK_FIELDS_QUERY };

@@ -104,7 +104,7 @@ function QualificationTable() {
       name: 'Create',
       icon: <ActionCreateIcon />,
       priority: 10,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         dialog.showDialog(
           // <QualificationForm />,
           <></>,
@@ -117,7 +117,7 @@ function QualificationTable() {
       name: 'Edit',
       icon: <ActionEditIcon />,
       priority: 20,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         dialog.showDialog(
           // <QualificationForm personPropertyGroupId={selected[0].id} />,
           <></>,
@@ -133,7 +133,7 @@ function QualificationTable() {
       name: 'Delete',
       icon: <ActionDeleteIcon />,
       priority: 30,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (selected.length > 0),
     },
   ];

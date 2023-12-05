@@ -106,7 +106,7 @@ function OperationTable() {
       name: 'Create',
       icon: <ActionCreateIcon />,
       priority: 10,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         dialog.showDialog(
           // <OperationForm />,
           <></>,
@@ -119,7 +119,7 @@ function OperationTable() {
       name: 'Edit',
       icon: <ActionEditIcon />,
       priority: 20,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         dialog.showDialog(
           // <OperationForm operationId={selected[0].id} />,
           <></>,
@@ -135,14 +135,14 @@ function OperationTable() {
       name: 'Delete',
       icon: <ActionDeleteIcon />,
       priority: 30,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (selected.length > 0),
     },
     {
       name: 'Publish',
       icon: <ActionPublishIcon />,
       priority: 100,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
         && operationState.sources.PUBLISHED.includes(selected[0].state)
@@ -156,7 +156,7 @@ function OperationTable() {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
       priority: 110,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
         && operationState.sources.ARCHIVED.includes(selected[0].state)
@@ -170,7 +170,7 @@ function OperationTable() {
       name: 'Operations',
       icon: <NavigationForwardIcon />,
       priority: 1000,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         filter.setFilter(selected[0].id);
         router.push("/admin/tasks");
       },
@@ -193,3 +193,4 @@ function OperationTable() {
 }
 
 export default OperationTable;
+export { LIST_OPERATIONS_QUERY };

@@ -10,6 +10,7 @@ import Button from "@mui/material/Button";
 import Form from "@/components/shared/Form";
 import { Input } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
+import { useFilter, GET_FILTER_OBJECT_QUERY } from "@/provider/Filter";
 
 import { gql } from '@/types/__generated__/gql';
 import {
@@ -100,20 +101,23 @@ type Errors = FormErrors<
 >;
 
 function OrganizationForm({
-  organizationId = '',
+  id = '',
   onSuccess = () => undefined,
   onError = () => undefined,
 }: {
-  organizationId?: string,
+  id?: string,
   onSuccess?: (data: Data) => void,
   onError?: (data: Data) => void,
 }) {
+  id = decodeURIComponent(id);
+
   // mode
-  const create = !(organizationId);
-  const edit = (organizationId);
+  const create = !(id);
+  const edit = (id);
 
   // context
   const snackbar = useSnackbar();
+  const filter = useFilter();
 
   // states
   const [changed, setChanged] = useState<{[id: string]: any}>({});
@@ -138,7 +142,7 @@ function OrganizationForm({
         if (!response)
           return;
         if(response.errors.length === 0) {
-          updateOrganizationReset();
+          createOrganizationReset();
           setErrors({});
           setChanged({});
           snackbar.showSnackbar("Organization created", 'success');
@@ -172,7 +176,7 @@ function OrganizationForm({
     GET_ORGANIZATION_QUERY, {
       skip: create,
       variables: {
-        id: organizationId
+        id: id
       },
       onCompleted: data => {
         if (!data.listOrganizations) return;
@@ -246,7 +250,7 @@ function OrganizationForm({
     if (edit)
       updateOrganization({
         variables: {
-          id: organizationId,
+          id: id,
           name: name,
           description: description,
           icon: icon,
@@ -279,6 +283,7 @@ function OrganizationForm({
         value={description}
         setValue={setDescription}
         label="Description"
+        multiline={true}
         handleChanged={handleChanged}
         errors={errors.description}
       />

@@ -100,45 +100,42 @@ function OrganizationTable() {
 
   // actions
   const actions: DataTableActions<OrganizationType> = [
-    {
-      name: 'Create',
-      icon: <ActionCreateIcon />,
-      priority: 10,
-      action: (selected, event) => {
-        dialog.showDialog(
-          <OrganizationForm />,
-          "Create Organization"
-        )
-      },
-      available: (selected) => (selected.length == 0),
-    },
+    // {
+    //   name: 'Create',
+    //   icon: <ActionCreateIcon />,
+    //   priority: 10,
+    //   action: (selected, setSelected, event) => {
+    //     dialog.showDialog(
+    //       <OrganizationForm />,
+    //       "Create Organization"
+    //     )
+    //   },
+    //   available: (selected) => (selected.length == 0),
+    // },
     {
       name: 'Edit',
       icon: <ActionEditIcon />,
       priority: 20,
-      action: (selected, event) => {
-        dialog.showDialog(
-          <OrganizationForm organizationId={selected[0].id} />,
-          "Edit Organization"
-        )
+      action: (selected, setSelected, event) => {
+        router.push("/admin/organizations/edit/" + selected[0].id);
       },
       available: (selected) => (selected.length == 1),
       display: {
         row: true,
       }
     },
-    {
-      name: 'Delete',
-      icon: <ActionDeleteIcon />,
-      priority: 30,
-      action: (selected, event) => {},
-      available: (selected) => (selected.length > 0),
-    },
+    // {
+    //   name: 'Delete',
+    //   icon: <ActionDeleteIcon />,
+    //   priority: 30,
+    //   action: (selected, setSelected, event) => {},
+    //   available: (selected) => (selected.length > 0),
+    // },
     {
       name: 'Publish',
       icon: <ActionPublishIcon />,
       priority: 100,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
         && organizationState.sources.PUBLISHED.includes(selected[0].state)
@@ -152,7 +149,7 @@ function OrganizationTable() {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
       priority: 110,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
         && organizationState.sources.ARCHIVED.includes(selected[0].state)
@@ -166,7 +163,7 @@ function OrganizationTable() {
       name: 'Projects',
       icon: <NavigationForwardIcon />,
       priority: 1000,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         filter.setFilter(selected[0].id);
         router.push("/admin/projects");
       },
@@ -189,3 +186,4 @@ function OrganizationTable() {
 }
 
 export default OrganizationTable;
+export { LIST_ORGANIZATIONS_QUERY };

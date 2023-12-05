@@ -21,7 +21,11 @@ type DataTableAction<T> = {
   name: string,
   icon: React.ReactNode,
   priority: number,
-  action: (rows: T[], event: React.MouseEvent<HTMLElement>) => void,
+  action: (
+    selected: T[],
+    setSelected: React.Dispatch<React.SetStateAction<any>>,
+    event: React.MouseEvent<HTMLElement>
+  ) => void,
   available?: (rows: T[]) => boolean,
   display?: {
     row?: boolean,

@@ -3,11 +3,17 @@
  * Repository: https://github.com/georga-app/georga-client-react
  */
 
+import dayjs from "dayjs";
+
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InputLabel from "@mui/material/InputLabel";
+import MuiAutocomplete from '@mui/material/Autocomplete';
 import MuiInput from "@mui/material/Input";
 import MuiSwitch from '@mui/material/Switch';
+import MuiTextField from "@mui/material/TextField";
+
+import { DateTimePicker as MuiDateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 import FormFieldError from "@/components/shared/FormFieldError";
 
@@ -22,6 +28,7 @@ function Input({
   type,
   required,
   disabled,
+  multiline,
   handleChanged,
 }: {
   id: string,
@@ -32,6 +39,7 @@ function Input({
   type?: string,
   required?: boolean,
   disabled?: boolean,
+  multiline?: boolean,
   handleChanged?: (id: string, oldValue: typeof value, newValue: typeof value) => void,
 }) {
   return (
@@ -50,6 +58,8 @@ function Input({
         id={id}
         value={value}
         type={type}
+        multiline={multiline}
+        rows={multiline ? 5 : 1} // see https://github.com/mui/material-ui/issues/33081
         onChange={(event) => {
           if( handleChanged )
             handleChanged(id, value, event.target.value);
@@ -112,7 +122,119 @@ function Switch({
   )
 }
 
+function Autocomplete<T extends { id: string, name?: string } | undefined>({
+  id,
+  label,
+  options,
+  value,
+  setValue,
+  errors,
+  required,
+  getOptionLabel = option => option?.name || "",
+  handleChanged,
+}: {
+  id: string,
+  label: string,
+  options: T[],
+  value: any,
+  setValue: React.Dispatch<React.SetStateAction<T | undefined>>,
+  errors: FormFieldErrorType | undefined,
+  required?: boolean,
+  getOptionLabel?: (option: T) => string,
+  handleChanged?: (id: string, oldValue: typeof value, newValue: typeof value) => void,
+}) {
+  return (
+    <FormControl
+      margin="normal"
+      variant="standard"
+      error={Boolean(errors)}
+      fullWidth
+      required={required}
+    >
+      <MuiAutocomplete
+        disablePortal
+        id={id}
+        value={value ? value : ""}
+        options={options}
+        getOptionLabel={getOptionLabel}
+        renderInput={params =>
+          <MuiTextField {...params}
+            variant="standard"
+            label={label}
+          />
+        }
+        renderOption={(props, option) => {
+          if (!option) return;
+          return (
+            <li {...props} key={option.id}>
+              {option.name}
+            </li>
+          )
+        }}
+        onChange={(event, newValue) => {
+          if( handleChanged )
+            handleChanged(id, value, newValue || undefined);
+          setValue(newValue || undefined);
+        }}
+      />
+      {errors &&
+        <FormFieldError error={errors}/>
+      }
+    </FormControl>
+  )
+}
+
+function DateTimePicker({
+  id,
+  value,
+  setValue,
+  errors,
+  label,
+  required,
+  disabled,
+  handleChanged,
+}: {
+  id: string,
+  value: any,
+  setValue?: React.Dispatch<React.SetStateAction<any>>,
+  errors?: FormFieldErrorType | undefined,
+  label?: string,
+  required?: boolean,
+  disabled?: boolean,
+  handleChanged?: (id: string, oldValue: typeof value, newValue: typeof value) => void,
+}) {
+  return (
+    <FormControl
+      id={id}
+      margin="normal"
+      variant="standard"
+      fullWidth
+      error={Boolean(errors)}
+      required={required}
+      disabled={disabled}
+    >
+      <MuiDateTimePicker
+        value={value || null}
+        label={label}
+        onChange={(newValue: any) => {
+          if( handleChanged )
+            handleChanged(id, value, newValue);
+          if ( setValue )
+            setValue(newValue);
+        }}
+        slotProps={{ textField: { variant: 'standard' } }}
+      />
+      {errors &&
+        <FormFieldError error={errors}/>
+      }
+    </FormControl>
+  )
+}
 export {
   Input,
   Switch,
+  Autocomplete,
+  DateTimePicker,
 };
+
+

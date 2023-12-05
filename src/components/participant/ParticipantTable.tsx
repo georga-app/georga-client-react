@@ -122,7 +122,7 @@ function ParticipantTable() {
     //   name: 'Create',
     //   icon: <ActionCreateIcon />,
     //   priority: 10,
-    //   action: (selected, event) => {
+    //   action: (selected, setSelected, event) => {
     //     dialog.showDialog(
     //       // <ParticipantForm />,
     //       <></>,
@@ -135,7 +135,7 @@ function ParticipantTable() {
     //   name: 'Edit',
     //   icon: <ActionEditIcon />,
     //   priority: 20,
-    //   action: (selected, event) => {
+    //   action: (selected, setSelected, event) => {
     //     dialog.showDialog(
     //       // <ParticipantForm shiftId={selected[0].id} />,
     //       <></>,
@@ -151,14 +151,14 @@ function ParticipantTable() {
     //   name: 'Delete',
     //   icon: <ActionDeleteIcon />,
     //   priority: 30,
-    //   action: (selected, event) => {},
+    //   action: (selected, setSelected, event) => {
     //   available: (selected) => (selected.length > 0),
     // },
     // {
     //   name: 'Publish',
     //   icon: <ActionPublishIcon />,
     //   priority: 100,
-    //   action: (selected, event) => {},
+    //   action: (selected, setSelected, event) => {
     //   available: (selected) => (
     //     selected.length > 0
     //     && participantAcceptance.sources.PUBLISHED.includes(selected[0].state)
@@ -172,7 +172,7 @@ function ParticipantTable() {
     //   name: 'Archive',
     //   icon: <ActionArchiveIcon />,
     //   priority: 110,
-    //   action: (selected, event) => {},
+    //   action: (selected, setSelected, event) => {
     //   available: (selected) => (
     //     selected.length > 0
     //     && participantAcceptance.sources.ARCHIVED.includes(selected[0].state)

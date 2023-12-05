@@ -99,7 +99,7 @@ function PersonTable() {
     //   name: 'Create',
     //   icon: <ActionCreateIcon />,
     //   priority: 10,
-    //   action: (selected, event) => {
+    //   action: (selected, setSelected, event) => {
     //     dialog.showDialog(
     //       // <TaskForm />,
     //       <></>,
@@ -112,7 +112,7 @@ function PersonTable() {
     //   name: 'Edit',
     //   icon: <ActionEditIcon />,
     //   priority: 20,
-    //   action: (selected, event) => {
+    //   action: (selected, setSelected, event) => {
     //     dialog.showDialog(
     //       // <TaskForm taskId={selected[0].id} />,
     //       <></>,
@@ -128,14 +128,14 @@ function PersonTable() {
     //   name: 'Delete',
     //   icon: <ActionDeleteIcon />,
     //   priority: 30,
-    //   action: (selected, event) => {},
+    //   action: (selected, setSelected, event) => {
     //   available: (selected) => (selected.length > 0),
     // },
     // {
     //   name: 'Publish',
     //   icon: <ActionPublishIcon />,
     //   priority: 100,
-    //   action: (selected, event) => {},
+    //   action: (selected, setSelected, event) => {
     //   available: (selected) => (
     //     selected.length > 0
     //     && taskState.sources.PUBLISHED.includes(selected[0].state)
@@ -149,7 +149,7 @@ function PersonTable() {
     //   name: 'Archive',
     //   icon: <ActionArchiveIcon />,
     //   priority: 110,
-    //   action: (selected, event) => {},
+    //   action: (selected, setSelected, event) => {
     //   available: (selected) => (
     //     selected.length > 0
     //     && taskState.sources.ARCHIVED.includes(selected[0].state)
@@ -163,7 +163,7 @@ function PersonTable() {
     //   name: 'Operations',
     //   icon: <NavigationForwardIcon />,
     //   priority: 1000,
-    //   action: (selected, event) => {
+    //   action: (selected, setSelected, event) => {
     //     filter.setFilter(selected[0]);
     //   },
     //   available: (selected) => (selected.length == 1),

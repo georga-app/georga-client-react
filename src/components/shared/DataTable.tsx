@@ -215,6 +215,7 @@ function DataTableToolbar<T>({
   selectable = true,
   numSelected = 0,
   getSelectedRows = () => [],
+  setSelected,
   selectToggleAll = () => undefined,
   filterable = true,
   filter,
@@ -229,6 +230,7 @@ function DataTableToolbar<T>({
   selectable?: boolean,
   numSelected: number,
   getSelectedRows?: () => T[],
+  setSelected: React.Dispatch<React.SetStateAction<any>>,
   selectToggleAll?: (event: React.MouseEvent<HTMLElement>) => void,
   filter: string,
   setFilter: React.Dispatch<React.SetStateAction<string>>,
@@ -407,7 +409,7 @@ function DataTableToolbar<T>({
             key={'promoted-action-' + index}
             icon={action.icon}
             tooltip={action.name}
-            onClick={event => action.action(getSelectedRows(), event)}
+            onClick={event => action.action(getSelectedRows(), setSelected, event)}
           />
         )}
         {showActionMenu && <>
@@ -438,7 +440,7 @@ function DataTableToolbar<T>({
               <MenuItem
                 key={'toolbar-available-action-' + index}
                 onClick={event => {
-                  action.action(getSelectedRows(), event); handleCloseActionsMenu();
+                  action.action(getSelectedRows(), setSelected, event); handleCloseActionsMenu();
                 }}
               >
                 <Typography textAlign="center">{action.name}</Typography>
@@ -610,6 +612,7 @@ function DataTable<T extends {}>({
             selectable={selectable}
             numSelected={numSelected}
             getSelectedRows={getSelectedRows}
+            setSelected={setSelected}
             selectToggleAll={handleSelectToggleAllClick}
             filterable={filterable}
             filter={filter}
@@ -675,7 +678,7 @@ function DataTable<T extends {}>({
                               key={column.id as string}
                               sx={[{ cursor: 'default' }, ... [sx] ]}
                             >
-                              {content}
+                              {(content && content != "null" ) ? content : '-'}
                             </TableCell>
                           );
                         })}
@@ -694,7 +697,7 @@ function DataTable<T extends {}>({
                                   tooltip={action.name}
                                   onClick={event => {
                                     event.stopPropagation();
-                                    action.action([row], event)
+                                    action.action([row], setSelected, event)
                                   }}
                                   sx={{
                                     paddingRight: {
@@ -764,7 +767,7 @@ function DataTable<T extends {}>({
               <MenuItem
                 key={'context-action-' + index}
                 onClick={event => {
-                  action.action(getSelectedRows(), event); handleCloseContextMenu();
+                  action.action(getSelectedRows(), setSelected, event); handleCloseContextMenu();
                 }}
               >
                 <Typography textAlign="center">{action.name}</Typography>

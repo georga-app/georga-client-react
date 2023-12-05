@@ -13,11 +13,11 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 
 import { useFilter } from '@/provider/Filter';
+import { DateRange } from '@/components/shared/DateTime';
 
 import { ActionCloseIcon } from '@/theme/Icons';
 
 import { FilterObjectType } from '@/types/Filter';
-
 
 function Info({
   label,
@@ -40,10 +40,10 @@ function Info({
       style={{ textDecoration: 'none', marginBottom: 1 }}
     >
       <Box sx={{ marginBottom: 1 }}>
-        <Typography variant="caption" sx={{ color: active ? 'secondary.light' : '#aaa' }}>
+        <Typography variant="caption" sx={{ color: active ? 'secondary.light' : '#999' }}>
           {label}
         </Typography>
-        <Typography variant="body1" sx={{ color: active ? 'primary.main' : '#888' }}>
+        <Typography variant="body2" sx={{ color: active ? 'primary.main' : '#777' }}>
           {content}
         </Typography>
       </Box>
@@ -161,11 +161,7 @@ function ObjectInfo({ object }: { object: FilterObjectType }) {
         />
         <Info
           label="Shift"
-          content=<>
-            {new Date(object.startTime).toLocaleString()}
-            -
-            {new Date(object.shiftEndTime).toLocaleString()}
-          </>
+          content=<DateRange start={object.startTime} end={object.shiftEndTime} />
           url="/admin/shifts"
           active={true}
         />

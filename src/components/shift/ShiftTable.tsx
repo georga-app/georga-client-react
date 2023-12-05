@@ -112,7 +112,7 @@ function ShiftTable() {
       name: 'Create',
       icon: <ActionCreateIcon />,
       priority: 10,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         dialog.showDialog(
           // <ShiftForm />,
           <></>,
@@ -125,7 +125,7 @@ function ShiftTable() {
       name: 'Edit',
       icon: <ActionEditIcon />,
       priority: 20,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         dialog.showDialog(
           // <ShiftForm shiftId={selected[0].id} />,
           <></>,
@@ -141,14 +141,14 @@ function ShiftTable() {
       name: 'Delete',
       icon: <ActionDeleteIcon />,
       priority: 30,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (selected.length > 0),
     },
     {
       name: 'Publish',
       icon: <ActionPublishIcon />,
       priority: 100,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
         && shiftState.sources.PUBLISHED.includes(selected[0].state)
@@ -162,7 +162,7 @@ function ShiftTable() {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
       priority: 110,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
         && shiftState.sources.ARCHIVED.includes(selected[0].state)
@@ -176,7 +176,7 @@ function ShiftTable() {
       name: 'Operations',
       icon: <NavigationForwardIcon />,
       priority: 1000,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         filter.setFilter(selected[0].id);
         router.push("/admin/participants");
       },

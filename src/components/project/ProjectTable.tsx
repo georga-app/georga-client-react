@@ -4,14 +4,15 @@
  */
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
-// import ProjectForm from '@/components/project/ProjectForm';
+import ProjectForm from '@/components/project/ProjectForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
+import { useSnackbar } from "@/provider/Snackbar";
 import { projectState } from '@/app/states';
 
 import {  // TODO
@@ -46,6 +47,26 @@ const LIST_PROJECTS_QUERY = gql(`
   }
 `);
 
+const DELETE_PROJECT_MUTATION = gql(`
+  mutation DeleteProject (
+    $id: ID!
+  ) {
+    deleteProject (
+      input: {
+        id: $id
+      }
+    ) {
+      project {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`);
+
 // columns
 const rowKey = 'id';
 let columns: DataTableColumn<ProjectType>[] = [
@@ -64,14 +85,7 @@ let columns: DataTableColumn<ProjectType>[] = [
   },
 ]
 
-
-function ProjectTable() {
-  // provider
-  const dialog = useDialog();
-  const filter = useFilter();
-  const router = useRouter();
-
-  // filter
+const filterVariables = (filter: any) => {
   let filterVariables: ListProjectsQueryVariables = {}
   switch ( filter?.object?.__typename ) {
     case "OrganizationType":
@@ -85,11 +99,35 @@ function ProjectTable() {
     case "ShiftType":
       filterVariables.organization = filter.object.task.operation.project.organization.id; break
   }
+  return filterVariables;
+}
+
+function ProjectTable() {
+  // provider
+  const dialog = useDialog();
+  const filter = useFilter();
+  const router = useRouter();
+  const snackbar = useSnackbar();
+
+  // filter
+  // let filterVariables: ListProjectsQueryVariables = {}
+  // switch ( filter?.object?.__typename ) {
+  //   case "OrganizationType":
+  //     filterVariables.organization = filter.object.id; break;
+  //   case "ProjectType":
+  //     filterVariables.organization = filter.object.organization.id; break
+  //   case "OperationType":
+  //     filterVariables.organization = filter.object.project.organization.id; break
+  //   case "TaskType":
+  //     filterVariables.organization = filter.object.operation.project.organization.id; break
+  //   case "ShiftType":
+  //     filterVariables.organization = filter.object.task.operation.project.organization.id; break
+  // }
 
   // get
   const { data, loading } = useQuery(
     LIST_PROJECTS_QUERY, {
-      variables: filterVariables
+      variables: filterVariables(filter)
     }
   );
   let rows: ProjectType[] = [];
@@ -98,18 +136,49 @@ function ProjectTable() {
       .map((edge) => edge?.node)
       .filter((node): node is ProjectType => node !== undefined);
 
+  // delete
+  const [ deleteProject, {
+    loading: deleteProjectLoading,
+    reset: deleteProjectReset
+  }] = useMutation(
+    DELETE_PROJECT_MUTATION, {
+      onCompleted: data => {
+        const response = data.deleteProject;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          deleteProjectReset();
+          // setErrors({});
+          // setChanged({});
+          snackbar.showSnackbar("Project deleted", 'success');
+          // onSuccess(data);
+        } else {
+          var fieldErrors: {[fieldId: string]: string[]} = {};
+          response.errors.forEach(error => {
+            fieldErrors[error.field] = error.messages
+          });
+          // setErrors(fieldErrors);
+          deleteProjectReset();
+          // onError(data);
+        }
+      },
+      // onError: error => {
+      //   setErrors({form: error.message});
+      // },
+      refetchQueries: [
+        "ListProjects"
+      ]
+    }
+  );
+
   // actions
   const actions: DataTableActions<ProjectType> = [
     {
       name: 'Create',
       icon: <ActionCreateIcon />,
       priority: 10,
-      action: (selected, event) => {
-        dialog.showDialog(
-          // <ProjectForm />,
-          <></>,
-          "Create Project"
-        )
+      action: (selected, setSelected, event) => {
+        router.push("/admin/projects/add");
       },
       available: (selected) => (selected.length == 0),
     },
@@ -117,12 +186,8 @@ function ProjectTable() {
       name: 'Edit',
       icon: <ActionEditIcon />,
       priority: 20,
-      action: (selected, event) => {
-        dialog.showDialog(
-          // <ProjectForm projectId={selected[0].id} />,
-          <></>,
-          "Edit Project"
-        )
+      action: (selected, setSelected, event) => {
+        router.push("/admin/projects/edit/" + selected[0].id);
       },
       available: (selected) => (selected.length == 1),
       display: {
@@ -133,14 +198,19 @@ function ProjectTable() {
       name: 'Delete',
       icon: <ActionDeleteIcon />,
       priority: 30,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {
+        deleteProject({
+          variables: { id: selected[0].id }
+        })
+        setSelected([]);
+      },
       available: (selected) => (selected.length > 0),
     },
     {
       name: 'Publish',
       icon: <ActionPublishIcon />,
       priority: 100,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
         && projectState.sources.PUBLISHED.includes(selected[0].state)
@@ -154,7 +224,7 @@ function ProjectTable() {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
       priority: 110,
-      action: (selected, event) => {},
+      action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
         && projectState.sources.ARCHIVED.includes(selected[0].state)
@@ -168,7 +238,7 @@ function ProjectTable() {
       name: 'Operations',
       icon: <NavigationForwardIcon />,
       priority: 1000,
-      action: (selected, event) => {
+      action: (selected, setSelected, event) => {
         filter.setFilter(selected[0].id);
         router.push("/admin/operations");
       },
@@ -191,3 +261,4 @@ function ProjectTable() {
 }
 
 export default ProjectTable;
+export { LIST_PROJECTS_QUERY, filterVariables };

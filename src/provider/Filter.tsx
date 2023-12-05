@@ -160,4 +160,4 @@ const useFilter = (): FilterContextType => {
   return context;
 };
 
-export { FilterProvider, useFilter };
+export { FilterProvider, useFilter, GET_FILTER_OBJECT_QUERY };

@@ -2,38 +2,43 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from '@apollo/client';
 
 import Button from "@mui/material/Button";
 
 import Form from "@/components/shared/Form";
-import { Input } from "@/components/shared/FormFields";
+import { Input, Autocomplete } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
+import { useFilter } from '@/provider/Filter';
+
+import { LIST_ORGANIZATIONS_QUERY } from "@/components/organization/OrganizationTable"
+import { LIST_PROJECTS_QUERY, filterVariables } from "@/components/project/ProjectTable"
 
 import { gql } from '@/types/__generated__/gql';
 import {
-  CreateOrganizationMutation,
-  CreateOrganizationMutationVariables,
-  UpdateOrganizationMutation,
-  UpdateOrganizationMutationVariables,
+  CreateProjectMutation,
+  CreateProjectMutationVariables,
+  OrganizationType,
+  UpdateProjectMutation,
+  UpdateProjectMutationVariables,
 } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
 
-const CREATE_ORGANIZATION_MUTATION = gql(`
-  mutation CreateOrganization (
+const CREATE_PROJECT_MUTATION = gql(`
+  mutation CreateProject (
+    $organization: ID!
     $name: String!
     $description: String
-    $icon: String
   ) {
-    createOrganization (
+    createProject (
       input: {
+        organization: $organization
         name: $name
         description: $description
-        icon: $icon
       }
     ) {
-      organization {
+      project {
         id
       }
       errors {
@@ -44,11 +49,11 @@ const CREATE_ORGANIZATION_MUTATION = gql(`
   }
 `);
 
-const GET_ORGANIZATION_QUERY = gql(`
-  query GetOrganization (
+const GET_PROJECT_QUERY = gql(`
+  query GetProject (
     $id: ID!
   ) {
-    listOrganizations (
+    listProjects (
       id: $id
     ) {
       edges {
@@ -59,29 +64,30 @@ const GET_ORGANIZATION_QUERY = gql(`
           state
           name
           description
-          icon
+          organization {
+            id
+            name
+          }
         }
       }
     }
   }
 `);
 
-const UPDATE_ORGANIZATION_MUTATION = gql(`
-  mutation UpdateOrganization (
+const UPDATE_PROJECT_MUTATION = gql(`
+  mutation UpdateProject (
     $id: ID!
     $name: String
     $description: String
-    $icon: String
   ) {
-    updateOrganization (
+    updateProject (
       input: {
         id: $id
         name: $name
         description: $description
-        icon: $icon
       }
     ) {
-      organization {
+      project {
         id
       }
       errors {
@@ -92,56 +98,77 @@ const UPDATE_ORGANIZATION_MUTATION = gql(`
   }
 `);
 
-type Data = CreateOrganizationMutation
-            | UpdateOrganizationMutation;
+type Data = CreateProjectMutation
+            | UpdateProjectMutation;
 type Errors = FormErrors<
-  CreateOrganizationMutationVariables
-  | UpdateOrganizationMutationVariables
+  CreateProjectMutationVariables
+  | UpdateProjectMutationVariables
 >;
 
-function OrganizationForm({
-  organizationId = '',
+function ProjectForm({
+  id = '',
   onSuccess = () => undefined,
   onError = () => undefined,
 }: {
-  organizationId?: string,
+  id?: string,
   onSuccess?: (data: Data) => void,
   onError?: (data: Data) => void,
 }) {
+  id = decodeURIComponent(id);
+
   // mode
-  const create = !(organizationId);
-  const edit = (organizationId);
+  const create = !(id);
+  const edit = (id);
 
   // context
   const snackbar = useSnackbar();
+  const filter = useFilter();
 
   // states
   const [changed, setChanged] = useState<{[id: string]: any}>({});
   const [errors, setErrors] = useState<Errors>({});
 
   // fields
+  const [organizationOptions, setOrganizationOptions] = useState<OrganizationType[]>([]);
+  const [organization, setOrganization] = useState<OrganizationType | undefined>(undefined);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [icon, setIcon] = useState("");
   const [state, setState] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [modifiedAt, setModifiedAt] = useState("");
 
-  // createOrganization
-  const [ createOrganization, {
-    loading: createOrganizationLoading,
-    reset: createOrganizationReset
+  useEffect(() => {
+    if (organization || !filter.hasFilter)
+      return
+    switch ( filter?.object?.__typename ) {
+      case "OrganizationType":
+        setOrganization(filter.object); break;
+      case "ProjectType":
+        setOrganization(filter.object.organization); break;
+      case "OperationType":
+        setOrganization(filter.object.project.organization); break
+      case "TaskType":
+        setOrganization(filter.object.operation.project.organization); break;
+      case "ShiftType":
+        setOrganization(filter.object.task.operation.project.organization); break;
+    }
+  }, [organization, filter.hasFilter, filter.object]);
+
+  // create
+  const [ createProject, {
+    loading: createProjectLoading,
+    reset: createProjectReset
   }] = useMutation(
-    CREATE_ORGANIZATION_MUTATION, {
+    CREATE_PROJECT_MUTATION, {
       onCompleted: data => {
-        const response = data.createOrganization;
+        const response = data.createProject;
         if (!response)
           return;
         if(response.errors.length === 0) {
-          updateOrganizationReset();
+          createProjectReset();
           setErrors({});
           setChanged({});
-          snackbar.showSnackbar("Organization created", 'success');
+          snackbar.showSnackbar("Project created", 'success');
           onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
@@ -149,7 +176,7 @@ function OrganizationForm({
             fieldErrors[error.field] = error.messages
           });
           setErrors(fieldErrors);
-          updateOrganizationReset();
+          updateProjectReset();
           onError(data);
         }
       },
@@ -157,53 +184,65 @@ function OrganizationForm({
         setErrors({form: error.message});
       },
       refetchQueries: [
-        "ListOrganizations"
+        { query: LIST_PROJECTS_QUERY, variables: filterVariables(filter) }
       ]
     }
   );
 
-  // getOrganization
+  // get
   const {
-    called: getOrganizationCalled,
-    loading: getOrganizationLoading,
-    data: getOrganizationData,
-    error: getOrganizationError
+    called: getProjectCalled,
+    loading: getProjectLoading,
+    data: getProjectData,
+    error: getProjectError
   } = useQuery(
-    GET_ORGANIZATION_QUERY, {
+    GET_PROJECT_QUERY, {
       skip: create,
       variables: {
-        id: organizationId
+        id: id
       },
       onCompleted: data => {
-        if (!data.listOrganizations) return;
-        const organization = data.listOrganizations.edges[0]?.node;
-        if (!organization)
+        if (!data.listProjects) return;
+        const project = data.listProjects.edges[0]?.node;
+        if (!project)
           return;
-        setName(organization.name);
-        setDescription(organization.description || '');
-        setIcon(organization.icon || '');
-        setState(organization.state || '');
-        setCreatedAt(organization.createdAt);
-        setModifiedAt(organization.modifiedAt);
+        setOrganization(project.organization as OrganizationType);
+        setName(project.name);
+        setDescription(project.description || '');
+        setState(project.state || '');
+        setCreatedAt(project.createdAt);
+        setModifiedAt(project.modifiedAt);
       },
     },
   );
 
-  // updateOrganization
-  const [ updateOrganization, {
-    loading: updateOrganizationLoading,
-    reset: updateOrganizationReset
-  }] = useMutation(
-    UPDATE_ORGANIZATION_MUTATION, {
+  const { data, loading } = useQuery(
+    LIST_ORGANIZATIONS_QUERY, {
       onCompleted: data => {
-        const response = data.updateOrganization;
+        if (!data.listOrganizations) return;
+        const organizations = data.listOrganizations.edges
+          .map((edge) => edge?.node)
+          .filter((node): node is OrganizationType => node !== undefined);
+        setOrganizationOptions(organizations);
+      }
+    }
+  );
+
+  // update
+  const [ updateProject, {
+    loading: updateProjectLoading,
+    reset: updateProjectReset
+  }] = useMutation(
+    UPDATE_PROJECT_MUTATION, {
+      onCompleted: data => {
+        const response = data.updateProject;
         if (!response)
           return;
         if(response.errors.length === 0) {
-          updateOrganizationReset();
+          updateProjectReset();
           setErrors({});
           setChanged({});
-          snackbar.showSnackbar("Organization updated", 'success');
+          snackbar.showSnackbar("Project updated", 'success');
           onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
@@ -211,7 +250,7 @@ function OrganizationForm({
             fieldErrors[error.field] = error.messages
           });
           setErrors(fieldErrors);
-          updateOrganizationReset();
+          updateProjectReset();
           onError(data);
         }
       },
@@ -219,7 +258,7 @@ function OrganizationForm({
         setErrors({form: error.message});
       },
       refetchQueries: [
-        "GetOrganization"
+        "GetProject"
       ]
     }
   );
@@ -236,35 +275,47 @@ function OrganizationForm({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (create)
-      createOrganization({
+      createProject({
         variables: {
+          organization: organization?.id || "",
           name: name,
           description: description,
-          icon: icon,
         }
       });
     if (edit)
-      updateOrganization({
+      updateProject({
         variables: {
-          id: organizationId,
+          id: id,
           name: name,
           description: description,
-          icon: icon,
         }
       });
   }
 
   // return
   if (edit) {
-    if (getOrganizationError)
+    if (getProjectError)
       return <div>Error</div>;
-    if (!getOrganizationCalled || getOrganizationLoading)
+    if (!getProjectCalled || getProjectLoading)
       return <div>Loading...</div>;
   }
   return (
     <Form handleSubmit={handleSubmit} error={errors.form}>
 
       {/* Fields */}
+      {create &&
+        <Autocomplete
+          id="organization"
+          value={organization}
+          setValue={setOrganization}
+          options={organizationOptions}
+          label="Organization"
+          handleChanged={handleChanged}
+          // @ts-ignore
+          errors={errors.organization}
+          required
+        />
+      }
       <Input
         id="name"
         value={name}
@@ -279,18 +330,17 @@ function OrganizationForm({
         value={description}
         setValue={setDescription}
         label="Description"
+        multiline={true}
         handleChanged={handleChanged}
         errors={errors.description}
       />
-      <Input
-        id="icon"
-        value={icon}
-        setValue={setIcon}
-        label="Icon"
-        handleChanged={handleChanged}
-        errors={errors.icon}
-      />
       {edit && <>
+        <Input
+          id="organization"
+          value={organization?.name}
+          label="Organization At"
+          disabled
+        />
         <Input
           id="createdAt"
           value={new Date(createdAt).toLocaleString()}
@@ -320,15 +370,15 @@ function OrganizationForm({
         sx={{ marginTop: 1 }}
         disabled={
           Object.keys(changed).length === 0
-          || (edit && updateOrganizationLoading)
-          || (create && createOrganizationLoading)
+          || (edit && updateProjectLoading)
+          || (create && createProjectLoading)
         }
       >
-        {edit && (updateOrganizationLoading ? "Saving..." : "Save")}
-        {create && (createOrganizationLoading ? "Creating..." : "Create")}
+        {edit && (updateProjectLoading ? "Saving..." : "Save")}
+        {create && (createProjectLoading ? "Creating..." : "Create")}
       </Button>
     </Form>
   );
 }
 
-export default OrganizationForm;
+export default ProjectForm;
