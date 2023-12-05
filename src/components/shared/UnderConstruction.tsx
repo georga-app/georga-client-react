@@ -13,13 +13,13 @@ function UnderConstruction({
   label?: string
 }) {
   return (
-    <Box sx={{ marginY: 5, display: 'flex', justifyContent: 'center' }}>
+    <Box sx={{ marginY: 5, display: 'flex', justifyContent: 'center', opacity: 0.4 }}>
       <Box>
-        <ConstructionIcon sx={{ fontSize: '200px', color: '#ccc' }} />
+        <ConstructionIcon sx={{ fontSize: '200px', color: 'primary.main' }} />
         {label &&
           <Typography
             variant="h4"
-            sx={{ color: '#ccc', marginLeft: "6px", textAlign: 'center' }}
+            sx={{ color: 'primary.main', marginLeft: "6px", textAlign: 'center' }}
           >{label}</Typography>
         }
       </Box>
