@@ -2,6 +2,8 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
+import dayjs from "dayjs";
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@apollo/client';
@@ -62,6 +64,7 @@ let columns: DataTableColumn<ShiftType>[] = [
     label: 'Start Time',
     sortable: true,
     filterable: true,
+    content: (data, row) => String(dayjs(data)),
   },
   {
     id: 'endTime',
@@ -69,6 +72,7 @@ let columns: DataTableColumn<ShiftType>[] = [
     // display: 'sm',
     sortable: true,
     filterable: true,
+    content: (data, row) => String(dayjs(data)),
   },
   // TODO
 ]
