@@ -20,6 +20,7 @@ import ActionDeselectIcon from '@mui/icons-material/Deselect';
 import ActionEditIcon from '@mui/icons-material/Edit';
 import ActionFilterIcon from '@mui/icons-material/FilterList';
 import ActionMoreIcon from '@mui/icons-material/MoreHoriz';
+import ActionNotifyIcon from '@mui/icons-material/Notifications';
 import ActionPublishIcon from '@mui/icons-material/Visibility';
 import ActionUnsubscribeIcon from '@mui/icons-material/PersonRemove';
 import ActionSearchIcon from '@mui/icons-material/Search';
@@ -70,6 +71,7 @@ export {
   ActionEditIcon,
   ActionFilterIcon,
   ActionMoreIcon,
+  ActionNotifyIcon,
   ActionPublishIcon,
   ActionUnsubscribeIcon,
   ActionSearchIcon,

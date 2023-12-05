@@ -19,6 +19,7 @@ import {  // TODO
   ActionCreateIcon,
   ActionDeleteIcon,
   ActionEditIcon,
+  ActionNotifyIcon,
   ActionPublishIcon,
   NavigationForwardIcon,
 } from '@/theme/Icons';
@@ -171,6 +172,13 @@ function ShiftTable() {
         transitions: shiftState,
         target: 'ARCHIVED'
       }
+    },
+    {
+      name: 'Message',
+      icon: <ActionNotifyIcon />,
+      priority: 200,
+      action: (selected, setSelected, event) => {},
+      available: (selected) => (selected.length == 1),
     },
     {
       name: 'Operations',

@@ -19,6 +19,7 @@ import {  // TODO
   ActionCreateIcon,
   ActionDeleteIcon,
   ActionEditIcon,
+  ActionNotifyIcon,
   ActionPublishIcon,
   NavigationForwardIcon,
 } from '@/theme/Icons';
@@ -167,7 +168,14 @@ function OperationTable() {
       }
     },
     {
-      name: 'Operations',
+      name: 'Message',
+      icon: <ActionNotifyIcon />,
+      priority: 200,
+      action: (selected, setSelected, event) => {},
+      available: (selected) => (selected.length == 1),
+    },
+    {
+      name: 'Tasks',
       icon: <NavigationForwardIcon />,
       priority: 1000,
       action: (selected, setSelected, event) => {
