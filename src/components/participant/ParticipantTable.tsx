@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 
 // import ParticipantForm from '@/components/project/ParticipantForm';
 import DataTable from '@/components/shared/DataTable';
@@ -71,6 +72,19 @@ let columns: DataTableColumn<ParticipantType>[] = [
     label: 'Acceptance',
     sortable: true,
     filterable: true,
+    content: (data, row) => {
+      let color = "warning"
+      switch (data) {
+        case "ACCEPTED": color = "success"; break;
+        case "DECLINED": color = "error"; break;
+      }
+      return (
+        <Chip
+          label={data}
+          color={color as "success" | "error" | "warning"}
+        />
+      )
+    }
   },
   {
     id: 'adminAcceptance',
@@ -78,6 +92,19 @@ let columns: DataTableColumn<ParticipantType>[] = [
     // display: 'sm',
     sortable: true,
     filterable: true,
+    content: (data, row) => {
+      let color = "warning"
+      switch (data) {
+        case "ACCEPTED": color = "success"; break;
+        case "DECLINED": color = "error"; break;
+      }
+      return (
+        <Chip
+          label={data}
+          color={color as "success" | "error" | "warning"}
+        />
+      )
+    }
   },
   // TODO
 ]
