@@ -31,6 +31,7 @@ const LIST_PERSONS_QUERY = gql(`
     listPersons {
       edges {
         node {
+          id
           email
           firstName
           lastName
