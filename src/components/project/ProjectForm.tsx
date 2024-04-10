@@ -8,12 +8,17 @@ import { useQuery, useMutation } from '@apollo/client';
 import Button from "@mui/material/Button";
 
 import Form from "@/components/shared/Form";
-import { Input, Autocomplete } from "@/components/shared/FormFields";
+import { Input, Autocomplete, Switch } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
-import { useFilter } from '@/provider/Filter';
+import { useFilter, filterVariables } from '@/provider/Filter';
 
-import { LIST_ORGANIZATIONS_QUERY } from "@/components/organization/OrganizationTable"
-import { LIST_PROJECTS_QUERY, filterVariables } from "@/components/project/ProjectTable"
+import { LIST_ORGANIZATIONS_QUERY } from "@/gql/organization"
+import {
+  GET_PROJECT_QUERY,
+  LIST_PROJECTS_QUERY,
+  CREATE_PROJECT_MUTATION,
+  UPDATE_PROJECT_MUTATION,
+} from "@/gql/project"
 
 import { gql } from '@/types/__generated__/gql';
 import {
@@ -25,78 +30,6 @@ import {
 } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
 
-const CREATE_PROJECT_MUTATION = gql(`
-  mutation CreateProject (
-    $organization: ID!
-    $name: String!
-    $description: String
-  ) {
-    createProject (
-      input: {
-        organization: $organization
-        name: $name
-        description: $description
-      }
-    ) {
-      project {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
-
-const GET_PROJECT_QUERY = gql(`
-  query GetProject (
-    $id: ID!
-  ) {
-    listProjects (
-      id: $id
-    ) {
-      edges {
-        node {
-          id
-          createdAt
-          modifiedAt
-          state
-          name
-          description
-          organization {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`);
-
-const UPDATE_PROJECT_MUTATION = gql(`
-  mutation UpdateProject (
-    $id: ID!
-    $name: String
-    $description: String
-  ) {
-    updateProject (
-      input: {
-        id: $id
-        name: $name
-        description: $description
-      }
-    ) {
-      project {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
 
 type Data = CreateProjectMutation
             | UpdateProjectMutation;
@@ -131,6 +64,7 @@ function ProjectForm({
   // fields
   const [organizationOptions, setOrganizationOptions] = useState<OrganizationType[]>([]);
   const [organization, setOrganization] = useState<OrganizationType | undefined>(undefined);
+  const [publish, setPublish] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [state, setState] = useState("");
@@ -183,8 +117,11 @@ function ProjectForm({
       onError: error => {
         setErrors({form: error.message});
       },
+      // refetchQueries: [
+      //   { query: LIST_PROJECTS_QUERY, variables: filterVariables('project', filter) }
+      // ]
       refetchQueries: [
-        { query: LIST_PROJECTS_QUERY, variables: filterVariables(filter) }
+        "ListProjects"
       ]
     }
   );
@@ -277,6 +214,7 @@ function ProjectForm({
     if (create)
       createProject({
         variables: {
+          publish: publish,
           organization: organization?.id || "",
           name: name,
           description: description,
@@ -303,7 +241,14 @@ function ProjectForm({
     <Form handleSubmit={handleSubmit} error={errors.form}>
 
       {/* Fields */}
-      {create &&
+      {create && <>
+        <Switch
+          id="publish"
+          value={publish}
+          setValue={setPublish}
+          errors={[]}
+          label="Publish"
+        />
         <Autocomplete
           id="organization"
           value={organization}
@@ -315,7 +260,7 @@ function ProjectForm({
           errors={errors.organization}
           required
         />
-      }
+      </>}
       <Input
         id="name"
         value={name}

@@ -9,6 +9,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import Box from '@mui/material/Box';
 
 import DataTable from '@/components/shared/DataTable'
+import { GET_PERSON_ORGANIZATIONS_QUERY } from '@/gql/organization'
 
 import {
   ActionSubscribeIcon,
@@ -18,27 +19,6 @@ import {
 import { gql } from '@/types/__generated__/gql';
 import { OrganizationType } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
-
-const GET_PERSON_ORGANIZATIONS_QUERY = gql(`
-  query GetPersonOrganizationsProfile (
-    $name_Icontains: String
-  ) {
-    getPersonProfile {
-      organizationsSubscribed (
-        name_Icontains: $name_Icontains
-      ) {
-        edges {
-          node {
-            id
-            name
-            description
-            icon
-          }
-        }
-      }
-    }
-  }
-`);
 
 const title = 'Persons';
 const rowKey = 'name';
@@ -67,7 +47,6 @@ let columns: DataTableColumn<OrganizationType>[] = [
     filterable: true,
   },
 ]
-
 
 function OrganizationSubscribedTable() {
 

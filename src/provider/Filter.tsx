@@ -7,83 +7,32 @@
 import { createContext, useContext, useState } from 'react';
 import { useQuery } from '@apollo/client';
 
+import { GET_FILTER_OBJECT_FRAGMENTS, GET_FILTER_OBJECT_QUERY } from '@/gql/filter';
+
 import { gql } from '@/types/__generated__/gql';
+import { ListProjectsQueryVariables } from '@/types/__generated__/graphql'
 import { FilterObjectType, FilterContextType } from '@/types/Filter';
 
-const GET_FILTER_OBJECT_FRAGMENTS = gql(`
-  fragment OrganizationParts on OrganizationType {
-    id
-    name
-    description
-    organizationState: state
-    icon
-  }
-  fragment ProjectParts on ProjectType {
-    id
-    name
-    description
-    projectState: state
-    organization {
-      ... OrganizationParts
-    }
-  }
-  fragment OperationParts on OperationType {
-    id
-    name
-    description
-    operationState: state
-    project {
-      ... ProjectParts
-    }
-  }
-  fragment TaskParts on TaskType {
-    id
-    name
-    description
-    taskState: state
-    startTime
-    taskEndTime: endTime
-    operation {
-      ... OperationParts
-    }
-  }
-  fragment ShiftParts on ShiftType {
-    id
-    state
-    startTime
-    shiftEndTime: endTime
-    task {
-      ... TaskParts
-    }
-  }
-`);
-
-const GET_FILTER_OBJECT_QUERY = gql(`
-  query GetFilterObject (
-    $id: ID!
-  ) {
-    node (
-      id: $id
-    ) {
-      __typename
-      ... on OrganizationType {
-        ... OrganizationParts
+// filter
+const filterVariables = (target: "project" | "operation", filter: any) => {
+  switch ( target ) {
+    case "project":
+      let filterVariables: ListProjectsQueryVariables = {}
+      switch ( filter?.object?.__typename ) {
+        case "OrganizationType":
+          filterVariables.organization = filter.object.id; break;
+        case "ProjectType":
+          filterVariables.organization = filter.object.organization.id; break
+        case "OperationType":
+          filterVariables.organization = filter.object.project.organization.id; break
+        case "TaskType":
+          filterVariables.organization = filter.object.operation.project.organization.id; break
+        case "ShiftType":
+          filterVariables.organization = filter.object.task.operation.project.organization.id; break
       }
-      ... on ProjectType {
-        ... ProjectParts
-      }
-      ... on OperationType {
-        ... OperationParts
-      }
-      ... on TaskType {
-        ... TaskParts
-      }
-      ... on ShiftType {
-        ... ShiftParts
-      }
-    }
+      return filterVariables;
   }
-`);
+}
 
 // see https://developer.school/snippets/react/localstorage-is-not-defined-nextjs
 let localStorage: Storage = (typeof window !== "undefined") ? window.localStorage : {
@@ -160,4 +109,9 @@ const useFilter = (): FilterContextType => {
   return context;
 };
 
-export { FilterProvider, useFilter, GET_FILTER_OBJECT_QUERY };
+export {
+  FilterProvider,
+  useFilter,
+  GET_FILTER_OBJECT_QUERY,
+  filterVariables,
+};

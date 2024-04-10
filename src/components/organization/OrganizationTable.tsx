@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
@@ -13,7 +13,13 @@ import OrganizationForm from '@/components/organization/OrganizationForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
+import { useSnackbar } from "@/provider/Snackbar";
 import { organizationState } from '@/app/states';
+import {
+  LIST_ORGANIZATIONS_QUERY,
+  PUBLISH_ORGANIZATION_MUTATION,
+  ARCHIVE_ORGANIZATION_MUTATION,
+} from '@/gql/organization'
 
 import {
   ActionArchiveIcon,
@@ -26,32 +32,11 @@ import {
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
-import { gql } from '@/types/__generated__/gql';
 import {
   GeorgaOrganizationStateChoices,
   OrganizationType,
 } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
-
-const LIST_ORGANIZATIONS_QUERY = gql(`
-  query ListOrganizations (
-    $state_In: [GeorgaOrganizationStateChoices]
-  ) {
-    listOrganizations (
-      state_In: $state_In
-    ) {
-      edges {
-        node {
-          id
-          state
-          name
-          icon
-          description
-        }
-      }
-    }
-  }
-`);
 
 // columns
 const rowKey = 'id';
@@ -94,6 +79,7 @@ function OrganizationTable() {
   const dialog = useDialog();
   const filter = useFilter();
   const router = useRouter();
+  const snackbar = useSnackbar();
 
   // states
   const [archive, setArchive] = useState(false);
@@ -114,17 +100,58 @@ function OrganizationTable() {
       .map((edge) => edge?.node)
       .filter((node): node is OrganizationType => node !== undefined);
 
+  // publish
+  const [ publishOrganization, {
+    loading: publishOrganizationLoading,
+    reset: publishOrganizationReset
+  }] = useMutation(
+    PUBLISH_ORGANIZATION_MUTATION, {
+      onCompleted: data => {
+        const response = data.publishOrganization;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          snackbar.showSnackbar("Organization published", 'success');
+          publishOrganizationReset();
+        } else {
+          snackbar.showSnackbar("Organization not published", 'error');
+          publishOrganizationReset();
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListOrganizations"
+      ]
+    }
+  );
+
+  // archive
+  const [ archiveOrganization, {
+    loading: archiveOrganizationLoading,
+    reset: archiveOrganizationReset
+  }] = useMutation(
+    ARCHIVE_ORGANIZATION_MUTATION, {
+      onCompleted: data => {
+        const response = data.archiveOrganization;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          snackbar.showSnackbar("Organization archiveed", 'success');
+          archiveOrganizationReset();
+        } else {
+          snackbar.showSnackbar("Organization not archiveed", 'error');
+          archiveOrganizationReset();
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListOrganizations"
+      ]
+    }
+  );
+
   // actions
   const actions: DataTableActions<OrganizationType> = [
-    // {
-    //   name: 'Create',
-    //   icon: <ActionCreateIcon />,
-    //   priority: 10,
-    //   action: (selected, setSelected, event) => {
-    //     router.push("/admin/organizations/create");
-    //   },
-    //   available: (selected) => (selected.length == 0),
-    // },
     {
       name: archive ? "Close Archive" : "Open Archive",
       icon: archive ? <ActionArchiveIcon /> : <ActionToggleArchiveIcon />,
@@ -150,7 +177,14 @@ function OrganizationTable() {
       name: 'Publish',
       icon: <ActionPublishIcon />,
       priority: 40,
-      action: (selected, setSelected, event) => {},
+      action: (selected, setSelected, event) => {
+        selected.forEach(entry => {
+          publishOrganization({
+            variables: { id: entry.id }
+          })
+        })
+        setSelected([]);
+      },
       available: (selected) => (
         selected.length > 0
         && selected.every(entry => organizationState.sources.PUBLISHED.includes(entry.state))
@@ -164,7 +198,12 @@ function OrganizationTable() {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
       priority: 50,
-      action: (selected, setSelected, event) => {},
+      action: (selected, setSelected, event) => {
+        archiveOrganization({
+          variables: { id: selected[0].id }
+        })
+        setSelected([]);
+      },
       available: (selected) => (
         selected.length > 0
         && selected.every(entry => organizationState.sources.ARCHIVED.includes(entry.state))
@@ -174,13 +213,6 @@ function OrganizationTable() {
         target: 'ARCHIVED'
       }
     },
-    // {
-    //   name: 'Delete',
-    //   icon: <ActionDeleteIcon />,
-    //   priority: 100,
-    //   action: (selected, setSelected, event) => {},
-    //   available: (selected) => (selected.length > 0),
-    // },
     {
       name: 'Message',
       icon: <ActionNotifyIcon />,
@@ -215,4 +247,3 @@ function OrganizationTable() {
 }
 
 export default OrganizationTable;
-export { LIST_ORGANIZATIONS_QUERY };

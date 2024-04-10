@@ -11,11 +11,18 @@ import Box from '@mui/material/Box';
 import ProjectForm from '@/components/project/ProjectForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
-import { useFilter } from '@/provider/Filter';
+import { useFilter, filterVariables } from '@/provider/Filter';
 import { useSnackbar } from "@/provider/Snackbar";
 import { projectState } from '@/app/states';
 
-import {  // TODO
+import {
+  LIST_PROJECTS_QUERY,
+  PUBLISH_PROJECT_MUTATION,
+  ARCHIVE_PROJECT_MUTATION,
+  DELETE_PROJECT_MUTATION,
+} from '@/gql/project'
+
+import {
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -33,47 +40,6 @@ import {
   ListProjectsQueryVariables,
 } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
-
-const LIST_PROJECTS_QUERY = gql(`
-  query ListProjects (
-    $organization: ID
-    $state_In: [GeorgaProjectStateChoices]
-  ) {
-    listProjects (
-      organization: $organization
-      state_In: $state_In
-    ) {
-      edges {
-        node {
-          id
-          state
-          name
-          description
-        }
-      }
-    }
-  }
-`);
-
-const DELETE_PROJECT_MUTATION = gql(`
-  mutation DeleteProject (
-    $id: ID!
-  ) {
-    deleteProject (
-      input: {
-        id: $id
-      }
-    ) {
-      project {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
 
 // columns
 const rowKey = 'id';
@@ -93,24 +59,6 @@ let columns: DataTableColumn<ProjectType>[] = [
   },
 ]
 
-// filter
-const filterVariables = (filter: any) => {
-  let filterVariables: ListProjectsQueryVariables = {}
-  switch ( filter?.object?.__typename ) {
-    case "OrganizationType":
-      filterVariables.organization = filter.object.id; break;
-    case "ProjectType":
-      filterVariables.organization = filter.object.organization.id; break
-    case "OperationType":
-      filterVariables.organization = filter.object.project.organization.id; break
-    case "TaskType":
-      filterVariables.organization = filter.object.operation.project.organization.id; break
-    case "ShiftType":
-      filterVariables.organization = filter.object.task.operation.project.organization.id; break
-  }
-  return filterVariables;
-}
-
 function ProjectTable() {
   // provider
   const dialog = useDialog();
@@ -128,7 +76,7 @@ function ProjectTable() {
         state_In: archive
           ? [GeorgaProjectStateChoices.Archived]
           : [GeorgaProjectStateChoices.Draft, GeorgaProjectStateChoices.Published],
-        ... filterVariables(filter)
+        ... filterVariables('project', filter)
       }
     }
   );
@@ -137,6 +85,56 @@ function ProjectTable() {
     rows = data.listProjects.edges
       .map((edge) => edge?.node)
       .filter((node): node is ProjectType => node !== undefined);
+
+  // publish
+  const [ publishProject, {
+    loading: publishProjectLoading,
+    reset: publishProjectReset
+  }] = useMutation(
+    PUBLISH_PROJECT_MUTATION, {
+      onCompleted: data => {
+        const response = data.publishProject;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          snackbar.showSnackbar("Project published", 'success');
+          publishProjectReset();
+        } else {
+          snackbar.showSnackbar("Project not published", 'error');
+          publishProjectReset();
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListProjects"
+      ]
+    }
+  );
+
+  // archive
+  const [ archiveProject, {
+    loading: archiveProjectLoading,
+    reset: archiveProjectReset
+  }] = useMutation(
+    ARCHIVE_PROJECT_MUTATION, {
+      onCompleted: data => {
+        const response = data.archiveProject;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          snackbar.showSnackbar("Project archived", 'success');
+          archiveProjectReset();
+        } else {
+          snackbar.showSnackbar("Project not archived", 'error');
+          archiveProjectReset();
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListProjects"
+      ]
+    }
+  );
 
   // delete
   const [ deleteProject, {
@@ -149,24 +147,14 @@ function ProjectTable() {
         if (!response)
           return;
         if(response.errors.length === 0) {
-          deleteProjectReset();
-          // setErrors({});
-          // setChanged({});
           snackbar.showSnackbar("Project deleted", 'success');
-          // onSuccess(data);
-        } else {
-          var fieldErrors: {[fieldId: string]: string[]} = {};
-          response.errors.forEach(error => {
-            fieldErrors[error.field] = error.messages
-          });
-          // setErrors(fieldErrors);
           deleteProjectReset();
-          // onError(data);
+        } else {
+          snackbar.showSnackbar("Project not deleted", 'error');
+          deleteProjectReset();
         }
       },
-      // onError: error => {
-      //   setErrors({form: error.message});
-      // },
+      onError: error => {},
       refetchQueries: [
         "ListProjects"
       ]
@@ -209,7 +197,14 @@ function ProjectTable() {
       name: 'Publish',
       icon: <ActionPublishIcon />,
       priority: 40,
-      action: (selected, setSelected, event) => {},
+      action: (selected, setSelected, event) => {
+        selected.forEach(entry => {
+          publishProject({
+            variables: { id: entry.id }
+          })
+        })
+        setSelected([]);
+      },
       available: (selected) => (
         selected.length > 0
         && selected.every(entry => projectState.sources.PUBLISHED.includes(entry.state))
@@ -223,7 +218,14 @@ function ProjectTable() {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
       priority: 50,
-      action: (selected, setSelected, event) => {},
+      action: (selected, setSelected, event) => {
+        selected.forEach(entry => {
+          archiveProject({
+            variables: { id: entry.id }
+          })
+        })
+        setSelected([]);
+      },
       available: (selected) => (
         selected.length > 0
         && selected.every(entry => projectState.sources.ARCHIVED.includes(entry.state))
@@ -238,8 +240,10 @@ function ProjectTable() {
       icon: <ActionDeleteIcon />,
       priority: 100,
       action: (selected, setSelected, event) => {
-        deleteProject({
-          variables: { id: selected[0].id }
+        selected.forEach(entry => {
+          deleteProject({
+            variables: { id: entry.id }
+          })
         })
         setSelected([]);
       },
@@ -279,4 +283,3 @@ function ProjectTable() {
 }
 
 export default ProjectTable;
-export { LIST_PROJECTS_QUERY, filterVariables };

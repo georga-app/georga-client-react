@@ -11,8 +11,12 @@ import Form from "@/components/shared/Form";
 import { Input } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
 import { useFilter, GET_FILTER_OBJECT_QUERY } from "@/provider/Filter";
+import {
+  GET_ORGANIZATION_QUERY,
+  CREATE_ORGANIZATION_MUTATION,
+  UPDATE_ORGANIZATION_MUTATION,
+} from '@/gql/organization'
 
-import { gql } from '@/types/__generated__/gql';
 import {
   CreateOrganizationMutation,
   CreateOrganizationMutationVariables,
@@ -20,78 +24,6 @@ import {
   UpdateOrganizationMutationVariables,
 } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
-
-const CREATE_ORGANIZATION_MUTATION = gql(`
-  mutation CreateOrganization (
-    $name: String!
-    $description: String
-    $icon: String
-  ) {
-    createOrganization (
-      input: {
-        name: $name
-        description: $description
-        icon: $icon
-      }
-    ) {
-      organization {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
-
-const GET_ORGANIZATION_QUERY = gql(`
-  query GetOrganization (
-    $id: ID!
-  ) {
-    listOrganizations (
-      id: $id
-    ) {
-      edges {
-        node {
-          id
-          createdAt
-          modifiedAt
-          state
-          name
-          description
-          icon
-        }
-      }
-    }
-  }
-`);
-
-const UPDATE_ORGANIZATION_MUTATION = gql(`
-  mutation UpdateOrganization (
-    $id: ID!
-    $name: String
-    $description: String
-    $icon: String
-  ) {
-    updateOrganization (
-      input: {
-        id: $id
-        name: $name
-        description: $description
-        icon: $icon
-      }
-    ) {
-      organization {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
 
 type Data = CreateOrganizationMutation
             | UpdateOrganizationMutation;
