@@ -106,19 +106,25 @@ function OrganizationTable() {
     //   icon: <ActionCreateIcon />,
     //   priority: 10,
     //   action: (selected, setSelected, event) => {
-    //     dialog.showDialog(
-    //       <OrganizationForm />,
-    //       "Create Organization"
-    //     )
+    //     router.push("/admin/organizations/create");
     //   },
     //   available: (selected) => (selected.length == 0),
     // },
+    {
+      name: archive ? "Close Archive" : "Open Archive",
+      icon: archive ? <ActionArchiveIcon /> : <ActionToggleArchiveIcon />,
+      priority: 15,
+      action: (selected, setSelected, event) => {
+        setArchive(archive ? false : true);
+      },
+      available: (selected) => (selected.length == 0),
+    },
     {
       name: 'Edit',
       icon: <ActionEditIcon />,
       priority: 20,
       action: (selected, setSelected, event) => {
-        router.push("/admin/organizations/edit/" + selected[0].id);
+        router.push("/admin/organizations/" + selected[0].id + "/edit");
       },
       available: (selected) => (selected.length == 1),
       display: {

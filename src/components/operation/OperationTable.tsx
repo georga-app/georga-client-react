@@ -108,11 +108,7 @@ function OperationTable() {
       icon: <ActionCreateIcon />,
       priority: 10,
       action: (selected, setSelected, event) => {
-        dialog.showDialog(
-          // <OperationForm />,
-          <></>,
-          "Create Operation"
-        )
+        router.push("/admin/operations/create");
       },
       available: (selected) => (selected.length == 0),
     },
@@ -121,11 +117,7 @@ function OperationTable() {
       icon: <ActionEditIcon />,
       priority: 20,
       action: (selected, setSelected, event) => {
-        dialog.showDialog(
-          // <OperationForm operationId={selected[0].id} />,
-          <></>,
-          "Edit Operation"
-        )
+        router.push("/admin/operations/" + selected[0].id + "/edit");
       },
       available: (selected) => (selected.length == 1),
       display: {

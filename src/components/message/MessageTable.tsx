@@ -3,6 +3,7 @@
  * Repository: https://github.com/georga-app/georga-client-react
  */
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
@@ -91,6 +92,7 @@ function MessageTable() {
   // provider
   const dialog = useDialog();
   const filter = useFilter();
+  const router = useRouter();
 
   // get
   const { data, loading } = useQuery(
@@ -111,11 +113,7 @@ function MessageTable() {
       icon: <ActionCreateIcon />,
       priority: 10,
       action: (selected, setSelected, event) => {
-        dialog.showDialog(
-          // <MessageForm />,
-          <></>,
-          "Create Message"
-        )
+        router.push("/admin/messages/create");
       },
       available: (selected) => (selected.length == 0),
     },
@@ -124,11 +122,7 @@ function MessageTable() {
       icon: <ActionEditIcon />,
       priority: 20,
       action: (selected, setSelected, event) => {
-        dialog.showDialog(
-          // <MessageForm messageId={selected[0].id} />,
-          <></>,
-          "Edit Message"
-        )
+        router.push("/admin/messages/" + selected[0].id + "/edit");
       },
       available: (selected) => (selected.length == 1),
       display: {

@@ -110,21 +110,6 @@ function ProjectTable() {
   const router = useRouter();
   const snackbar = useSnackbar();
 
-  // filter
-  // let filterVariables: ListProjectsQueryVariables = {}
-  // switch ( filter?.object?.__typename ) {
-  //   case "OrganizationType":
-  //     filterVariables.organization = filter.object.id; break;
-  //   case "ProjectType":
-  //     filterVariables.organization = filter.object.organization.id; break
-  //   case "OperationType":
-  //     filterVariables.organization = filter.object.project.organization.id; break
-  //   case "TaskType":
-  //     filterVariables.organization = filter.object.operation.project.organization.id; break
-  //   case "ShiftType":
-  //     filterVariables.organization = filter.object.task.operation.project.organization.id; break
-  // }
-
   // get
   const { data, loading } = useQuery(
     LIST_PROJECTS_QUERY, {
@@ -179,7 +164,7 @@ function ProjectTable() {
       icon: <ActionCreateIcon />,
       priority: 10,
       action: (selected, setSelected, event) => {
-        router.push("/admin/projects/add");
+        router.push("/admin/projects/create");
       },
       available: (selected) => (selected.length == 0),
     },
@@ -188,7 +173,7 @@ function ProjectTable() {
       icon: <ActionEditIcon />,
       priority: 20,
       action: (selected, setSelected, event) => {
-        router.push("/admin/projects/edit/" + selected[0].id);
+        router.push("/admin/projects/" + selected[0].id + "/edit");
       },
       available: (selected) => (selected.length == 1),
       display: {
