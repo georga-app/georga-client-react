@@ -77,14 +77,8 @@ let columns: DataTableColumn<ShiftType>[] = [
   // TODO
 ]
 
-
-function ShiftTable() {
-  // provider
-  const dialog = useDialog();
-  const filter = useFilter();
-  const router = useRouter();
-
-  // filter
+// filter
+const filterVariables = (filter: any) => {
   let filterVariables: ListShiftsQueryVariables = {}
   switch ( filter?.object?.__typename ) {
     case "OrganizationType":
@@ -98,11 +92,19 @@ function ShiftTable() {
     case "ShiftType":
       filterVariables.task = filter.object.task.id; break
   }
+  return filterVariables;
+}
+
+function ShiftTable() {
+  // provider
+  const dialog = useDialog();
+  const filter = useFilter();
+  const router = useRouter();
 
   // get
   const { data, loading } = useQuery(
     LIST_SHIFTS_QUERY, {
-      variables: filterVariables
+      variables: {... filterVariables}
     }
   );
   let rows: ShiftType[] = [];
@@ -117,65 +119,53 @@ function ShiftTable() {
       name: 'Create',
       icon: <ActionCreateIcon />,
       priority: 10,
-      action: (selected, setSelected, event) => {
-        dialog.showDialog(
-          // <ShiftForm />,
-          <></>,
-          "Create Shift"
-        )
-      },
+      action: (selected, setSelected, event) => {},
       available: (selected) => (selected.length == 0),
     },
     {
       name: 'Edit',
       icon: <ActionEditIcon />,
-      priority: 20,
-      action: (selected, setSelected, event) => {
-        dialog.showDialog(
-          // <ShiftForm shiftId={selected[0].id} />,
-          <></>,
-          "Edit Shift"
-        )
-      },
+      priority: 30,
+      action: (selected, setSelected, event) => {},
       available: (selected) => (selected.length == 1),
       display: {
         row: true,
       }
     },
     {
-      name: 'Delete',
-      icon: <ActionDeleteIcon />,
-      priority: 30,
-      action: (selected, setSelected, event) => {},
-      available: (selected) => (selected.length > 0),
-    },
-    {
       name: 'Publish',
       icon: <ActionPublishIcon />,
-      priority: 100,
+      priority: 40,
       action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && shiftState.sources.PUBLISHED.includes(selected[0].state)
+        && selected.every(entry => shiftState.sources.PUBLISHED.includes(entry.state))
       ),
       state: {
         transitions: shiftState,
         target: 'PUBLISHED'
       }
     },
+    // {
+    //   name: 'Archive',
+    //   icon: <ActionArchiveIcon />,
+    //   priority: 110,
+    //   action: (selected, setSelected, event) => {},
+    //   available: (selected) => (
+    //     selected.length > 0
+    //     && selected.every(entry => shiftState.sources.ARCHIVED.includes(entry.state))
+    //   ),
+    //   state: {
+    //     transitions: shiftState,
+    //     target: 'ARCHIVED'
+    //   }
+    // },
     {
-      name: 'Archive',
-      icon: <ActionArchiveIcon />,
-      priority: 110,
+      name: 'Delete',
+      icon: <ActionDeleteIcon />,
+      priority: 100,
       action: (selected, setSelected, event) => {},
-      available: (selected) => (
-        selected.length > 0
-        && shiftState.sources.ARCHIVED.includes(selected[0].state)
-      ),
-      state: {
-        transitions: shiftState,
-        target: 'ARCHIVED'
-      }
+      available: (selected) => (selected.length > 0),
     },
     {
       name: 'Message',
@@ -185,7 +175,7 @@ function ShiftTable() {
       available: (selected) => (selected.length == 1),
     },
     {
-      name: 'Operations',
+      name: 'Participants',
       icon: <NavigationForwardIcon />,
       priority: 1000,
       action: (selected, setSelected, event) => {

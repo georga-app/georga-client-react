@@ -22,11 +22,16 @@ import {  // TODO
   ActionEditIcon,
   ActionNotifyIcon,
   ActionPublishIcon,
+  ActionToggleArchiveIcon,
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { TaskType, ListTasksQueryVariables } from '@/types/__generated__/graphql'
+import {
+  GeorgaTaskStateChoices,
+  TaskType,
+  ListTasksQueryVariables,
+} from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
 const LIST_TASKS_QUERY = gql(`
@@ -34,11 +39,13 @@ const LIST_TASKS_QUERY = gql(`
     $operation: ID
     $project: ID
     $organization: ID
+    $state_In: [GeorgaTaskStateChoices]
   ) {
     listTasks (
       operation: $operation
       operation_Project: $project
       operation_Project_Organization: $organization
+      state_In: $state_In
     ) {
       edges {
         node {
@@ -105,6 +112,7 @@ let columns: DataTableColumn<TaskType>[] = [
   // TODO
 ]
 
+// filter
 const filterVariables = (filter: any) => {
   let filterVariables: ListTasksQueryVariables = {}
   switch ( filter?.object?.__typename ) {
@@ -129,25 +137,18 @@ function TaskTable() {
   const router = useRouter();
   const snackbar = useSnackbar();
 
-  // filter
-  // let filterVariables: ListTasksQueryVariables = {}
-  // switch ( filter?.object?.__typename ) {
-  //   case "OrganizationType":
-  //     filterVariables.organization = filter.object.id; break;
-  //   case "ProjectType":
-  //     filterVariables.project = filter.object.id; break
-  //   case "OperationType":
-  //     filterVariables.operation = filter.object.id; break
-  //   case "TaskType":
-  //     filterVariables.operation = filter.object.operation.id; break
-  //   case "ShiftType":
-  //     filterVariables.operation = filter.object.task.operation.id; break
-  // }
+  // states
+  const [archive, setArchive] = useState(false);
 
   // get
   const { data, loading } = useQuery(
     LIST_TASKS_QUERY, {
-      variables: filterVariables(filter)
+      variables: {
+        state_In: archive
+          ? [GeorgaTaskStateChoices.Archived]
+          : [GeorgaTaskStateChoices.Draft, GeorgaTaskStateChoices.Published],
+        ... filterVariables(filter)
+      }
     }
   );
   let rows: TaskType[] = [];
@@ -198,16 +199,25 @@ function TaskTable() {
       icon: <ActionCreateIcon />,
       priority: 10,
       action: (selected, setSelected, event) => {
-        router.push("/admin/tasks/add");
+        router.push("/admin/tasks/create");
+      },
+      available: (selected) => (selected.length == 0),
+    },
+    {
+      name: archive ? "Close Archive" : "Open Archive",
+      icon: archive ? <ActionArchiveIcon /> : <ActionToggleArchiveIcon />,
+      priority: 20,
+      action: (selected, setSelected, event) => {
+        setArchive(archive ? false : true);
       },
       available: (selected) => (selected.length == 0),
     },
     {
       name: 'Edit',
       icon: <ActionEditIcon />,
-      priority: 20,
+      priority: 30,
       action: (selected, setSelected, event) => {
-        router.push("/admin/tasks/edit/" + selected[0].id);
+        router.push("/admin/tasks/" + selected[0].id + "/edit");
       },
       available: (selected) => (selected.length == 1),
       display: {
@@ -215,25 +225,13 @@ function TaskTable() {
       }
     },
     {
-      name: 'Delete',
-      icon: <ActionDeleteIcon />,
-      priority: 30,
-      action: (selected, setSelected, event) => {
-        deleteTask({
-          variables: { id: selected[0].id }
-        })
-        setSelected([]);
-      },
-      available: (selected) => (selected.length > 0),
-    },
-    {
       name: 'Publish',
       icon: <ActionPublishIcon />,
-      priority: 100,
+      priority: 40,
       action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && taskState.sources.PUBLISHED.includes(selected[0].state)
+        && selected.every(entry => taskState.sources.PUBLISHED.includes(entry.state))
       ),
       state: {
         transitions: taskState,
@@ -243,16 +241,28 @@ function TaskTable() {
     {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
-      priority: 110,
+      priority: 50,
       action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && taskState.sources.ARCHIVED.includes(selected[0].state)
+        && selected.every(entry => taskState.sources.ARCHIVED.includes(entry.state))
       ),
       state: {
         transitions: taskState,
         target: 'ARCHIVED'
       }
+    },
+    {
+      name: 'Delete',
+      icon: <ActionDeleteIcon />,
+      priority: 100,
+      action: (selected, setSelected, event) => {
+        deleteTask({
+          variables: { id: selected[0].id }
+        })
+        setSelected([]);
+      },
+      available: (selected) => (selected.length > 0),
     },
     {
       name: 'Message',

@@ -22,10 +22,11 @@ import ActionFilterIcon from '@mui/icons-material/FilterList';
 import ActionMoreIcon from '@mui/icons-material/MoreHoriz';
 import ActionNotifyIcon from '@mui/icons-material/Notifications';
 import ActionPublishIcon from '@mui/icons-material/Visibility';
-import ActionUnsubscribeIcon from '@mui/icons-material/PersonRemove';
 import ActionSearchIcon from '@mui/icons-material/Search';
 import ActionSelectIcon from '@mui/icons-material/SelectAll';
 import ActionSubscribeIcon from '@mui/icons-material/PersonAdd';
+import ActionToggleArchiveIcon from '@mui/icons-material/Unarchive';
+import ActionUnsubscribeIcon from '@mui/icons-material/PersonRemove';
 
 // States
 import StatePublishedIcon from '@mui/icons-material/Visibility';
@@ -73,10 +74,11 @@ export {
   ActionMoreIcon,
   ActionNotifyIcon,
   ActionPublishIcon,
-  ActionUnsubscribeIcon,
   ActionSearchIcon,
   ActionSelectIcon,
   ActionSubscribeIcon,
+  ActionToggleArchiveIcon,
+  ActionUnsubscribeIcon,
 
   StatePublishedIcon,
 

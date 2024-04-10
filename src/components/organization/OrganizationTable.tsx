@@ -20,18 +20,26 @@ import {
   ActionCreateIcon,
   ActionDeleteIcon,
   ActionEditIcon,
-  ActionPublishIcon,
   ActionNotifyIcon,
+  ActionPublishIcon,
+  ActionToggleArchiveIcon,
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { OrganizationType } from '@/types/__generated__/graphql'
+import {
+  GeorgaOrganizationStateChoices,
+  OrganizationType,
+} from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
 const LIST_ORGANIZATIONS_QUERY = gql(`
-  query ListOrganizations {
-    listOrganizations {
+  query ListOrganizations (
+    $state_In: [GeorgaOrganizationStateChoices]
+  ) {
+    listOrganizations (
+      state_In: $state_In
+    ) {
       edges {
         node {
           id
@@ -87,10 +95,17 @@ function OrganizationTable() {
   const filter = useFilter();
   const router = useRouter();
 
+  // states
+  const [archive, setArchive] = useState(false);
+
   // get
   const { data, loading } = useQuery(
     LIST_ORGANIZATIONS_QUERY, {
-      variables: {}
+      variables: {
+        state_In: archive
+          ? [GeorgaOrganizationStateChoices.Archived]
+          : [GeorgaOrganizationStateChoices.Draft, GeorgaOrganizationStateChoices.Published],
+      }
     }
   );
   let rows: OrganizationType[] = [];
@@ -113,7 +128,7 @@ function OrganizationTable() {
     {
       name: archive ? "Close Archive" : "Open Archive",
       icon: archive ? <ActionArchiveIcon /> : <ActionToggleArchiveIcon />,
-      priority: 15,
+      priority: 20,
       action: (selected, setSelected, event) => {
         setArchive(archive ? false : true);
       },
@@ -122,7 +137,7 @@ function OrganizationTable() {
     {
       name: 'Edit',
       icon: <ActionEditIcon />,
-      priority: 20,
+      priority: 30,
       action: (selected, setSelected, event) => {
         router.push("/admin/organizations/" + selected[0].id + "/edit");
       },
@@ -131,21 +146,14 @@ function OrganizationTable() {
         row: true,
       }
     },
-    // {
-    //   name: 'Delete',
-    //   icon: <ActionDeleteIcon />,
-    //   priority: 30,
-    //   action: (selected, setSelected, event) => {},
-    //   available: (selected) => (selected.length > 0),
-    // },
     {
       name: 'Publish',
       icon: <ActionPublishIcon />,
-      priority: 100,
+      priority: 40,
       action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && organizationState.sources.PUBLISHED.includes(selected[0].state)
+        && selected.every(entry => organizationState.sources.PUBLISHED.includes(entry.state))
       ),
       state: {
         transitions: organizationState,
@@ -155,17 +163,24 @@ function OrganizationTable() {
     {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
-      priority: 110,
+      priority: 50,
       action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && organizationState.sources.ARCHIVED.includes(selected[0].state)
+        && selected.every(entry => organizationState.sources.ARCHIVED.includes(entry.state))
       ),
       state: {
         transitions: organizationState,
         target: 'ARCHIVED'
       }
     },
+    // {
+    //   name: 'Delete',
+    //   icon: <ActionDeleteIcon />,
+    //   priority: 100,
+    //   action: (selected, setSelected, event) => {},
+    //   available: (selected) => (selected.length > 0),
+    // },
     {
       name: 'Message',
       icon: <ActionNotifyIcon />,

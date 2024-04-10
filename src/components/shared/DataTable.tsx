@@ -740,7 +740,7 @@ function DataTable<T extends {}>({
                 }
                 {emptyRows > 0 && (
                   <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }} >
-                    <TableCell colSpan={columns.length} />
+                    <TableCell colSpan={columns.length + 1} />
                   </TableRow>
                 )}
               </TableBody>

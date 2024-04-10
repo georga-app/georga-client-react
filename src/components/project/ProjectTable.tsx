@@ -22,19 +22,26 @@ import {  // TODO
   ActionEditIcon,
   ActionNotifyIcon,
   ActionPublishIcon,
+  ActionToggleArchiveIcon,
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { ProjectType, ListProjectsQueryVariables } from '@/types/__generated__/graphql'
+import {
+  GeorgaProjectStateChoices,
+  ProjectType,
+  ListProjectsQueryVariables,
+} from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
 const LIST_PROJECTS_QUERY = gql(`
   query ListProjects (
     $organization: ID
+    $state_In: [GeorgaProjectStateChoices]
   ) {
     listProjects (
       organization: $organization
+      state_In: $state_In
     ) {
       edges {
         node {
@@ -86,6 +93,7 @@ let columns: DataTableColumn<ProjectType>[] = [
   },
 ]
 
+// filter
 const filterVariables = (filter: any) => {
   let filterVariables: ListProjectsQueryVariables = {}
   switch ( filter?.object?.__typename ) {
@@ -110,10 +118,18 @@ function ProjectTable() {
   const router = useRouter();
   const snackbar = useSnackbar();
 
+  // states
+  const [archive, setArchive] = useState(false);
+
   // get
   const { data, loading } = useQuery(
     LIST_PROJECTS_QUERY, {
-      variables: filterVariables(filter)
+      variables: {
+        state_In: archive
+          ? [GeorgaProjectStateChoices.Archived]
+          : [GeorgaProjectStateChoices.Draft, GeorgaProjectStateChoices.Published],
+        ... filterVariables(filter)
+      }
     }
   );
   let rows: ProjectType[] = [];
@@ -169,9 +185,18 @@ function ProjectTable() {
       available: (selected) => (selected.length == 0),
     },
     {
+      name: archive ? "Close Archive" : "Open Archive",
+      icon: archive ? <ActionArchiveIcon /> : <ActionToggleArchiveIcon />,
+      priority: 20,
+      action: (selected, setSelected, event) => {
+        setArchive(archive ? false : true);
+      },
+      available: (selected) => (selected.length == 0),
+    },
+    {
       name: 'Edit',
       icon: <ActionEditIcon />,
-      priority: 20,
+      priority: 30,
       action: (selected, setSelected, event) => {
         router.push("/admin/projects/" + selected[0].id + "/edit");
       },
@@ -181,25 +206,13 @@ function ProjectTable() {
       }
     },
     {
-      name: 'Delete',
-      icon: <ActionDeleteIcon />,
-      priority: 30,
-      action: (selected, setSelected, event) => {
-        deleteProject({
-          variables: { id: selected[0].id }
-        })
-        setSelected([]);
-      },
-      available: (selected) => (selected.length > 0),
-    },
-    {
       name: 'Publish',
       icon: <ActionPublishIcon />,
-      priority: 100,
+      priority: 40,
       action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && projectState.sources.PUBLISHED.includes(selected[0].state)
+        && selected.every(entry => projectState.sources.PUBLISHED.includes(entry.state))
       ),
       state: {
         transitions: projectState,
@@ -209,16 +222,28 @@ function ProjectTable() {
     {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
-      priority: 110,
+      priority: 50,
       action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && projectState.sources.ARCHIVED.includes(selected[0].state)
+        && selected.every(entry => projectState.sources.ARCHIVED.includes(entry.state))
       ),
       state: {
         transitions: projectState,
         target: 'ARCHIVED'
       }
+    },
+    {
+      name: 'Delete',
+      icon: <ActionDeleteIcon />,
+      priority: 100,
+      action: (selected, setSelected, event) => {
+        deleteProject({
+          variables: { id: selected[0].id }
+        })
+        setSelected([]);
+      },
+      available: (selected) => (selected.length > 0),
     },
     {
       name: 'Message',

@@ -21,21 +21,28 @@ import {  // TODO
   ActionEditIcon,
   ActionNotifyIcon,
   ActionPublishIcon,
+  ActionToggleArchiveIcon,
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
 import { gql } from '@/types/__generated__/gql';
-import { OperationType, ListOperationsQueryVariables } from '@/types/__generated__/graphql'
+import {
+  GeorgaOperationStateChoices,
+  OperationType,
+  ListOperationsQueryVariables,
+} from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
 const LIST_OPERATIONS_QUERY = gql(`
   query ListOperations (
     $project: ID
     $organization: ID
+    $state_In: [GeorgaOperationStateChoices]
   ) {
     listOperations (
       project: $project
       project_Organization: $organization
+      state_In: $state_In
     ){
       edges {
         node {
@@ -67,14 +74,8 @@ let columns: DataTableColumn<OperationType>[] = [
   },
 ]
 
-
-function OperationTable() {
-  // provider
-  const dialog = useDialog();
-  const filter = useFilter();
-  const router = useRouter();
-
-  // filter
+// filter
+const filterVariables = (filter: any) => {
   let filterVariables: ListOperationsQueryVariables = {}
   switch ( filter?.object?.__typename ) {
     case "OrganizationType":
@@ -88,11 +89,27 @@ function OperationTable() {
     case "ShiftType":
       filterVariables.project = filter.object.task.operation.project.id; break
   }
+  return filterVariables;
+}
+
+function OperationTable() {
+  // provider
+  const dialog = useDialog();
+  const filter = useFilter();
+  const router = useRouter();
+
+  // states
+  const [archive, setArchive] = useState(false);
 
   // get
   const { data, loading } = useQuery(
     LIST_OPERATIONS_QUERY, {
-      variables: filterVariables
+      variables: {
+        state_In: archive
+          ? [GeorgaOperationStateChoices.Archived]
+          : [GeorgaOperationStateChoices.Draft, GeorgaOperationStateChoices.Published],
+        ... filterVariables(filter)
+      }
     }
   );
   let rows: OperationType[] = [];
@@ -113,9 +130,18 @@ function OperationTable() {
       available: (selected) => (selected.length == 0),
     },
     {
+      name: archive ? "Close Archive" : "Open Archive",
+      icon: archive ? <ActionArchiveIcon /> : <ActionToggleArchiveIcon />,
+      priority: 20,
+      action: (selected, setSelected, event) => {
+        setArchive(archive ? false : true);
+      },
+      available: (selected) => (selected.length == 0),
+    },
+    {
       name: 'Edit',
       icon: <ActionEditIcon />,
-      priority: 20,
+      priority: 30,
       action: (selected, setSelected, event) => {
         router.push("/admin/operations/" + selected[0].id + "/edit");
       },
@@ -125,20 +151,13 @@ function OperationTable() {
       }
     },
     {
-      name: 'Delete',
-      icon: <ActionDeleteIcon />,
-      priority: 30,
-      action: (selected, setSelected, event) => {},
-      available: (selected) => (selected.length > 0),
-    },
-    {
       name: 'Publish',
       icon: <ActionPublishIcon />,
-      priority: 100,
+      priority: 40,
       action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && operationState.sources.PUBLISHED.includes(selected[0].state)
+        && selected.every(entry => operationState.sources.PUBLISHED.includes(entry.state))
       ),
       state: {
         transitions: operationState,
@@ -148,16 +167,23 @@ function OperationTable() {
     {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
-      priority: 110,
+      priority: 50,
       action: (selected, setSelected, event) => {},
       available: (selected) => (
         selected.length > 0
-        && operationState.sources.ARCHIVED.includes(selected[0].state)
+        && selected.every(entry => operationState.sources.ARCHIVED.includes(entry.state))
       ),
       state: {
         transitions: operationState,
         target: 'ARCHIVED'
       }
+    },
+    {
+      name: 'Delete',
+      icon: <ActionDeleteIcon />,
+      priority: 100,
+      action: (selected, setSelected, event) => {},
+      available: (selected) => (selected.length > 0),
     },
     {
       name: 'Message',
