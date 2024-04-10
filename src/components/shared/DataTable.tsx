@@ -643,6 +643,13 @@ function DataTable<T extends {}>({
               <TableBody>
                 {visibleRows.map((row, rowIndex) => {
                     const isItemSelected = isSelected(row[rowKey] as string);
+                    const isItemDraft = 'state' in row && row.state === "DRAFT";
+                    const draftRowSx: SxProps<Theme> = {
+                      backgroundImage:
+                        'linear-gradient(45deg, transparent 25%, #fafafa 25%, #fafafa 50%, '
+                          + 'transparent 50%, transparent 75%, #fafafa 75%, #fafafa 100%)',
+                      backgroundSize: '40px 40px',
+                    }
                     return (
                       <TableRow
                         hover
@@ -655,6 +662,7 @@ function DataTable<T extends {}>({
                         tabIndex={-1}
                         key={row[rowKey] as string}
                         selected={isItemSelected}
+                        sx={isItemDraft ? draftRowSx: {}}
                       >
                         {/* columns */}
                         {columns.map((column, colIndex) => {
