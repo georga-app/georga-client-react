@@ -4,7 +4,7 @@
  */
 'use client';
 
-import { useState, useContext } from "react";
+import { useState, useContext, Suspense } from "react";
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation } from '@apollo/client';
 
@@ -134,4 +134,12 @@ function PersonLoginForm() {
   );
 }
 
-export default PersonLoginForm;
+function PersonLoginFormSuspense() {
+  return (
+    <Suspense>
+      <PersonLoginForm />
+    </Suspense>
+  )
+}
+
+export default PersonLoginFormSuspense;
