@@ -8,7 +8,6 @@ import { useQuery, useMutation } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
-import ProjectForm from '@/components/project/ProjectForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter, filterVariables } from '@/provider/Filter';
@@ -76,7 +75,7 @@ function ProjectTable() {
         state_In: archive
           ? [GeorgaProjectStateChoices.Archived]
           : [GeorgaProjectStateChoices.Draft, GeorgaProjectStateChoices.Published],
-        ... filterVariables('project', filter)
+        ... filterVariables.project(filter.object)
       }
     }
   );

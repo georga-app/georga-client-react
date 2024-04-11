@@ -10,29 +10,7 @@ import { useQuery } from '@apollo/client';
 import { GET_FILTER_OBJECT_FRAGMENTS, GET_FILTER_OBJECT_QUERY } from '@/gql/filter';
 
 import { gql } from '@/types/__generated__/gql';
-import { ListProjectsQueryVariables } from '@/types/__generated__/graphql'
 import { FilterObjectType, FilterContextType } from '@/types/Filter';
-
-// filter
-const filterVariables = (target: "project" | "operation", filter: any) => {
-  switch ( target ) {
-    case "project":
-      let filterVariables: ListProjectsQueryVariables = {}
-      switch ( filter?.object?.__typename ) {
-        case "OrganizationType":
-          filterVariables.organization = filter.object.id; break;
-        case "ProjectType":
-          filterVariables.organization = filter.object.organization.id; break
-        case "OperationType":
-          filterVariables.organization = filter.object.project.organization.id; break
-        case "TaskType":
-          filterVariables.organization = filter.object.operation.project.organization.id; break
-        case "ShiftType":
-          filterVariables.organization = filter.object.task.operation.project.organization.id; break
-      }
-      return filterVariables;
-  }
-}
 
 // see https://developer.school/snippets/react/localstorage-is-not-defined-nextjs
 let localStorage: Storage = (typeof window !== "undefined") ? window.localStorage : {
@@ -108,6 +86,41 @@ const useFilter = (): FilterContextType => {
 
   return context;
 };
+
+// filter
+// prepares the query filter variables for each filter object
+const filterVariables = {
+  project: (object: FilterContextType["object"]) => {
+    switch ( object?.__typename ) {
+      case "OrganizationType":
+        return { organization: object.id };
+      case "ProjectType":
+        return { organization: object.organization.id };
+      case "OperationType":
+        return { organization: object.project.organization.id };
+      case "TaskType":
+        return { organization: object.operation.project.organization.id };
+      case "ShiftType":
+        return { organization: object.task.operation.project.organization.id };
+    }
+    return {};
+  },
+  operation: (object: FilterContextType["object"]) => {
+    switch ( object?.__typename ) {
+      case "OrganizationType":
+        return { organization: object.id };
+      case "ProjectType":
+        return { project: object.id };
+      case "OperationType":
+        return { project: object.project.id };
+      case "TaskType":
+        return { project: object.operation.project.id };
+      case "ShiftType":
+        return { project: object.task.operation.project.id };
+    }
+    return {};
+  },
+}
 
 export {
   FilterProvider,

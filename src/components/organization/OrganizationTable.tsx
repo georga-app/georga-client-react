@@ -9,7 +9,6 @@ import { useQuery, useMutation } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
-import OrganizationForm from '@/components/organization/OrganizationForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
