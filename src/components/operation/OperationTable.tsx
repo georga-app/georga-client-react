@@ -4,17 +4,24 @@
  */
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
-// import OperationForm from '@/components/operation/OperationForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
-import { useFilter } from '@/provider/Filter';
+import { useFilter, filterVariables } from '@/provider/Filter';
+import { useSnackbar } from "@/provider/Snackbar";
 import { operationState } from '@/app/states';
 
-import {  // TODO
+import {
+  LIST_OPERATIONS_QUERY,
+  PUBLISH_OPERATION_MUTATION,
+  ARCHIVE_OPERATION_MUTATION,
+  DELETE_OPERATION_MUTATION,
+} from '@/gql/operation'
+
+import {
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -32,29 +39,6 @@ import {
   ListOperationsQueryVariables,
 } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
-
-const LIST_OPERATIONS_QUERY = gql(`
-  query ListOperations (
-    $project: ID
-    $organization: ID
-    $state_In: [GeorgaOperationStateChoices]
-  ) {
-    listOperations (
-      project: $project
-      project_Organization: $organization
-      state_In: $state_In
-    ){
-      edges {
-        node {
-          id
-          state
-          name
-          description
-        }
-      }
-    }
-  }
-`);
 
 // columns
 const rowKey = 'id';
@@ -74,29 +58,12 @@ let columns: DataTableColumn<OperationType>[] = [
   },
 ]
 
-// filter
-const filterVariables = (filter: any) => {
-  let filterVariables: ListOperationsQueryVariables = {}
-  switch ( filter?.object?.__typename ) {
-    case "OrganizationType":
-      filterVariables.organization = filter.object.id; break;
-    case "ProjectType":
-      filterVariables.project = filter.object.id; break
-    case "OperationType":
-      filterVariables.project = filter.object.project.id; break
-    case "TaskType":
-      filterVariables.project = filter.object.operation.project.id; break
-    case "ShiftType":
-      filterVariables.project = filter.object.task.operation.project.id; break
-  }
-  return filterVariables;
-}
-
 function OperationTable() {
   // provider
   const dialog = useDialog();
   const filter = useFilter();
   const router = useRouter();
+  const snackbar = useSnackbar();
 
   // states
   const [archive, setArchive] = useState(false);
@@ -108,7 +75,7 @@ function OperationTable() {
         state_In: archive
           ? [GeorgaOperationStateChoices.Archived]
           : [GeorgaOperationStateChoices.Draft, GeorgaOperationStateChoices.Published],
-        ... filterVariables(filter)
+        ... filterVariables.operation(filter.object)
       }
     }
   );
@@ -117,6 +84,81 @@ function OperationTable() {
     rows = data.listOperations.edges
       .map((edge) => edge?.node)
       .filter((node): node is OperationType => node !== undefined);
+
+  // publish
+  const [ publishOperation, {
+    loading: publishOperationLoading,
+    reset: publishOperationReset
+  }] = useMutation(
+    PUBLISH_OPERATION_MUTATION, {
+      onCompleted: data => {
+        const response = data.publishOperation;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          snackbar.showSnackbar("Operation published", 'success');
+          publishOperationReset();
+        } else {
+          snackbar.showSnackbar("Operation not published", 'error');
+          publishOperationReset();
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListOperations"
+      ]
+    }
+  );
+
+  // archive
+  const [ archiveOperation, {
+    loading: archiveOperationLoading,
+    reset: archiveOperationReset
+  }] = useMutation(
+    ARCHIVE_OPERATION_MUTATION, {
+      onCompleted: data => {
+        const response = data.archiveOperation;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          snackbar.showSnackbar("Operation archived", 'success');
+          archiveOperationReset();
+        } else {
+          snackbar.showSnackbar("Operation not archived", 'error');
+          archiveOperationReset();
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListOperations"
+      ]
+    }
+  );
+
+  // delete
+  const [ deleteOperation, {
+    loading: deleteOperationLoading,
+    reset: deleteOperationReset
+  }] = useMutation(
+    DELETE_OPERATION_MUTATION, {
+      onCompleted: data => {
+        const response = data.deleteOperation;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          snackbar.showSnackbar("Operation deleted", 'success');
+          deleteOperationReset();
+        } else {
+          snackbar.showSnackbar("Operation not deleted", 'error');
+          deleteOperationReset();
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListOperations"
+      ]
+    }
+  );
 
   // actions
   const actions: DataTableActions<OperationType> = [
@@ -154,7 +196,14 @@ function OperationTable() {
       name: 'Publish',
       icon: <ActionPublishIcon />,
       priority: 40,
-      action: (selected, setSelected, event) => {},
+      action: (selected, setSelected, event) => {
+        selected.forEach(entry => {
+          publishOperation({
+            variables: { id: entry.id }
+          })
+        })
+        setSelected([]);
+      },
       available: (selected) => (
         selected.length > 0
         && selected.every(entry => operationState.sources.PUBLISHED.includes(entry.state))
@@ -168,7 +217,14 @@ function OperationTable() {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
       priority: 50,
-      action: (selected, setSelected, event) => {},
+      action: (selected, setSelected, event) => {
+        selected.forEach(entry => {
+          archiveOperation({
+            variables: { id: entry.id }
+          })
+        })
+        setSelected([]);
+      },
       available: (selected) => (
         selected.length > 0
         && selected.every(entry => operationState.sources.ARCHIVED.includes(entry.state))
@@ -182,7 +238,14 @@ function OperationTable() {
       name: 'Delete',
       icon: <ActionDeleteIcon />,
       priority: 100,
-      action: (selected, setSelected, event) => {},
+      action: (selected, setSelected, event) => {
+        selected.forEach(entry => {
+          deleteOperation({
+            variables: { id: entry.id }
+          })
+        })
+        setSelected([]);
+      },
       available: (selected) => (selected.length > 0),
     },
     {
