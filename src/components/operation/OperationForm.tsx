@@ -12,32 +12,32 @@ import { Input, Autocomplete, Switch } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
 import { useFilter, filterVariables } from '@/provider/Filter';
 
-import { LIST_ORGANIZATIONS_QUERY } from "@/gql/organization"
+import { LIST_PROJECTS_QUERY } from "@/gql/project"
 import {
-  GET_PROJECT_QUERY,
-  LIST_PROJECTS_QUERY,
-  CREATE_PROJECT_MUTATION,
-  UPDATE_PROJECT_MUTATION,
-} from "@/gql/project"
+  GET_OPERATION_QUERY,
+  LIST_OPERATIONS_QUERY,
+  CREATE_OPERATION_MUTATION,
+  UPDATE_OPERATION_MUTATION,
+} from "@/gql/operation"
 
 import {
-  CreateProjectMutation,
-  CreateProjectMutationVariables,
-  OrganizationType,
-  UpdateProjectMutation,
-  UpdateProjectMutationVariables,
+  CreateOperationMutation,
+  CreateOperationMutationVariables,
+  ProjectType,
+  UpdateOperationMutation,
+  UpdateOperationMutationVariables,
 } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
 
 
-type Data = CreateProjectMutation
-            | UpdateProjectMutation;
+type Data = CreateOperationMutation
+            | UpdateOperationMutation;
 type Errors = FormErrors<
-  CreateProjectMutationVariables
-  | UpdateProjectMutationVariables
+  CreateOperationMutationVariables
+  | UpdateOperationMutationVariables
 >;
 
-function ProjectForm({
+function OperationForm({
   id = '',
   onSuccess = () => undefined,
   onError = () => undefined,
@@ -61,8 +61,8 @@ function ProjectForm({
   const [errors, setErrors] = useState<Errors>({});
 
   // fields
-  const [organizationOptions, setOrganizationOptions] = useState<OrganizationType[]>([]);
-  const [organization, setOrganization] = useState<OrganizationType | undefined>(undefined);
+  const [projectOptions, setProjectOptions] = useState<ProjectType[]>([]);
+  const [project, setProject] = useState<ProjectType | undefined>(undefined);
   const [publish, setPublish] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -71,37 +71,35 @@ function ProjectForm({
   const [modifiedAt, setModifiedAt] = useState("");
 
   useEffect(() => {
-    if (organization || !filter.hasFilter)
+    if (project || !filter.hasFilter)
       return
     switch ( filter?.object?.__typename ) {
-      case "OrganizationType":
-        setOrganization(filter.object); break;
       case "ProjectType":
-        setOrganization(filter.object.organization); break;
+        setProject(filter.object); break;
       case "OperationType":
-        setOrganization(filter.object.project.organization); break
+        setProject(filter.object.project); break
       case "TaskType":
-        setOrganization(filter.object.operation.project.organization); break;
+        setProject(filter.object.operation.project); break;
       case "ShiftType":
-        setOrganization(filter.object.task.operation.project.organization); break;
+        setProject(filter.object.task.operation.project); break;
     }
-  }, [organization, filter.hasFilter, filter.object]);
+  }, [project, filter.hasFilter, filter.object]);
 
   // create
-  const [ createProject, {
-    loading: createProjectLoading,
-    reset: createProjectReset
+  const [ createOperation, {
+    loading: createOperationLoading,
+    reset: createOperationReset
   }] = useMutation(
-    CREATE_PROJECT_MUTATION, {
+    CREATE_OPERATION_MUTATION, {
       onCompleted: data => {
-        const response = data.createProject;
+        const response = data.createOperation;
         if (!response)
           return;
         if(response.errors.length === 0) {
-          createProjectReset();
+          createOperationReset();
           setErrors({});
           setChanged({});
-          snackbar.showSnackbar("Project created", 'success');
+          snackbar.showSnackbar("Operation created", 'success');
           onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
@@ -109,7 +107,7 @@ function ProjectForm({
             fieldErrors[error.field] = error.messages
           });
           setErrors(fieldErrors);
-          updateProjectReset();
+          updateOperationReset();
           onError(data);
         }
       },
@@ -120,65 +118,65 @@ function ProjectForm({
       //   { query: LIST_PROJECTS_QUERY, variables: filterVariables('project', filter) }
       // ]
       refetchQueries: [
-        "ListProjects"
+        "ListOperations"
       ]
     }
   );
 
   // get
   const {
-    called: getProjectCalled,
-    loading: getProjectLoading,
-    data: getProjectData,
-    error: getProjectError
+    called: getOperationCalled,
+    loading: getOperationLoading,
+    data: getOperationData,
+    error: getOperationError
   } = useQuery(
-    GET_PROJECT_QUERY, {
+    GET_OPERATION_QUERY, {
       skip: create,
       variables: {
         id: id
       },
       onCompleted: data => {
-        if (!data.listProjects) return;
-        const project = data.listProjects.edges[0]?.node;
-        if (!project)
+        if (!data.listOperations) return;
+        const operation = data.listOperations.edges[0]?.node;
+        if (!operation)
           return;
-        setOrganization(project.organization as OrganizationType);
-        setName(project.name);
-        setDescription(project.description || '');
-        setState(project.state || '');
-        setCreatedAt(project.createdAt);
-        setModifiedAt(project.modifiedAt);
+        setProject(operation.project as ProjectType);
+        setName(operation.name);
+        setDescription(operation.description || '');
+        setState(operation.state || '');
+        setCreatedAt(operation.createdAt);
+        setModifiedAt(operation.modifiedAt);
       },
     },
   );
 
   const { data, loading } = useQuery(
-    LIST_ORGANIZATIONS_QUERY, {
+    LIST_PROJECTS_QUERY, {
       onCompleted: data => {
-        if (!data.listOrganizations) return;
-        const organizations = data.listOrganizations.edges
+        if (!data.listProjects) return;
+        const projects = data.listProjects.edges
           .map((edge) => edge?.node)
-          .filter((node): node is OrganizationType => node !== undefined);
-        setOrganizationOptions(organizations);
+          .filter((node): node is ProjectType => node !== undefined);
+        setProjectOptions(projects);
       }
     }
   );
 
   // update
-  const [ updateProject, {
-    loading: updateProjectLoading,
-    reset: updateProjectReset
+  const [ updateOperation, {
+    loading: updateOperationLoading,
+    reset: updateOperationReset
   }] = useMutation(
-    UPDATE_PROJECT_MUTATION, {
+    UPDATE_OPERATION_MUTATION, {
       onCompleted: data => {
-        const response = data.updateProject;
+        const response = data.updateOperation;
         if (!response)
           return;
         if(response.errors.length === 0) {
-          updateProjectReset();
+          updateOperationReset();
           setErrors({});
           setChanged({});
-          snackbar.showSnackbar("Project updated", 'success');
+          snackbar.showSnackbar("Operation updated", 'success');
           onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
@@ -186,7 +184,7 @@ function ProjectForm({
             fieldErrors[error.field] = error.messages
           });
           setErrors(fieldErrors);
-          updateProjectReset();
+          updateOperationReset();
           onError(data);
         }
       },
@@ -194,7 +192,7 @@ function ProjectForm({
         setErrors({form: error.message});
       },
       refetchQueries: [
-        "GetProject"
+        "GetOperation"
       ]
     }
   );
@@ -211,16 +209,16 @@ function ProjectForm({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (create)
-      createProject({
+      createOperation({
         variables: {
           publish: publish,
-          organization: organization?.id || "",
+          project: project?.id || "",
           name: name,
           description: description,
         }
       });
     if (edit)
-      updateProject({
+      updateOperation({
         variables: {
           id: id,
           name: name,
@@ -231,9 +229,9 @@ function ProjectForm({
 
   // return
   if (edit) {
-    if (getProjectError)
+    if (getOperationError)
       return <div>Error</div>;
-    if (!getProjectCalled || getProjectLoading)
+    if (!getOperationCalled || getOperationLoading)
       return <div>Loading...</div>;
   }
   return (
@@ -249,14 +247,14 @@ function ProjectForm({
           label="Publish"
         />
         <Autocomplete
-          id="organization"
-          value={organization}
-          setValue={setOrganization}
-          options={organizationOptions}
-          label="Organization"
+          id="project"
+          value={project}
+          setValue={setProject}
+          options={projectOptions}
+          label="Project"
           handleChanged={handleChanged}
           // @ts-ignore
-          errors={errors.organization}
+          errors={errors.project}
           required
         />
       </>}
@@ -280,9 +278,9 @@ function ProjectForm({
       />
       {edit && <>
         <Input
-          id="organization"
-          value={organization?.name}
-          label="Organization"
+          id="project"
+          value={project?.name}
+          label="Project"
           disabled
         />
         <Input
@@ -314,15 +312,15 @@ function ProjectForm({
         sx={{ marginTop: 1 }}
         disabled={
           Object.keys(changed).length === 0
-          || (edit && updateProjectLoading)
-          || (create && createProjectLoading)
+          || (edit && updateOperationLoading)
+          || (create && createOperationLoading)
         }
       >
-        {edit && (updateProjectLoading ? "Saving..." : "Save")}
-        {create && (createProjectLoading ? "Creating..." : "Create")}
+        {edit && (updateOperationLoading ? "Saving..." : "Save")}
+        {create && (createOperationLoading ? "Creating..." : "Create")}
       </Button>
     </Form>
   );
 }
 
-export default ProjectForm;
+export default OperationForm;
