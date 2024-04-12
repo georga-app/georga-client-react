@@ -18,28 +18,10 @@ import UserContext from "@/provider/User";
 import Form from "@/components/shared/Form";
 import { Input } from "@/components/shared/FormFields";
 
-import { gql } from '@/types/__generated__/gql';
+import { TOKEN_AUTH_MUTATION } from '@/gql/person';
+
 import { TokenAuthMutationVariables } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
-
-const TOKEN_AUTH_MUTATION = gql(`
-  mutation TokenAuth (
-    $email: String!
-    $password: String!
-  ) {
-    tokenAuth(
-      input: {
-        email: $email
-        password: $password
-      }
-    ) {
-      id
-      token
-      refreshExpiresIn
-      adminLevel
-    }
-  }
-`);
 
 type Errors = FormErrors<TokenAuthMutationVariables>;
 

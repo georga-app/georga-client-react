@@ -12,13 +12,13 @@ import { Input, Autocomplete, Switch } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
 import { useFilter, filterVariables } from '@/provider/Filter';
 
-import { LIST_ORGANIZATIONS_QUERY } from "@/gql/organization"
+import { LIST_ORGANIZATIONS_QUERY } from "@/gql/organization";
 import {
   GET_PROJECT_QUERY,
   LIST_PROJECTS_QUERY,
   CREATE_PROJECT_MUTATION,
   UPDATE_PROJECT_MUTATION,
-} from "@/gql/project"
+} from "@/gql/project";
 
 import {
   CreateProjectMutation,
@@ -116,11 +116,11 @@ function ProjectForm({
       onError: error => {
         setErrors({form: error.message});
       },
-      // refetchQueries: [
-      //   { query: LIST_PROJECTS_QUERY, variables: filterVariables('project', filter) }
-      // ]
       refetchQueries: [
-        "ListProjects"
+        {
+          query: LIST_PROJECTS_QUERY,
+          variables: filterVariables.project(filter.object)
+        }
       ]
     }
   );

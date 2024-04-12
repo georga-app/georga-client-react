@@ -16,7 +16,12 @@ import { useSnackbar } from "@/provider/Snackbar";
 import Form from "@/components/shared/Form";
 import FormFieldError from "@/components/shared/FormFieldError";
 
-import { gql } from '@/types/__generated__/gql';
+import { LIST_PERSON_PROPERTY_GROUPS_QUERY } from '@/gql/personPropertyGroup';
+import {
+  GET_PERSON_PROFILE_PROPERTIES_QUERY,
+  UPDATE_PERSON_PROFILE_PROPERTIES_MUTATION,
+} from '@/gql/person';
+
 import {
   PersonPropertyGroupType,
   UpdatePersonProfilePropertiesMutation,
@@ -24,71 +29,6 @@ import {
 } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
 import { onlyType } from "@/types/Util";
-
-const LIST_PERSON_PROPERTY_GROUPS_QUERY = gql(`
-  query ListPersonPropertyGroups (
-    $organization: ID
-  ) {
-    listPersonPropertyGroups (
-      organization: $organization
-    ) {
-      edges {
-        node {
-          id
-          codename
-          name
-          selectionType
-          personpropertySet {
-            edges {
-              node {
-                id
-                name
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`);
-
-const GET_PERSON_PROFILE_PROPERTIES_QUERY = gql(`
-  query GetPersonProfileProperties {
-    getPersonProfile {
-      properties {
-        edges {
-          node {
-            id
-            group {
-              id
-            }
-          }
-        }
-      }
-    }
-  }
-`);
-
-const UPDATE_PERSON_PROFILE_PROPERTIES_MUTATION = gql(`
-  mutation UpdatePersonProfileProperties (
-    $properties: [ID]
-  ) {
-    updatePersonProfile (
-      input: {
-        properties: $properties
-      }
-    ) {
-      person {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
-
 
 type PersonPropertyGroupDataType = {
   [id: string]: string[]
@@ -346,5 +286,5 @@ function PersonPropertiesForm({
 }
 
 export default PersonPropertiesForm;
-export { PersonPropertyGroupField, LIST_PERSON_PROPERTY_GROUPS_QUERY }
+export { PersonPropertyGroupField }
 export type { PersonPropertyGroupDataType }

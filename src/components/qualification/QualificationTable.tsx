@@ -12,7 +12,7 @@ import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
 
-import {  // TODO
+import {
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -21,7 +21,8 @@ import {  // TODO
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
-import { gql } from '@/types/__generated__/gql';
+import { LIST_QUALIFICATIONS_QUERY } from '@/gql/qualification';
+
 import {
   PersonPropertyType,
   PersonPropertyGroupType,
@@ -29,29 +30,6 @@ import {
   GeorgaPersonPropertyGroupSelectionTypeChoices,
 } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
-
-const LIST_QUALIFICATIONS_QUERY = gql(`
-  query ListQualifications {
-    listPersonPropertyGroups {
-      edges {
-        node {
-          id
-          name
-          selectionType
-          necessity
-          personpropertySet {
-            edges {
-              node {
-                id
-                name
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`);
 
 // columns
 const rowKey = 'id';

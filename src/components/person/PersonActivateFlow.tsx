@@ -5,25 +5,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { useMutation } from '@apollo/client';
-import { gql } from '@/types/__generated__/gql';
 
-const ACTIVATE_PERSON_MUTATION = gql(`
-  mutation ActivatePerson(
-    $token: String!
-  ) {
-    activatePerson(
-      input: {
-        token: $token
-      }
-    ) {
-      email
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
+import { ACTIVATE_PERSON_MUTATION } from '@/gql/person';
 
 function PersonActivateFlow({
   token

@@ -19,7 +19,7 @@ import {
   messageSmsDelivery,
 } from '@/app/states';
 
-import {  // TODO
+import {
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -28,25 +28,10 @@ import {  // TODO
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
-import { gql } from '@/types/__generated__/gql';
-import { MessageType } from '@/types/__generated__/graphql'
-import { DataTableColumn, DataTableActions } from '@/types/DataTable'
+import { LIST_MESSAGES_QUERY } from '@/gql/message';
 
-const LIST_MESSAGES_QUERY = gql(`
-  query ListMessages {
-    listMessages {
-      edges {
-        node {
-          title
-          priority
-          category
-          state
-          delivery
-        }
-      }
-    }
-  }
-`);
+import { MessageType } from '@/types/__generated__/graphql';
+import { DataTableColumn, DataTableActions } from '@/types/DataTable';
 
 // columns
 const rowKey = 'id';

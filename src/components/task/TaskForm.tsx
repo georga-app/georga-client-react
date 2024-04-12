@@ -19,20 +19,24 @@ import Typography from "@mui/material/Typography";
 import Form from "@/components/shared/Form";
 import { Input, Autocomplete, DateTimePicker } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
-import { useFilter } from '@/provider/Filter';
+import { useFilter, filterVariables } from '@/provider/Filter';
 import { useDialog } from '@/provider/Dialog';
 
 import {
   PersonPropertyGroupField,
   PersonPropertyGroupDataType,
-  LIST_PERSON_PROPERTY_GROUPS_QUERY
 } from "@/components/person/PersonPropertiesForm";
 
-import { LIST_TASKS_QUERY, filterVariables } from "@/components/task/TaskTable"
-import { LIST_OPERATIONS_QUERY } from "@/components/operation/OperationTable"
-import { LIST_TASK_FIELDS_QUERY } from "@/components/taskField/TaskFieldTable"
+import { LIST_PERSON_PROPERTY_GROUPS_QUERY } from '@/gql/personPropertyGroup';
+import { LIST_OPERATIONS_QUERY } from '@/gql/operation';
+import { LIST_TASK_FIELDS_QUERY } from '@/gql/taskField';
+import {
+  GET_TASK_QUERY,
+  LIST_TASKS_QUERY,
+  CREATE_TASK_MUTATION,
+  UPDATE_TASK_MUTATION,
+} from '@/gql/task';
 
-import { gql } from '@/types/__generated__/gql';
 import {
   CreateTaskMutation,
   CreateTaskMutationVariables,
@@ -47,110 +51,6 @@ import {
 } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
 import { onlyType } from "@/types/Util";
-
-const CREATE_TASK_MUTATION = gql(`
-  mutation CreateTask (
-    $operation: ID!
-    $field: ID!
-    $name: String!
-    $description: String
-    $startTime: DateTime!
-    $endTime: DateTime
-  ) {
-    createTask (
-      input: {
-        operation: $operation
-        field: $field
-        name: $name
-        description: $description
-        startTime: $startTime
-        endTime: $endTime
-      }
-    ) {
-      task {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
-
-const GET_TASK_QUERY = gql(`
-  query GetTask (
-    $id: ID!
-  ) {
-    listTasks (
-      id: $id
-    ) {
-      edges {
-        node {
-          id
-          createdAt
-          modifiedAt
-          state
-          field {
-            id
-            name
-          }
-          name
-          description
-          startTime
-          endTime
-          operation {
-            id
-            name
-          }
-          roleSet {
-            edges {
-              node {
-                id
-                name
-                description
-                quantity
-                participantsAccepted
-                participantsDeclined
-                participantsPending
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`);
-
-const UPDATE_TASK_MUTATION = gql(`
-  mutation UpdateTask (
-    $id: ID!
-    $field: ID
-    $name: String
-    $description: String
-    $startTime: DateTime
-    $endTime: DateTime
-  ) {
-    updateTask (
-      input: {
-        id: $id
-        field: $field
-        name: $name
-        description: $description
-        startTime: $startTime
-        endTime: $endTime
-      }
-    ) {
-      task {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
 
 type Data = CreateTaskMutation
             | UpdateTaskMutation;
@@ -374,7 +274,10 @@ function TaskForm({
         setErrors({form: error.message});
       },
       refetchQueries: [
-        { query: LIST_TASKS_QUERY, variables: filterVariables(filter) }
+        {
+          query: LIST_TASKS_QUERY,
+          variables: filterVariables.task(filter.object)
+        }
       ]
     }
   );
@@ -517,15 +420,6 @@ function TaskForm({
     <Form handleSubmit={handleSubmit} error={errors.form}>
 
       {/* Fields */}
-      <Input
-        id="name"
-        value={name}
-        setValue={setName}
-        label="Name"
-        handleChanged={handleChanged}
-        errors={errors.name}
-        required
-      />
       {create &&
         <Autocomplete
           id="operation"
@@ -539,6 +433,15 @@ function TaskForm({
           required
         />
       }
+      <Input
+        id="name"
+        value={name}
+        setValue={setName}
+        label="Name"
+        handleChanged={handleChanged}
+        errors={errors.name}
+        required
+      />
       <Autocomplete
         id="field"
         value={field}

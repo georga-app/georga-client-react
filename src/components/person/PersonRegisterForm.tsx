@@ -21,30 +21,10 @@ import { RegisterSuccessIcon } from "@/theme/Icons"
 import Form from "@/components/shared/Form";
 import { Input } from "@/components/shared/FormFields";
 
-import { gql } from '@/types/__generated__/gql';
+import { REGISTER_PERSON_MUTATION } from '@/gql/person';
+
 import { RegisterPersonMutationVariables } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
-
-
-const REGISTER_PERSON_MUTATION = gql(`
-  mutation RegisterPerson (
-    $email: String!
-    $password: String!
-  ) {
-    registerPerson(
-      input: {
-        email: $email
-        password: $password
-      }
-    ) {
-      id
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
 
 type Errors = FormErrors<RegisterPersonMutationVariables>;
 

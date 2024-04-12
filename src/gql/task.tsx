@@ -5,6 +5,50 @@
 
 import { gql } from '@/types/__generated__/gql';
 
+const GET_TASK_QUERY = gql(`
+  query GetTask (
+    $id: ID!
+  ) {
+    listTasks (
+      id: $id
+    ) {
+      edges {
+        node {
+          id
+          createdAt
+          modifiedAt
+          state
+          field {
+            id
+            name
+          }
+          name
+          description
+          startTime
+          endTime
+          operation {
+            id
+            name
+          }
+          roleSet {
+            edges {
+              node {
+                id
+                name
+                description
+                quantity
+                participantsAccepted
+                participantsDeclined
+                participantsPending
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
 const LIST_TASKS_QUERY = gql(`
   query ListTasks (
     $operation: ID
@@ -31,6 +75,66 @@ const LIST_TASKS_QUERY = gql(`
           startTime
           endTime
         }
+      }
+    }
+  }
+`);
+
+const CREATE_TASK_MUTATION = gql(`
+  mutation CreateTask (
+    $operation: ID!
+    $field: ID!
+    $name: String!
+    $description: String
+    $startTime: DateTime!
+    $endTime: DateTime
+  ) {
+    createTask (
+      input: {
+        operation: $operation
+        field: $field
+        name: $name
+        description: $description
+        startTime: $startTime
+        endTime: $endTime
+      }
+    ) {
+      task {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`);
+
+const UPDATE_TASK_MUTATION = gql(`
+  mutation UpdateTask (
+    $id: ID!
+    $field: ID
+    $name: String
+    $description: String
+    $startTime: DateTime
+    $endTime: DateTime
+  ) {
+    updateTask (
+      input: {
+        id: $id
+        field: $field
+        name: $name
+        description: $description
+        startTime: $startTime
+        endTime: $endTime
+      }
+    ) {
+      task {
+        id
+      }
+      errors {
+        field
+        messages
       }
     }
   }
@@ -97,7 +201,10 @@ const DELETE_TASK_MUTATION = gql(`
 `);
 
 export {
+  GET_TASK_QUERY,
   LIST_TASKS_QUERY,
+  CREATE_TASK_MUTATION,
+  UPDATE_TASK_MUTATION,
   PUBLISH_TASK_MUTATION,
   ARCHIVE_TASK_MUTATION,
   DELETE_TASK_MUTATION,

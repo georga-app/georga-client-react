@@ -114,11 +114,11 @@ function OperationForm({
       onError: error => {
         setErrors({form: error.message});
       },
-      // refetchQueries: [
-      //   { query: LIST_PROJECTS_QUERY, variables: filterVariables('project', filter) }
-      // ]
       refetchQueries: [
-        "ListOperations"
+        {
+          query: LIST_OPERATIONS_QUERY,
+          variables: filterVariables.operation(filter.object),
+        }
       ]
     }
   );

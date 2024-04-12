@@ -16,7 +16,7 @@ import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
 import { shiftState } from '@/app/states';
 
-import {  // TODO
+import {
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -26,35 +26,10 @@ import {  // TODO
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
-import { gql } from '@/types/__generated__/gql';
-import { ShiftType, ListShiftsQueryVariables } from '@/types/__generated__/graphql'
-import { DataTableColumn, DataTableActions } from '@/types/DataTable'
+import { LIST_SHIFTS_QUERY } from '@/gql/shift';
 
-const LIST_SHIFTS_QUERY = gql(`
-  query ListShifts (
-    $task: ID
-    $operation: ID
-    $project: ID
-    $organization: ID
-  ) {
-    listShifts (
-      task: $task
-      task_Operation: $operation
-      task_Operation_Project: $project
-      task_Operation_Project_Organization: $organization
-    ) {
-      edges {
-        node {
-          id
-          state
-          startTime
-          endTime
-          enrollmentDeadline
-        }
-      }
-    }
-  }
-`);
+import { ShiftType, ListShiftsQueryVariables } from '@/types/__generated__/graphql';
+import { DataTableColumn, DataTableActions } from '@/types/DataTable';
 
 // columns
 const rowKey = 'id';

@@ -282,4 +282,3 @@ function OperationTable() {
 }
 
 export default OperationTable;
-export { LIST_OPERATIONS_QUERY };

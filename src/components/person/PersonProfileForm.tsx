@@ -11,69 +11,17 @@ import Form from "@/components/shared/Form";
 import { Input, Switch } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
 
-import { gql } from '@/types/__generated__/gql';
+import {
+  GET_PERSON_PROFILE_QUERY,
+  UPDATE_PERSON_PROFILE_MUTATION,
+} from '@/gql/person';
+
 import {
   GetPersonProfileQuery,
   UpdatePersonProfileMutation,
   UpdatePersonProfileMutationVariables,
 } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
-
-const GET_PERSON_PROFILE_QUERY = gql(`
-  query GetPersonProfile {
-    getPersonProfile {
-      firstName
-      lastName
-      email
-      occupation
-      street
-      number
-      postalCode
-      city
-      privatePhone
-      mobilePhone
-      onlyJobRelatedTopics
-    }
-  }
-`);
-
-const UPDATE_PERSON_PROFILE_MUTATION = gql(`
-  mutation UpdatePersonProfile (
-    $firstName: String
-    $lastName: String
-    $occupation: String
-    $street: String
-    $number: String
-    $postalCode: String
-    $city: String
-    $privatePhone: String
-    $mobilePhone: String
-    $onlyJobRelatedTopics: String
-  ) {
-    updatePersonProfile (
-      input: {
-        firstName: $firstName
-        lastName: $lastName
-        occupation: $occupation
-        street: $street
-        number: $number
-        postalCode: $postalCode
-        city: $city
-        privatePhone: $privatePhone
-        mobilePhone: $mobilePhone
-        onlyJobRelatedTopics: $onlyJobRelatedTopics
-      }
-    ) {
-      person {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
 
 type Errors = FormErrors<UpdatePersonProfileMutationVariables>;
 

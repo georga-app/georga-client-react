@@ -12,7 +12,7 @@ import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
 
-import {  // TODO
+import {
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -21,23 +21,10 @@ import {  // TODO
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
-import { gql } from '@/types/__generated__/gql';
+import { LIST_TASK_FIELDS_QUERY } from '@/gql/taskField';
+
 import { TaskFieldType } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
-
-const LIST_TASK_FIELDS_QUERY = gql(`
-  query ListTaskFields {
-    listTaskFields {
-      edges {
-        node {
-          id
-          name
-          description
-        }
-      }
-    }
-  }
-`);
 
 // columns
 const rowKey = 'id';
@@ -57,7 +44,6 @@ let columns: DataTableColumn<TaskFieldType>[] = [
   },
   // TODO
 ]
-
 
 function TaskFieldTable() {
   // provider
@@ -128,4 +114,3 @@ function TaskFieldTable() {
 }
 
 export default TaskFieldTable;
-export { LIST_TASK_FIELDS_QUERY };

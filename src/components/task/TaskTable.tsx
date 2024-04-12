@@ -290,4 +290,3 @@ function TaskTable() {
 }
 
 export default TaskTable;
-export { LIST_TASKS_QUERY, filterVariables };

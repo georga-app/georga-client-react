@@ -7,7 +7,6 @@ import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
-// import PersonForm from '@/components/person/PersonForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
@@ -22,33 +21,10 @@ import {  // TODO
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
-import { gql } from '@/types/__generated__/gql';
+import { LIST_PERSONS_QUERY } from '@/gql/person';
+
 import { PersonType } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
-
-const LIST_PERSONS_QUERY = gql(`
-  query ListPersons {
-    listPersons {
-      edges {
-        node {
-          id
-          email
-          firstName
-          lastName
-          dateJoined
-          organizationsSubscribed {
-            edges {
-              node {
-                id
-                name
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`);
 
 // columns
 const rowKey = 'id';
