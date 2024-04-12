@@ -32,7 +32,6 @@ import {
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
-import { gql } from '@/types/__generated__/gql';
 import {
   GeorgaProjectStateChoices,
   ProjectType,

@@ -8,12 +8,18 @@ import { useQuery, useMutation } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
-import TaskForm from '@/components/task/TaskForm';
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
-import { useFilter } from '@/provider/Filter';
+import { useFilter, filterVariables } from '@/provider/Filter';
 import { useSnackbar } from "@/provider/Snackbar";
 import { taskState } from '@/app/states';
+
+import {
+  LIST_TASKS_QUERY,
+  PUBLISH_TASK_MUTATION,
+  ARCHIVE_TASK_MUTATION,
+  DELETE_TASK_MUTATION,
+} from '@/gql/task';
 
 import {  // TODO
   ActionArchiveIcon,
@@ -26,64 +32,12 @@ import {  // TODO
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
-import { gql } from '@/types/__generated__/gql';
 import {
   GeorgaTaskStateChoices,
   TaskType,
   ListTasksQueryVariables,
 } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
-
-const LIST_TASKS_QUERY = gql(`
-  query ListTasks (
-    $operation: ID
-    $project: ID
-    $organization: ID
-    $state_In: [GeorgaTaskStateChoices]
-  ) {
-    listTasks (
-      operation: $operation
-      operation_Project: $project
-      operation_Project_Organization: $organization
-      state_In: $state_In
-    ) {
-      edges {
-        node {
-          id
-          state
-          name
-          description
-          field {
-            name
-            description
-          }
-          startTime
-          endTime
-        }
-      }
-    }
-  }
-`);
-
-const DELETE_TASK_MUTATION = gql(`
-  mutation DeleteTask (
-    $id: ID!
-  ) {
-    deleteTask (
-      input: {
-        id: $id
-      }
-    ) {
-      task {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`);
 
 // columns
 const rowKey = 'id';
@@ -112,24 +66,6 @@ let columns: DataTableColumn<TaskType>[] = [
   // TODO
 ]
 
-// filter
-const filterVariables = (filter: any) => {
-  let filterVariables: ListTasksQueryVariables = {}
-  switch ( filter?.object?.__typename ) {
-    case "OrganizationType":
-      filterVariables.organization = filter.object.id; break;
-    case "ProjectType":
-      filterVariables.project = filter.object.id; break
-    case "OperationType":
-      filterVariables.operation = filter.object.id; break
-    case "TaskType":
-      filterVariables.operation = filter.object.operation.id; break
-    case "ShiftType":
-      filterVariables.operation = filter.object.task.operation.id; break
-  }
-  return filterVariables;
-}
-
 function TaskTable() {
   // provider
   const dialog = useDialog();
@@ -147,7 +83,7 @@ function TaskTable() {
         state_In: archive
           ? [GeorgaTaskStateChoices.Archived]
           : [GeorgaTaskStateChoices.Draft, GeorgaTaskStateChoices.Published],
-        ... filterVariables(filter)
+        ... filterVariables.task(filter.object)
       }
     }
   );
@@ -156,6 +92,56 @@ function TaskTable() {
     rows = data.listTasks.edges
       .map((edge) => edge?.node)
       .filter((node): node is TaskType => node !== undefined);
+
+  // publish
+  const [ publishTask, {
+    loading: publishTaskLoading,
+    reset: publishTaskReset
+  }] = useMutation(
+    PUBLISH_TASK_MUTATION, {
+      onCompleted: data => {
+        const response = data.publishTask;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          publishTaskReset();
+          snackbar.showSnackbar("Task publishd", 'success');
+        } else {
+          publishTaskReset();
+          snackbar.showSnackbar("Task not publishd", 'error');
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListTasks"
+      ]
+    }
+  );
+
+  // archive
+  const [ archiveTask, {
+    loading: archiveTaskLoading,
+    reset: archiveTaskReset
+  }] = useMutation(
+    ARCHIVE_TASK_MUTATION, {
+      onCompleted: data => {
+        const response = data.archiveTask;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          archiveTaskReset();
+          snackbar.showSnackbar("Task archived", 'success');
+        } else {
+          archiveTaskReset();
+          snackbar.showSnackbar("Task not archived", 'error');
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListTasks"
+      ]
+    }
+  );
 
   // delete
   const [ deleteTask, {
@@ -169,23 +155,13 @@ function TaskTable() {
           return;
         if(response.errors.length === 0) {
           deleteTaskReset();
-          // setErrors({});
-          // setChanged({});
           snackbar.showSnackbar("Task deleted", 'success');
-          // onSuccess(data);
         } else {
-          var fieldErrors: {[fieldId: string]: string[]} = {};
-          response.errors.forEach(error => {
-            fieldErrors[error.field] = error.messages
-          });
-          // setErrors(fieldErrors);
           deleteTaskReset();
-          // onError(data);
+          snackbar.showSnackbar("Task not deleted", 'error');
         }
       },
-      // onError: error => {
-      //   setErrors({form: error.message});
-      // },
+      onError: error => {},
       refetchQueries: [
         "ListTasks"
       ]
@@ -228,7 +204,14 @@ function TaskTable() {
       name: 'Publish',
       icon: <ActionPublishIcon />,
       priority: 40,
-      action: (selected, setSelected, event) => {},
+      action: (selected, setSelected, event) => {
+        selected.forEach(entry => {
+          publishTask({
+            variables: { id: entry.id }
+          })
+        })
+        setSelected([]);
+      },
       available: (selected) => (
         selected.length > 0
         && selected.every(entry => taskState.sources.PUBLISHED.includes(entry.state))
@@ -242,7 +225,14 @@ function TaskTable() {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
       priority: 50,
-      action: (selected, setSelected, event) => {},
+      action: (selected, setSelected, event) => {
+        selected.forEach(entry => {
+          archiveTask({
+            variables: { id: entry.id }
+          })
+        })
+        setSelected([]);
+      },
       available: (selected) => (
         selected.length > 0
         && selected.every(entry => taskState.sources.ARCHIVED.includes(entry.state))
@@ -257,8 +247,10 @@ function TaskTable() {
       icon: <ActionDeleteIcon />,
       priority: 100,
       action: (selected, setSelected, event) => {
-        deleteTask({
-          variables: { id: selected[0].id }
+        selected.forEach(entry => {
+          deleteTask({
+            variables: { id: entry.id }
+          })
         })
         setSelected([]);
       },
