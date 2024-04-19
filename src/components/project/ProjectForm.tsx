@@ -62,7 +62,7 @@ function ProjectForm({
 
   // fields
   const [organizationOptions, setOrganizationOptions] = useState<OrganizationType[]>([]);
-  const [organization, setOrganization] = useState<OrganizationType | undefined>(undefined);
+  const [organization, setOrganization] = useState<OrganizationType | "">("");
   const [publish, setPublish] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -70,6 +70,7 @@ function ProjectForm({
   const [createdAt, setCreatedAt] = useState("");
   const [modifiedAt, setModifiedAt] = useState("");
 
+  // preset organization field, when filter is set
   useEffect(() => {
     if (organization || !filter.hasFilter)
       return
@@ -214,7 +215,7 @@ function ProjectForm({
       createProject({
         variables: {
           publish: publish,
-          organization: organization?.id || "",
+          organization: organization ? organization.id : "",
           name: name,
           description: description,
         }
@@ -281,7 +282,7 @@ function ProjectForm({
       {edit && <>
         <Input
           id="organization"
-          value={organization?.name}
+          value={organization ? organization.name : ""}
           label="Organization"
           disabled
         />

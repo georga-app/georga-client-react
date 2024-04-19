@@ -40,10 +40,18 @@ function Info({
       style={{ textDecoration: 'none', marginBottom: 1 }}
     >
       <Box sx={{ marginBottom: 1 }}>
-        <Typography variant="caption" sx={{ color: active ? 'secondary.light' : '#999' }}>
+        <Typography
+          component="div"
+          variant="caption"
+          sx={{ color: active ? 'secondary.light' : '#999', marginBottom: '2px' }}
+        >
           {label}
         </Typography>
-        <Typography variant="body2" sx={{ color: active ? 'primary.main' : '#777' }}>
+        <Typography
+          component="div"
+          variant="body2"
+          sx={{ color: active ? 'primary.main' : '#777', marginBottom: '2px' }}
+        >
           {content}
         </Typography>
       </Box>

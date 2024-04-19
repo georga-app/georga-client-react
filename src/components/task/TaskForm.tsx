@@ -5,31 +5,24 @@
 import dayjs, { Dayjs } from "dayjs";
 
 import { useState, useEffect } from "react";
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation, useApolloClient } from '@apollo/client';
 
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Chip from "@mui/material/Chip";
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from '@mui/material/FormControlLabel';
-import InputLabel from "@mui/material/InputLabel";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 
 import Form from "@/components/shared/Form";
-import { Input, Autocomplete, DateTimePicker } from "@/components/shared/FormFields";
+import { Input, Autocomplete, DateTimePicker, Switch } from "@/components/shared/FormFields";
 import { useSnackbar } from "@/provider/Snackbar";
 import { useFilter, filterVariables } from '@/provider/Filter';
-import { useDialog } from '@/provider/Dialog';
 
-import {
-  PersonPropertyGroupField,
-  PersonPropertyGroupDataType,
-} from "@/components/person/PersonPropertiesForm";
+import RoleTable from '@/components/role/RoleTable';
 
-import { LIST_PERSON_PROPERTY_GROUPS_QUERY } from '@/gql/personPropertyGroup';
 import { LIST_OPERATIONS_QUERY } from '@/gql/operation';
 import { LIST_TASK_FIELDS_QUERY } from '@/gql/taskField';
+import {
+  CREATE_ROLE_MUTATION,
+  UPDATE_ROLE_MUTATION,
+  DELETE_ROLE_MUTATION,
+} from '@/gql/role';
 import {
   GET_TASK_QUERY,
   LIST_TASKS_QUERY,
@@ -40,17 +33,13 @@ import {
 import {
   CreateTaskMutation,
   CreateTaskMutationVariables,
-  ProjectType,
   OperationType,
   RoleType,
-  TaskType,
   TaskFieldType,
-  PersonPropertyGroupType,
   UpdateTaskMutation,
   UpdateTaskMutationVariables,
 } from '@/types/__generated__/graphql';
 import { FormErrors } from "@/types/FormErrors";
-import { onlyType } from "@/types/Util";
 
 type Data = CreateTaskMutation
             | UpdateTaskMutation;
@@ -58,140 +47,6 @@ type Errors = FormErrors<
   CreateTaskMutationVariables
   | UpdateTaskMutationVariables
 >;
-
-function RoleForm({
-  organizationId,
-  role,
-  roles,
-  setRoles,
-  onSuccess = () => undefined,
-}: {
-  organizationId: string,
-  role?: number
-  roles: TempRoleType,
-  setRoles: React.Dispatch<React.SetStateAction<TempRoleType>>,
-  onSuccess?: () => void,
-}) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [quantity, setQuantity] = useState<number>();
-
-  const [propertyGroups, setPropertyGroups] = useState<PersonPropertyGroupType[]>();
-  const [properties, setProperties] = useState<PersonPropertyGroupDataType>({});
-
-  const [changed, setChanged] = useState<PersonPropertyGroupDataType>({});
-
-  useEffect(() => {
-    if (role) {
-      setName(roles[role]?.name || "")
-      setDescription(roles[role]?.description || "")
-      setQuantity(roles[role]?.quantity || 0)
-      setProperties(roles[role]?.properties || {})
-    }
-  }, [role, roles]);
-
-  const {
-    called: listPersonPropertyGroupsCalled,
-    loading: listPersonPropertyGroupsLoading,
-    data: listPersonPropertyGroupsData,
-    error: listPersonPropertyGroupsError
-  } = useQuery(
-    LIST_PERSON_PROPERTY_GROUPS_QUERY, {
-      skip: !organizationId,
-      variables: {
-        organization: organizationId
-      },
-      onCompleted: data => {
-        if (!data.listPersonPropertyGroups) return;
-        const groups = data.listPersonPropertyGroups.edges
-          .map(edge => edge?.node)
-          .filter(onlyType);
-        setPropertyGroups(groups as PersonPropertyGroupType[]);
-      },
-    },
-  );
-
-  return (
-    <Form handleSubmit={() => {}} error={undefined}>
-
-      <Input
-        id="name"
-        value={name}
-        setValue={setName}
-        label="Name"
-        // handleChanged={handleChanged}
-        // errors={errors.name}
-        required
-      />
-      <Input
-        id="description"
-        value={description}
-        setValue={setDescription}
-        label="Description"
-        // multiline={true}
-        // handleChanged={handleChanged}
-        // errors={errors.description}
-      />
-      <Input
-        id="quantity"
-        value={quantity}
-        setValue={setQuantity}
-        type="number"
-        label="Quantity"
-        // handleChanged={handleChanged}
-        // errors={errors.description}
-      />
-
-      <InputLabel sx={{ marginTop: 2, marginBottom: 1 }}>Role Specification</InputLabel>
-      {propertyGroups?.map(group =>
-        <PersonPropertyGroupField
-          key={group.id}
-          group={group}
-          properties={properties}
-          setProperties={setProperties}
-          changed={changed}
-          setChanged={setChanged}
-        />
-      )}
-
-      <Button
-        fullWidth
-        variant="contained"
-        color="secondary"
-        sx={{ marginTop: 1 }}
-        onClick={() => {
-          const newData = {
-            name: name,
-            description: description,
-            quantity: quantity || 0,
-            properties: {...properties},
-          }
-          if (role) {
-            roles[role] = newData;
-          } else {
-            roles.push(newData);
-          }
-          setRoles(roles)
-          onSuccess()
-        }}
-        // disabled={
-        //   Object.keys(changed).length === 0
-        // }
-      >
-        {"Save"}
-      </Button>
-    </Form>
-  );
-}
-
-type TempRoleType = [
-  {
-    name: string,
-    description: string,
-    quantity: number,
-    properties: PersonPropertyGroupDataType,
-  }?
-]
 
 function TaskForm({
   id = '',
@@ -209,28 +64,32 @@ function TaskForm({
   const edit = (id);
 
   // context
-  const dialog = useDialog();
   const snackbar = useSnackbar();
   const filter = useFilter();
+  const client = useApolloClient();
 
   // states
   const [changed, setChanged] = useState<{[id: string]: any}>({});
   const [errors, setErrors] = useState<Errors>({});
+  const [rolesOriginal, setRolesOriginal] = useState<RoleType[]>([]);
 
-  // fields
+  // options
   const [fieldOptions, setFieldOptions] = useState<TaskFieldType[]>([]);
   const [operationOptions, setOperationOptions] = useState<OperationType[]>([]);
-  const [operation, setOperation] = useState<OperationType | undefined>(undefined);
-  const [field, setField] = useState<TaskFieldType | undefined>(undefined);
+
+  // fields
+  const [publish, setPublish] = useState(false);
+  const [operation, setOperation] = useState<OperationType | ''>('');
+  const [field, setField] = useState<TaskFieldType | ''>('');
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [startTime, setStartTime] = useState<string | Dayjs>("");
   const [endTime, setEndTime] = useState<string | Dayjs>("");
-  // const [roles, setRoles] = useState<RoleType[]>([]);
-  const [roles, setRoles] = useState<TempRoleType>([]);
+  const [roles, setRoles] = useState<RoleType[]>([]);
   const [createdAt, setCreatedAt] = useState("");
   const [modifiedAt, setModifiedAt] = useState("");
 
+  // presets
   useEffect(() => {
     if (operation || !filter.hasFilter)
       return
@@ -244,7 +103,7 @@ function TaskForm({
     }
   }, [operation, filter.hasFilter, filter.object]);
 
-  // create
+  // create task
   const [ createTask, {
     loading: createTaskLoading,
     reset: createTaskReset
@@ -282,7 +141,7 @@ function TaskForm({
     }
   );
 
-  // get
+  // get task
   const {
     called: getTaskCalled,
     loading: getTaskLoading,
@@ -291,6 +150,7 @@ function TaskForm({
   } = useQuery(
     GET_TASK_QUERY, {
       skip: create,
+      fetchPolicy: 'network-only',
       variables: {
         id: id
       },
@@ -299,9 +159,9 @@ function TaskForm({
         const task = data.listTasks.edges[0]?.node;
         if (!task)
           return;
-        // const roles = task.roleSet.edges
-        //   .map((edge) => edge?.node)
-        //   .filter((node): node is RoleType => node !== undefined);
+        const roles = task.roleSet.edges
+          .map((edge) => edge?.node)
+          .filter((node): node is RoleType => node !== undefined);
         setOperation(task.operation as OperationType);
         setField(task.field as TaskFieldType);
         setName(task.name);
@@ -309,14 +169,16 @@ function TaskForm({
         setStartTime(dayjs(task.startTime));
         if (task.endTime)
           setEndTime(dayjs(task.endTime));
-        // setRoleSet(roles);
+        setRolesOriginal(roles);
+        setRoles(roles);
         setCreatedAt(task.createdAt);
         setModifiedAt(task.modifiedAt);
       },
     },
   );
 
-  const { data, loading } = useQuery(
+  // list operations
+  const { data: listOperationsData, loading: listOperationsLoading } = useQuery(
     LIST_OPERATIONS_QUERY, {
       onCompleted: data => {
         if (!data.listOperations) return;
@@ -327,8 +189,13 @@ function TaskForm({
       }
     }
   );
+
+  // list task fields
   const { data: listTaskFieldsData, loading: listTaskFieldsLoading } = useQuery(
     LIST_TASK_FIELDS_QUERY, {
+      variables: {
+        organization: operation ? operation.project.organization.id : "",
+      },
       onCompleted: data => {
         if (!data.listTaskFields) return;
         const fields = data.listTaskFields.edges
@@ -339,7 +206,61 @@ function TaskForm({
     }
   );
 
-  // update
+  // create role
+  const [ createRole, {
+    loading: createRoleLoading,
+    reset: createRoleReset
+  }] = useMutation(
+    CREATE_ROLE_MUTATION, {
+      onCompleted: data => {
+        const response = data.createRole;
+        if (!response)
+          return;
+        createRoleReset();
+      },
+      // refetchQueries: [
+      //   GET_TASK_QUERY
+      // ]
+    }
+  );
+
+  // update role
+  const [ updateRole, {
+    loading: updateRoleLoading,
+    reset: updateRoleReset
+  }] = useMutation(
+    UPDATE_ROLE_MUTATION, {
+      onCompleted: data => {
+        const response = data.updateRole;
+        if (!response)
+          return;
+        updateRoleReset();
+      },
+      // refetchQueries: [
+      //   GET_TASK_QUERY
+      // ]
+    }
+  );
+
+  // delete role
+  const [ deleteRole, {
+    loading: deleteRoleLoading,
+    reset: deleteRoleReset
+  }] = useMutation(
+    DELETE_ROLE_MUTATION, {
+      onCompleted: data => {
+        const response = data.deleteRole;
+        if (!response)
+          return;
+        deleteRoleReset();
+      },
+      // refetchQueries: [
+      //   GET_TASK_QUERY
+      // ]
+    }
+  );
+
+  // update task
   const [ updateTask, {
     loading: updateTaskLoading,
     reset: updateTaskReset
@@ -383,30 +304,97 @@ function TaskForm({
   };
 
   // submit
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (create)
-      createTask({
+    let taskId = id;
+    // task create
+    if (create) {
+      const taskResult = await createTask({
         variables: {
-          operation: operation?.id || "",
-          field: field?.id || "",
+          operation: operation ? operation.id : "",
+          field: field ? field.id : "",
           name: name,
           description: description || "",
           startTime: startTime || null,
           endTime: endTime || null,
         }
       });
-    if (edit)
-      updateTask({
+      taskId = taskResult.data?.createTask?.task?.id || '';
+    }
+    // task update
+    if (edit) {
+      await updateTask({
         variables: {
           id: id,
-          field: field?.id || "",
+          field: field ? field.id : "",
           name: name,
           description: description,
           startTime: startTime || null,
           endTime: endTime || null,
         }
       });
+    }
+    // roles create
+    await roles.forEach(role => {
+      if (!role.id || !role.id.startsWith("CREATE!"))
+        return;
+      createRole({
+        variables: {
+          task: taskId,
+          name: role.name,
+          description: role.description,
+          quantity: role.quantity,
+          needsAdminAcceptance: role.needsAdminAcceptance,
+          mandatory: role.mandatory?.map(property => property?.id || '')
+            .filter(Boolean) || [],
+          recommended: role.recommended?.map(property => property?.id || '')
+            .filter(Boolean) || [],
+          unrecommended: role.unrecommended?.map(property => property?.id || '')
+            .filter(Boolean) || [],
+          impossible: role.impossible?.map(property => property?.id || '')
+            .filter(Boolean) || [],
+        }
+      });
+    });
+    // roles delete
+    const rolesToDelete = rolesOriginal.reduce((result: RoleType[], entry: RoleType) => {
+      if (roles.findIndex(role => role?.id === entry.id) == -1)
+        result.push(entry)
+      return result
+    }, []);
+    await rolesToDelete.forEach(role => {
+      deleteRole({
+        variables: {
+          id: role.id,
+        }
+      })
+    });
+    // roles update
+    await roles.forEach(role => {
+      if (!role.id || role.id.startsWith("CREATE!"))
+        return;
+      updateRole({
+        variables: {
+          id: role.id,
+          name: role.name,
+          description: role.description,
+          quantity: role.quantity,
+          needsAdminAcceptance: role.needsAdminAcceptance,
+          mandatory: role.mandatory?.map(property => property?.id || '')
+            .filter(Boolean) || [],
+          recommended: role.recommended?.map(property => property?.id || '')
+            .filter(Boolean) || [],
+          unrecommended: role.unrecommended?.map(property => property?.id || '')
+            .filter(Boolean) || [],
+          impossible: role.impossible?.map(property => property?.id || '')
+            .filter(Boolean) || [],
+        }
+      })
+    });
+    // refetch
+    // await client.refetchQueries({
+    //   include: [GET_TASK_QUERY],
+    // });
   }
 
   // return
@@ -420,7 +408,14 @@ function TaskForm({
     <Form handleSubmit={handleSubmit} error={errors.form}>
 
       {/* Fields */}
-      {create &&
+      {create && <>
+        <Switch
+          id="publish"
+          value={publish}
+          setValue={setPublish}
+          errors={[]}
+          label="Publish"
+        />
         <Autocomplete
           id="operation"
           value={operation}
@@ -432,7 +427,15 @@ function TaskForm({
           errors={errors.operation}
           required
         />
-      }
+      </>}
+      {edit && <>
+        <Input
+          id="operation"
+          value={operation ? operation.name : ""}
+          label="Operation"
+          disabled
+        />
+      </>}
       <Input
         id="name"
         value={name}
@@ -442,17 +445,19 @@ function TaskForm({
         errors={errors.name}
         required
       />
-      <Autocomplete
-        id="field"
-        value={field}
-        setValue={setField}
-        options={fieldOptions}
-        label="Field"
-        handleChanged={handleChanged}
-        // @ts-ignore
-        errors={errors.field}
-        required
-      />
+      {!listTaskFieldsLoading &&
+        <Autocomplete
+          id="field"
+          value={field}
+          setValue={setField}
+          options={fieldOptions}
+          label="Field"
+          handleChanged={handleChanged}
+          // @ts-ignore
+          errors={errors.field}
+          required
+        />
+      }
       {/*
       <DateTimePicker
         id="starttime"
@@ -483,50 +488,14 @@ function TaskForm({
         errors={errors.description}
       />
 
-      <InputLabel sx={{ marginTop: 2, marginBottom: 1 }}>Roles</InputLabel>
-      {roles.map((role, index) =>
-        <Chip
-          key={'rolespec-' + index}
-          variant="filled"
-          sx={{ margin: 0.5 }}
-          label={<Box sx={{ display: 'flex' }}>
-            <Typography sx={{ color: "#777", marginRight: '5px' }}>{role?.quantity} x</Typography>
-            <Typography>{role?.name}</Typography>
-          </Box>}
-          onClick={() => dialog.showDialog(
-            <RoleForm
-              organizationId={operation?.project.organization.id || ""}
-              role={index}
-              roles={roles}
-              setRoles={setRoles}
-            />,
-            "Edit Role"
-          )}
-        />
-      )}
-      <Box sx={{ marginY: 1 }}>
-        <Button
-          variant="outlined"
-          onClick={() => dialog.showDialog(
-            <RoleForm
-              organizationId={operation?.project.organization.id || ""}
-              roles={roles}
-              setRoles={setRoles}
-            />,
-            "Add Role"
-          )}
-        >
-          Add Role
-        </Button>
-      </Box>
+      <RoleTable
+        operation={operation}
+        roles={roles}
+        setRoles={setRoles}
+        handleChanged={handleChanged}
+      />
 
       {edit && <>
-        <Input
-          id="operation"
-          value={operation?.name}
-          label="Organization At"
-          disabled
-        />
         <Input
           id="createdAt"
           value={new Date(createdAt).toLocaleString()}

@@ -222,6 +222,7 @@ function DataTableToolbar<T>({
   setFilter,
   numVisible,
   numTotal,
+  embed,
 }: {
   title?: string,
   actions?: DataTableActions<T>,
@@ -236,6 +237,7 @@ function DataTableToolbar<T>({
   setFilter: React.Dispatch<React.SetStateAction<string>>,
   numVisible: number,
   numTotal: number,
+  embed?: boolean,
 }) {
   const [filterOpen, setFilterOpen] = useState(false);
   const [anchorElActions, setAnchorElActions] = useState<null | HTMLElement>(null);
@@ -286,30 +288,34 @@ function DataTableToolbar<T>({
   return (
     <Box
       sx={{
-        paddingY: { xs: 0.5, sm: 0.5 },
-        paddingX: { xs: 0.5, sm: 2 },
+        paddingY: { xs: 1.5, sm: 0.5 },
+        paddingX: { xs: 1.5, sm: 2 },
         ...(numSelected > 0 ? {
           bgcolor: 'background.active',
         }: {
           bgcolor: (theme) => {
             return {
-              xs: theme.palette.background.default,
+              xs: embed ? theme.palette.background.brighter : theme.palette.background.default,
               sm: theme.palette.background.brighter,
             }
           },
         }),
-        position: { xs: 'fixed', sm: 'unset' },
-        bottom: { xs: 0, sm: 'inherit' },
-        left: { xs: 0, sm: 'inherit' },
-        right: { xs: 0, sm: 'inherit' },
-        width: { xs: '100vw', sm: 'inherit' },
-        boxShadow: {
-          xs: 'rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, '
-             +'rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, '
-             +'rgba(0, 0, 0, 0.12) 0px 1px 8px 0px',
-          sm: 'none'
-        },
-        zIndex: { xs: 1, sm: 'unset' }
+        ...(!embed ? {
+          paddingY: { xs: 0.5, sm: 0.5 },
+          paddingX: { xs: 0.5, sm: 2 },
+          position: { xs: 'fixed', sm: 'unset' },
+          bottom: { xs: 0, sm: 'inherit' },
+          left: { xs: 0, sm: 'inherit' },
+          right: { xs: 0, sm: 'inherit' },
+          width: { xs: '100vw', sm: 'inherit' },
+          boxShadow: {
+            xs: 'rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, '
+               +'rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, '
+               +'rgba(0, 0, 0, 0.12) 0px 1px 8px 0px',
+            sm: 'none'
+          },
+          zIndex: { xs: 1, sm: 'unset' }
+        }: {}),
       }}
     >
       <Toolbar
@@ -322,7 +328,7 @@ function DataTableToolbar<T>({
         {/* title */}
         {title &&
           <Typography
-            sx={{ display: { xs: 'none', sm: 'block' }, marginRight: 1 }}
+            sx={{ display: { xs: embed ? 'block' : 'none', sm: 'block' }, marginRight: 1 }}
             variant="h6"
             id="tableTitle"
             component="div"
@@ -332,19 +338,20 @@ function DataTableToolbar<T>({
         }
 
         {/* select */}
-        {selectable && numSelected
-          ? <DataTableToolbarAction
-              icon=<ActionDeselectIcon />
-              tooltip='Deselect all'
-              badge={numSelected}
-              onClick={selectToggleAll}
-            />
-          : <DataTableToolbarAction
-              icon=<ActionSelectIcon />
-              tooltip='Select all'
-              onClick={selectToggleAll}
-            />
-        }
+        {selectable && (
+          numSelected
+            ? <DataTableToolbarAction
+                icon=<ActionDeselectIcon />
+                tooltip='Deselect all'
+                badge={numSelected}
+                onClick={selectToggleAll}
+              />
+            : <DataTableToolbarAction
+                icon=<ActionSelectIcon />
+                tooltip='Select all'
+                onClick={selectToggleAll}
+              />
+        )}
 
         {/* filter */}
         {filterable &&
@@ -465,6 +472,7 @@ function DataTable<T extends {}>({
   header = true,
   filterable = true,
   selectable = true,
+  embed = false,
 }: {
   columns: DataTableColumn<T>[],
   rows: T[],
@@ -475,6 +483,7 @@ function DataTable<T extends {}>({
   header?: boolean,
   filterable?: boolean,
   selectable?: boolean,
+  embed?: boolean,
 }) {
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof T>(rowKey);
@@ -487,6 +496,10 @@ function DataTable<T extends {}>({
     mouseX: number;
     mouseY: number;
   } | null>(null);
+
+  // embed
+  if (embed)
+    elevation = 0;
 
   // sort
   const handleRequestSort = (
@@ -619,6 +632,7 @@ function DataTable<T extends {}>({
             setFilter={setFilter}
             numVisible={numVisible}
             numTotal={numTotal}
+            embed={embed}
           />
 
           <TableContainer>
@@ -685,6 +699,7 @@ function DataTable<T extends {}>({
                             <TableCell
                               key={column.id as string}
                               sx={[{ cursor: 'default' }, ... [sx] ]}
+                              align={column.align ? column.align : 'left'}
                             >
                               {(content && content != "null" ) ? content : '-'}
                             </TableCell>

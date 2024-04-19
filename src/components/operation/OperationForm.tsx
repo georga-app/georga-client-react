@@ -62,14 +62,15 @@ function OperationForm({
 
   // fields
   const [projectOptions, setProjectOptions] = useState<ProjectType[]>([]);
-  const [project, setProject] = useState<ProjectType | undefined>(undefined);
   const [publish, setPublish] = useState(false);
+  const [project, setProject] = useState<ProjectType | "">("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [state, setState] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [modifiedAt, setModifiedAt] = useState("");
 
+  // preset project field, when filter is set
   useEffect(() => {
     if (project || !filter.hasFilter)
       return
@@ -212,7 +213,7 @@ function OperationForm({
       createOperation({
         variables: {
           publish: publish,
-          project: project?.id || "",
+          project: project? project.id : "",
           name: name,
           description: description,
         }
@@ -279,7 +280,7 @@ function OperationForm({
       {edit && <>
         <Input
           id="project"
-          value={project?.name}
+          value={project ? project.name : ""}
           label="Project"
           disabled
         />

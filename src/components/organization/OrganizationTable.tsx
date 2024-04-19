@@ -10,7 +10,6 @@ import { useQuery, useMutation } from '@apollo/client';
 import Box from '@mui/material/Box';
 
 import DataTable from '@/components/shared/DataTable';
-import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
 import { useSnackbar } from "@/provider/Snackbar";
 import { organizationState } from '@/app/states';
@@ -75,7 +74,6 @@ let columns: DataTableColumn<OrganizationType>[] = [
 
 function OrganizationTable() {
   // provider
-  const dialog = useDialog();
   const filter = useFilter();
   const router = useRouter();
   const snackbar = useSnackbar();

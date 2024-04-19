@@ -15,9 +15,9 @@ const LIST_PERSON_PROPERTY_GROUPS_QUERY = gql(`
       edges {
         node {
           id
-          codename
           name
           selectionType
+          necessity
           personpropertySet {
             edges {
               node {

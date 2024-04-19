@@ -29,6 +29,14 @@ const GET_TASK_QUERY = gql(`
           operation {
             id
             name
+            project {
+              id
+              name
+              organization {
+                id
+                name
+              }
+            }
           }
           roleSet {
             edges {
@@ -37,9 +45,39 @@ const GET_TASK_QUERY = gql(`
                 name
                 description
                 quantity
-                participantsAccepted
-                participantsDeclined
-                participantsPending
+                needsAdminAcceptance
+                mandatory {
+                  id
+                  name
+                  group {
+                    id
+                    name
+                  }
+                }
+                recommended {
+                  id
+                  name
+                  group {
+                    id
+                    name
+                  }
+                }
+                unrecommended {
+                  id
+                  name
+                  group {
+                    id
+                    name
+                  }
+                }
+                impossible {
+                  id
+                  name
+                  group {
+                    id
+                    name
+                  }
+                }
               }
             }
           }

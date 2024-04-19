@@ -5,18 +5,22 @@
 
 import { gql } from '@/types/__generated__/gql';
 
-const LIST_TASK_FIELDS_QUERY = gql(`
-  query ListTaskFields (
-    $organization: ID
+const LIST_PERSON_PROPERTIES_QUERY = gql(`
+  query ListPersonProperties (
+    $group_Organization: ID
   ) {
-    listTaskFields (
-      organization: $organization
+    listPersonProperties (
+      group_Organization: $group_Organization
     ) {
       edges {
         node {
           id
           name
-          description
+          group {
+            id
+            name
+            selectionType
+          }
         }
       }
     }
@@ -24,5 +28,5 @@ const LIST_TASK_FIELDS_QUERY = gql(`
 `);
 
 export {
-  LIST_TASK_FIELDS_QUERY,
+  LIST_PERSON_PROPERTIES_QUERY,
 }

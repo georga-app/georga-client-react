@@ -14,11 +14,11 @@ const LIST_PARTICIPANTS_QUERY = gql(`
     $organization: ID
   ) {
     listParticipants (
-      role_Shift: $shift
-      role_Shift_Task: $task
-      role_Shift_Task_Operation: $operation
-      role_Shift_Task_Operation_Project: $project
-      role_Shift_Task_Operation_Project_Organization: $organization
+      shift: $shift
+      shift_Task: $task
+      shift_Task_Operation: $operation
+      shift_Task_Operation_Project: $project
+      shift_Task_Operation_Project_Organization: $organization
     ) {
       edges {
         node {

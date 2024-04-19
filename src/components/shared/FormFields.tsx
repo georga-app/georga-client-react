@@ -137,7 +137,7 @@ function Autocomplete<T extends { id: string, name?: string } | undefined>({
   label: string,
   options: T[],
   value: any,
-  setValue: React.Dispatch<React.SetStateAction<T | undefined>>,
+  setValue: React.Dispatch<React.SetStateAction<T | "">>,
   errors: FormFieldErrorType | undefined,
   required?: boolean,
   getOptionLabel?: (option: T) => string,
@@ -173,8 +173,8 @@ function Autocomplete<T extends { id: string, name?: string } | undefined>({
         }}
         onChange={(event, newValue) => {
           if( handleChanged )
-            handleChanged(id, value, newValue || undefined);
-          setValue(newValue || undefined);
+            handleChanged(id, value, newValue || "");
+          setValue(newValue || "");
         }}
       />
       {errors &&

@@ -9,7 +9,6 @@ import { useQuery, useMutation } from '@apollo/client';
 import Box from '@mui/material/Box';
 
 import DataTable from '@/components/shared/DataTable';
-import { useDialog } from '@/provider/Dialog';
 import { useFilter, filterVariables } from '@/provider/Filter';
 import { useSnackbar } from "@/provider/Snackbar";
 import { operationState } from '@/app/states';
@@ -36,7 +35,6 @@ import { gql } from '@/types/__generated__/gql';
 import {
   GeorgaOperationStateChoices,
   OperationType,
-  ListOperationsQueryVariables,
 } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
@@ -60,7 +58,6 @@ let columns: DataTableColumn<OperationType>[] = [
 
 function OperationTable() {
   // provider
-  const dialog = useDialog();
   const filter = useFilter();
   const router = useRouter();
   const snackbar = useSnackbar();

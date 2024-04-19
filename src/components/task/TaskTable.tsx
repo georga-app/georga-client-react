@@ -9,7 +9,6 @@ import { useQuery, useMutation } from '@apollo/client';
 import Box from '@mui/material/Box';
 
 import DataTable from '@/components/shared/DataTable';
-import { useDialog } from '@/provider/Dialog';
 import { useFilter, filterVariables } from '@/provider/Filter';
 import { useSnackbar } from "@/provider/Snackbar";
 import { taskState } from '@/app/states';
@@ -35,7 +34,6 @@ import {  // TODO
 import {
   GeorgaTaskStateChoices,
   TaskType,
-  ListTasksQueryVariables,
 } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 
@@ -68,7 +66,6 @@ let columns: DataTableColumn<TaskType>[] = [
 
 function TaskTable() {
   // provider
-  const dialog = useDialog();
   const filter = useFilter();
   const router = useRouter();
   const snackbar = useSnackbar();

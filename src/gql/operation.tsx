@@ -51,6 +51,14 @@ const LIST_OPERATIONS_QUERY = gql(`
           state
           name
           description
+          project {
+            id
+            name
+            organization {
+              id
+              name
+            }
+          }
         }
       }
     }
