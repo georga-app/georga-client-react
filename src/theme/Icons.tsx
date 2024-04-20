@@ -26,6 +26,8 @@ import ActionSearchIcon from '@mui/icons-material/Search';
 import ActionSelectIcon from '@mui/icons-material/SelectAll';
 import ActionSubscribeIcon from '@mui/icons-material/PersonAdd';
 import ActionToggleArchiveIcon from '@mui/icons-material/Unarchive';
+import ActionToggleOffIcon from '@mui/icons-material/ToggleOff';
+import ActionToggleOnIcon from '@mui/icons-material/ToggleOn';
 import ActionUnsubscribeIcon from '@mui/icons-material/PersonRemove';
 
 // States
@@ -78,6 +80,8 @@ export {
   ActionSelectIcon,
   ActionSubscribeIcon,
   ActionToggleArchiveIcon,
+  ActionToggleOffIcon,
+  ActionToggleOnIcon,
   ActionUnsubscribeIcon,
 
   StatePublishedIcon,

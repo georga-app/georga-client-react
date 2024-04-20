@@ -108,7 +108,7 @@ function OperationForm({
             fieldErrors[error.field] = error.messages
           });
           setErrors(fieldErrors);
-          updateOperationReset();
+          createOperationReset();
           onError(data);
         }
       },

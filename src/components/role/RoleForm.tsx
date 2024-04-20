@@ -91,12 +91,12 @@ function PropertiesAutocomplete({
 }
 
 function RoleForm({
-  operation,
+  organizationId,
   role,
   onApply = (role) => undefined,
   onSuccess = () => undefined,
 }: {
-  operation: OperationType | "",
+  organizationId: string,
   role?: RoleType,
   onApply?: (role: RoleType) => void,
   onSuccess?: () => void,
@@ -141,7 +141,7 @@ function RoleForm({
   } = useQuery(
     LIST_PERSON_PROPERTIES_QUERY, {
       variables: {
-        group_Organization: operation ? operation.project.organization.id : "",
+        group_Organization: organizationId,
       },
       onCompleted: data => {
         if (!data.listPersonProperties) return;

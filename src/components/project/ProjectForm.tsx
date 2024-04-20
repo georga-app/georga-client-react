@@ -110,7 +110,7 @@ function ProjectForm({
             fieldErrors[error.field] = error.messages
           });
           setErrors(fieldErrors);
-          updateProjectReset();
+          createProjectReset();
           onError(data);
         }
       },

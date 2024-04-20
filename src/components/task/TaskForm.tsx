@@ -125,7 +125,7 @@ function TaskForm({
             fieldErrors[error.field] = error.messages
           });
           setErrors(fieldErrors);
-          updateTaskReset();
+          createTaskReset();
           onError(data);
         }
       },
@@ -487,7 +487,7 @@ function TaskForm({
       />
 
       <RoleTable
-        operation={operation}
+        organizationId={operation ? operation.project.organization.id : ""}
         roles={roles}
         setRoles={setRoles}
         handleChanged={handleChanged}

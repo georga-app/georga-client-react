@@ -17,6 +17,8 @@ import {
    ActionCreateIcon,
    ActionDeleteIcon,
    ActionEditIcon,
+   ActionToggleOffIcon,
+   ActionToggleOnIcon,
 } from '@/theme/Icons';
 
 import {
@@ -119,15 +121,19 @@ let columns: DataTableColumn<RoleType>[] = [
 ]
 
 function RoleTable({
-  operation,
+  organizationId,
   roles,
   setRoles,
   handleChanged,
+  override,
+  setOverride,
 } : {
-  operation: OperationType | "",
+  organizationId: string,
   roles: RoleType[],
   setRoles: React.Dispatch<React.SetStateAction<RoleType[]>>,
   handleChanged: (key: string, oldValue: any, newValue: any) => void,
+  override?: boolean,
+  setOverride?: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
   // provider
   const dialog = useDialog();
@@ -136,7 +142,29 @@ function RoleTable({
   const [initialRoles, setInitialRoles] = useState<RoleType[]>([]);
 
   // actions
+  const actionsOverride: DataTableActions<RoleType> = [
+    {
+      name: 'Override',
+      icon: <ActionToggleOffIcon />,
+      priority: 1,
+      action: () => {
+        if (!!setOverride) setOverride(true);
+        handleChanged('override', override, true);
+      },
+      available: () => !!setOverride,
+    },
+  ]
   const actions: DataTableActions<RoleType> = [
+    {
+      name: 'Override',
+      icon: <ActionToggleOnIcon />,
+      priority: 1,
+      action: () => {
+        if (!!setOverride) setOverride(false);
+        handleChanged('override', override, false);
+      },
+      available: () => !!setOverride,
+    },
     {
       name: 'Add',
       icon: <ActionCreateIcon />,
@@ -144,7 +172,7 @@ function RoleTable({
       action: (selected, setSelected, event) => {
         dialog.showDialog(
           <RoleForm
-            operation={operation}
+            organizationId={organizationId}
             onApply={role => {
               let newRoles = structuredClone(roles);
               newRoles.push(role);
@@ -164,7 +192,7 @@ function RoleTable({
       action: (selected, setSelected, event) => {
         dialog.showDialog(
           <RoleForm
-            operation={operation}
+            organizationId={organizationId}
             role={selected[0]}
             onApply={role => {
               let newRoles = structuredClone(roles);
@@ -204,11 +232,11 @@ function RoleTable({
       columns={columns}
       rows={roles}
       rowKey={rowKey}
-      title="Roles"
+      title={(!!setOverride && !override) ? "Task Roles" : "Shift Roles"}
       filterable={false}
-      selectable={true}
+      selectable={(!!setOverride && !override) ? false : true}
       embed={true}
-      actions={actions}
+      actions={!!setOverride ? override ? actions : actionsOverride : actions}
     />
   );
 }
