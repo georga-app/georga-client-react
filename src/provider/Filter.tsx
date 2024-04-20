@@ -134,6 +134,20 @@ const filterVariables = {
         return { operation: object.task.operation.id }
     }
   },
+  shift: (object: FilterContextType["object"]) => {
+    switch ( object?.__typename ) {
+      case "OrganizationType":
+        return { organization: object.id }
+      case "ProjectType":
+        return { project: object.id }
+      case "OperationType":
+        return { operation: object.id }
+      case "TaskType":
+        return { task: object.id }
+      case "ShiftType":
+        return { task: object.task.id }
+    }
+  },
 }
 
 export {

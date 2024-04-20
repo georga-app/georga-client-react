@@ -13,11 +13,6 @@ import DataTable from '@/components/shared/DataTable';
 import { useFilter } from '@/provider/Filter';
 import { useSnackbar } from "@/provider/Snackbar";
 import { organizationState } from '@/app/states';
-import {
-  LIST_ORGANIZATIONS_QUERY,
-  PUBLISH_ORGANIZATION_MUTATION,
-  ARCHIVE_ORGANIZATION_MUTATION,
-} from '@/gql/organization'
 
 import {
   ActionArchiveIcon,
@@ -29,6 +24,12 @@ import {
   ActionToggleArchiveIcon,
   NavigationForwardIcon,
 } from '@/theme/Icons';
+
+import {
+  LIST_ORGANIZATIONS_QUERY,
+  PUBLISH_ORGANIZATION_MUTATION,
+  ARCHIVE_ORGANIZATION_MUTATION,
+} from '@/gql/organization'
 
 import {
   GeorgaOrganizationStateChoices,
@@ -81,7 +82,7 @@ function OrganizationTable() {
   // states
   const [archive, setArchive] = useState(false);
 
-  // get
+  // list organizations
   const { data, loading } = useQuery(
     LIST_ORGANIZATIONS_QUERY, {
       variables: {
@@ -97,7 +98,7 @@ function OrganizationTable() {
       .map((edge) => edge?.node)
       .filter((node): node is OrganizationType => node !== undefined);
 
-  // publish
+  // publish organization
   const [ publishOrganization, {
     loading: publishOrganizationLoading,
     reset: publishOrganizationReset
@@ -122,7 +123,7 @@ function OrganizationTable() {
     }
   );
 
-  // archive
+  // archive organization
   const [ archiveOrganization, {
     loading: archiveOrganizationLoading,
     reset: archiveOrganizationReset

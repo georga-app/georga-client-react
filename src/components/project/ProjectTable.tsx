@@ -14,13 +14,6 @@ import { useSnackbar } from "@/provider/Snackbar";
 import { projectState } from '@/app/states';
 
 import {
-  LIST_PROJECTS_QUERY,
-  PUBLISH_PROJECT_MUTATION,
-  ARCHIVE_PROJECT_MUTATION,
-  DELETE_PROJECT_MUTATION,
-} from '@/gql/project'
-
-import {
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -30,6 +23,13 @@ import {
   ActionToggleArchiveIcon,
   NavigationForwardIcon,
 } from '@/theme/Icons';
+
+import {
+  LIST_PROJECTS_QUERY,
+  PUBLISH_PROJECT_MUTATION,
+  ARCHIVE_PROJECT_MUTATION,
+  DELETE_PROJECT_MUTATION,
+} from '@/gql/project'
 
 import {
   GeorgaProjectStateChoices,
@@ -64,7 +64,7 @@ function ProjectTable() {
   // states
   const [archive, setArchive] = useState(false);
 
-  // get
+  // list projects
   const { data, loading } = useQuery(
     LIST_PROJECTS_QUERY, {
       variables: {
@@ -81,7 +81,7 @@ function ProjectTable() {
       .map((edge) => edge?.node)
       .filter((node): node is ProjectType => node !== undefined);
 
-  // publish
+  // publish project
   const [ publishProject, {
     loading: publishProjectLoading,
     reset: publishProjectReset
@@ -106,7 +106,7 @@ function ProjectTable() {
     }
   );
 
-  // archive
+  // archive project
   const [ archiveProject, {
     loading: archiveProjectLoading,
     reset: archiveProjectReset
@@ -131,7 +131,7 @@ function ProjectTable() {
     }
   );
 
-  // delete
+  // delete project
   const [ deleteProject, {
     loading: deleteProjectLoading,
     reset: deleteProjectReset

@@ -14,13 +14,6 @@ import { useSnackbar } from "@/provider/Snackbar";
 import { taskState } from '@/app/states';
 
 import {
-  LIST_TASKS_QUERY,
-  PUBLISH_TASK_MUTATION,
-  ARCHIVE_TASK_MUTATION,
-  DELETE_TASK_MUTATION,
-} from '@/gql/task';
-
-import {  // TODO
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -30,6 +23,13 @@ import {  // TODO
   ActionToggleArchiveIcon,
   NavigationForwardIcon,
 } from '@/theme/Icons';
+
+import {
+  LIST_TASKS_QUERY,
+  PUBLISH_TASK_MUTATION,
+  ARCHIVE_TASK_MUTATION,
+  DELETE_TASK_MUTATION,
+} from '@/gql/task';
 
 import {
   GeorgaTaskStateChoices,
@@ -61,7 +61,6 @@ let columns: DataTableColumn<TaskType>[] = [
     sortable: true,
     filterable: true,
   },
-  // TODO
 ]
 
 function TaskTable() {
@@ -73,7 +72,7 @@ function TaskTable() {
   // states
   const [archive, setArchive] = useState(false);
 
-  // get
+  // list tasks
   const { data, loading } = useQuery(
     LIST_TASKS_QUERY, {
       variables: {
@@ -90,7 +89,7 @@ function TaskTable() {
       .map((edge) => edge?.node)
       .filter((node): node is TaskType => node !== undefined);
 
-  // publish
+  // publish task
   const [ publishTask, {
     loading: publishTaskLoading,
     reset: publishTaskReset
@@ -115,7 +114,7 @@ function TaskTable() {
     }
   );
 
-  // archive
+  // archive task
   const [ archiveTask, {
     loading: archiveTaskLoading,
     reset: archiveTaskReset
@@ -140,7 +139,7 @@ function TaskTable() {
     }
   );
 
-  // delete
+  // delete task
   const [ deleteTask, {
     loading: deleteTaskLoading,
     reset: deleteTaskReset

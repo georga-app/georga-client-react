@@ -14,13 +14,6 @@ import { useSnackbar } from "@/provider/Snackbar";
 import { operationState } from '@/app/states';
 
 import {
-  LIST_OPERATIONS_QUERY,
-  PUBLISH_OPERATION_MUTATION,
-  ARCHIVE_OPERATION_MUTATION,
-  DELETE_OPERATION_MUTATION,
-} from '@/gql/operation'
-
-import {
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -30,6 +23,13 @@ import {
   ActionToggleArchiveIcon,
   NavigationForwardIcon,
 } from '@/theme/Icons';
+
+import {
+  LIST_OPERATIONS_QUERY,
+  PUBLISH_OPERATION_MUTATION,
+  ARCHIVE_OPERATION_MUTATION,
+  DELETE_OPERATION_MUTATION,
+} from '@/gql/operation'
 
 import { gql } from '@/types/__generated__/gql';
 import {
@@ -65,7 +65,7 @@ function OperationTable() {
   // states
   const [archive, setArchive] = useState(false);
 
-  // get
+  // list operations
   const { data, loading } = useQuery(
     LIST_OPERATIONS_QUERY, {
       variables: {
@@ -82,7 +82,7 @@ function OperationTable() {
       .map((edge) => edge?.node)
       .filter((node): node is OperationType => node !== undefined);
 
-  // publish
+  // publish operation
   const [ publishOperation, {
     loading: publishOperationLoading,
     reset: publishOperationReset
@@ -107,7 +107,7 @@ function OperationTable() {
     }
   );
 
-  // archive
+  // archive operation
   const [ archiveOperation, {
     loading: archiveOperationLoading,
     reset: archiveOperationReset
@@ -132,7 +132,7 @@ function OperationTable() {
     }
   );
 
-  // delete
+  // delete operation
   const [ deleteOperation, {
     loading: deleteOperationLoading,
     reset: deleteOperationReset
