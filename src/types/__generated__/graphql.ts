@@ -335,7 +335,6 @@ export type CreatePersonMutationPayload = {
 
 export type CreatePersonPropertyGroupMutationInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  codename: Scalars['String']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   necessity: Scalars['String']['input'];
   organization: Scalars['ID']['input'];
@@ -1996,7 +1995,6 @@ export type ParticipantTypeEdge = {
 
 export type PersonPropertyGroupType = Node & {
   __typename?: 'PersonPropertyGroupType';
-  codename: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   /** The ID of the object */
   id: Scalars['ID']['output'];
@@ -2658,8 +2656,6 @@ export type QueryTypeListPersonPropertiesArgs = {
 export type QueryTypeListPersonPropertyGroupsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
-  codename?: InputMaybe<Scalars['String']['input']>;
-  codename_Icontains?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   createdAt_Gt?: InputMaybe<Scalars['DateTime']['input']>;
   createdAt_Lte?: InputMaybe<Scalars['DateTime']['input']>;
@@ -3637,7 +3633,6 @@ export type UpdatePersonProfileMutationPayload = {
 
 export type UpdatePersonPropertyGroupMutationInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  codename?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   necessity?: InputMaybe<Scalars['String']['input']>;
