@@ -120,6 +120,7 @@ const LIST_TASKS_QUERY = gql(`
 
 const CREATE_TASK_MUTATION = gql(`
   mutation CreateTask (
+    $publish: Boolean
     $operation: ID!
     $field: ID!
     $name: String!
@@ -129,6 +130,7 @@ const CREATE_TASK_MUTATION = gql(`
   ) {
     createTask (
       input: {
+        publish: $publish
         operation: $operation
         field: $field
         name: $name

@@ -311,6 +311,7 @@ function TaskForm({
     if (create) {
       const taskResult = await createTask({
         variables: {
+          publish: publish,
           operation: operation ? operation.id : "",
           field: field ? field.id : "",
           name: name,
@@ -458,7 +459,6 @@ function TaskForm({
           required
         />
       }
-      {/*
       <DateTimePicker
         id="starttime"
         value={startTime}
@@ -475,9 +475,7 @@ function TaskForm({
         label="End Time"
         handleChanged={handleChanged}
         errors={errors.endTime}
-        required
       />
-      */}
       <Input
         id="description"
         value={description}

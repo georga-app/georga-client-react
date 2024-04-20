@@ -161,6 +161,7 @@ function Autocomplete<T extends { id: string, name?: string } | undefined>({
           <MuiTextField {...params}
             variant="standard"
             label={label}
+            required={required}
           />
         }
         renderOption={(props, option) => {
@@ -215,7 +216,7 @@ function DateTimePicker({
     >
       <MuiDateTimePicker
         value={value || null}
-        label={label}
+        label={label + (required ? " *" : "")}
         onChange={(newValue: any) => {
           if( handleChanged )
             handleChanged(id, value, newValue);
