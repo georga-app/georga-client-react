@@ -44,7 +44,7 @@ let columns: DataTableColumn<ParticipantType>[] = [
     sortable: true,
     filterable: true,
     content: (data, row) => {
-      let color = "warning"
+      let color = "warning";
       switch (data) {
         case "ACCEPTED": color = "success"; break;
         case "DECLINED": color = "error"; break;
@@ -64,7 +64,7 @@ let columns: DataTableColumn<ParticipantType>[] = [
     sortable: true,
     filterable: true,
     content: (data, row) => {
-      let color = "warning"
+      let color = "warning";
       switch (data) {
         case "ACCEPTED": color = "success"; break;
         case "DECLINED": color = "error"; break;

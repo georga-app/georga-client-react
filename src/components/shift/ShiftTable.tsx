@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useQuery, useMutation } from '@apollo/client';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 
 import DataTable from '@/components/shared/DataTable';
 import { useFilter, filterVariables } from '@/provider/Filter';
@@ -66,6 +67,33 @@ let columns: DataTableColumn<ShiftType>[] = [
     filterable: true,
     content: (data, row) => String(dayjs(data)),
   },
+  {
+    id: 'state',
+    label: '',
+    display: 'sm',
+    sortable: false,
+    filterable: false,
+    content: (data, row) => {
+      let color = "warning";
+      let message = data;
+      switch (data) {
+        case "PUBLISHED":
+          message = ""
+          if (dayjs().isBetween(dayjs(row['startTime']), dayjs(row['endTime'])))
+            message = "ONGOING"
+          break;
+        case "FINISHED": color = "success"; break;
+        case "CANCELED": color = "error"; break;
+      }
+      return (
+        !message ? " " :
+          <Chip
+            label={message}
+            color={color as "success" | "error" | "warning"}
+          />
+      )
+    }
+  },
 ]
 
 function ShiftTable() {
@@ -83,7 +111,12 @@ function ShiftTable() {
       variables: {
         state_In: archive
           ? [GeorgaShiftStateChoices.Archived]
-          : [GeorgaShiftStateChoices.Draft, GeorgaShiftStateChoices.Published],
+          : [
+              GeorgaShiftStateChoices.Draft,
+              GeorgaShiftStateChoices.Published,
+              GeorgaShiftStateChoices.Finished,
+              GeorgaShiftStateChoices.Canceled,
+            ],
         ... filterVariables.shift(filter.object)
       }
     }
