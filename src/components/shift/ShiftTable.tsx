@@ -71,24 +71,24 @@ let columns: DataTableColumn<ShiftType>[] = [
     id: 'state',
     label: '',
     display: 'sm',
-    sortable: false,
+    sortable: true,
     filterable: false,
     content: (data, row) => {
       let color = "warning";
-      let message = data;
+      let label = "";
       switch (data) {
         case "PUBLISHED":
-          message = ""
           if (dayjs().isBetween(dayjs(row['startTime']), dayjs(row['endTime'])))
-            message = "ONGOING"
+            label = "ongoing"
           break;
-        case "FINISHED": color = "success"; break;
-        case "CANCELED": color = "error"; break;
+        case "FINISHED": label = "finished"; color = "success"; break;
+        case "CANCELED": label = "canceled"; color = "error"; break;
       }
       return (
-        !message ? " " :
+        !label ? " " :
           <Chip
-            label={message}
+            size="small"
+            label={label}
             color={color as "success" | "error" | "warning"}
           />
       )

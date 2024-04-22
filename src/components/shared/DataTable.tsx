@@ -159,8 +159,8 @@ function DataTableHead<T>({
         })}
 
         {/* row actions */}
-        {rowActions &&
-          <TableCell sx={{ userSelect: 'none' }}>
+        {!rowActions ? <TableCell /> :
+          <TableCell sx={{ userSelect: 'none', textAlign: 'right' }}>
             Actions
           </TableCell>
         }
@@ -712,8 +712,17 @@ function DataTable<T extends {}>({
                             key={'row-' + rowIndex + '-actions'}
                             sx={{ cursor: 'default', width: 0 }}
                           >
-                            <Box sx={{ display: 'flex' }}>
-                              {visibleRowActions.map((action, actIndex) =>
+                            <Box sx={{
+                              display: 'flex',
+                              justifyContent: 'flex-end',
+                              "> button:last-child": {
+                                paddingRight: { xs: 0, sm: '8px' },
+                                marginRight: { xs: 0, sm: 0.5 },
+                              }
+                            }}>
+                              {visibleRowActions.filter(
+                                action => action.available && action.available([row])
+                              ).map((action, actIndex) =>
                                 <DataTableToolbarAction
                                   key={'row-' + rowIndex + '-action-' + actIndex}
                                   icon={action.icon}
@@ -723,16 +732,8 @@ function DataTable<T extends {}>({
                                     action.action([row], setSelected, event)
                                   }}
                                   sx={{
-                                    paddingRight: {
-                                      xs: actIndex == visibleRowActions.length - 1 ? 0 : '8px',
-                                      sm: '8px'
-                                    },
-                                    marginRight: {
-                                      xs: actIndex == visibleRowActions.length - 1 ? 0 : 0.5,
-                                      sm: 0.5
-                                    },
-                                    marginLeft: { xs: 0.5 },
-                                    marginY: { xs: 0.5 },
+                                    paddingRight: '8px',
+                                    margin: 0.5,
                                     color: isItemSelected ? '#777' : '#aaa',
                                   }}
                                 />

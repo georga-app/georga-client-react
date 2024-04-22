@@ -11,10 +11,12 @@ import AccountNotificationsIcon from '@mui/icons-material/Notifications';
 import AccountSecurityIcon from '@mui/icons-material/Security';
 
 // Actions
+import ActionAcceptIcon from '@mui/icons-material/CheckCircle';
 import ActionArchiveIcon from '@mui/icons-material/Archive';
 import ActionClearIcon from '@mui/icons-material/Clear';
 import ActionCloseIcon from '@mui/icons-material/Close';
 import ActionCreateIcon from '@mui/icons-material/Add';
+import ActionDeclineIcon from '@mui/icons-material/Cancel';
 import ActionDeleteIcon from '@mui/icons-material/Delete';
 import ActionDeselectIcon from '@mui/icons-material/Deselect';
 import ActionEditIcon from '@mui/icons-material/Edit';
@@ -29,6 +31,7 @@ import ActionToggleArchiveIcon from '@mui/icons-material/Unarchive';
 import ActionToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ActionToggleOnIcon from '@mui/icons-material/ToggleOn';
 import ActionUnsubscribeIcon from '@mui/icons-material/PersonRemove';
+import ActionViewIcon from '@mui/icons-material/Info';
 
 // States
 import StatePublishedIcon from '@mui/icons-material/Visibility';
@@ -65,10 +68,12 @@ export {
   AccountNotificationsIcon,
   AccountSecurityIcon,
 
+  ActionAcceptIcon,
   ActionArchiveIcon,
   ActionClearIcon,
   ActionCloseIcon,
   ActionCreateIcon,
+  ActionDeclineIcon,
   ActionDeleteIcon,
   ActionDeselectIcon,
   ActionEditIcon,
@@ -83,6 +88,7 @@ export {
   ActionToggleOffIcon,
   ActionToggleOnIcon,
   ActionUnsubscribeIcon,
+  ActionViewIcon,
 
   StatePublishedIcon,
 
