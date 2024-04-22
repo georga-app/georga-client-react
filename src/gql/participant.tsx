@@ -17,6 +17,13 @@ const GET_PARTICIPANT_QUERY = gql(`
           id
           acceptance
           adminAcceptance
+          adminAcceptanceUser {
+            id
+            firstName
+            lastName
+          }
+          createdAt
+          modifiedAt
           person {
             firstName
             lastName
@@ -28,6 +35,10 @@ const GET_PARTICIPANT_QUERY = gql(`
                   group {
                     id
                     name
+                    organization {
+                      id
+                      name
+                    }
                   }
                 }
               }
@@ -40,6 +51,18 @@ const GET_PARTICIPANT_QUERY = gql(`
             task {
               id
               name
+              operation {
+                id
+                name
+                project {
+                  id
+                  name
+                  organization {
+                    id
+                    name
+                  }
+                }
+              }
             }
           }
           role {

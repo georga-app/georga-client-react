@@ -38,7 +38,7 @@ function ViewParticipant({
             },
           }}
         >
-          <ParticipantView />
+          <ParticipantView id={params.id} />
         </Paper>
       </>
     />

@@ -15,7 +15,7 @@ import { useFilter, filterVariables } from '@/provider/Filter';
 import { useSnackbar } from "@/provider/Snackbar";
 import { participantAcceptance, participantAdminAcceptance } from '@/app/states';
 
-import {  // TODO
+import {
   ActionAcceptIcon,
   ActionArchiveIcon,
   ActionCreateIcon,
@@ -139,7 +139,7 @@ function ParticipantTable() {
           adminAcceptParticipantReset();
         }
       },
-      onError: error => { console.log(error) },
+      onError: error => {},
       refetchQueries: [
         "ListParticipants"
       ]
