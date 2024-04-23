@@ -9,7 +9,6 @@ import Box from '@mui/material/Box';
 
 // import TaskFieldForm from '@/components/taskField/TaskFieldForm';
 import DataTable from '@/components/shared/DataTable';
-import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
 
 import {
@@ -42,18 +41,17 @@ let columns: DataTableColumn<TaskFieldType>[] = [
     sortable: true,
     filterable: true,
   },
-  // TODO
 ]
 
 function TaskFieldTable() {
   // provider
-  const dialog = useDialog();
   const filter = useFilter();
 
   // get
   const { data, loading } = useQuery(
     LIST_TASK_FIELDS_QUERY, {
-      variables: {}
+      variables: {
+      }
     }
   );
   let rows: TaskFieldType[] = [];
@@ -70,11 +68,6 @@ function TaskFieldTable() {
       icon: <ActionCreateIcon />,
       priority: 10,
       action: (selected, setSelected, event) => {
-        dialog.showDialog(
-          // <TaskFieldForm />,
-          <></>,
-          "Create Field"
-        )
       },
       available: (selected) => (selected.length == 0),
     },
@@ -83,11 +76,6 @@ function TaskFieldTable() {
       icon: <ActionEditIcon />,
       priority: 20,
       action: (selected, setSelected, event) => {
-        dialog.showDialog(
-          // <TaskFieldForm taskFieldId={selected[0].id} />,
-          <></>,
-          "Edit Field"
-        )
       },
       available: (selected) => (selected.length == 1),
       display: {

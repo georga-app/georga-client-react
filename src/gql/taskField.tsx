@@ -17,6 +17,8 @@ const LIST_TASK_FIELDS_QUERY = gql(`
           id
           name
           description
+          createdAt
+          modifiedAt
         }
       }
     }

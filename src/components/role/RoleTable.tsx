@@ -127,6 +127,7 @@ function RoleTable({
   handleChanged,
   override,
   setOverride,
+  title = '',
 } : {
   organizationId: string,
   roles: RoleType[],
@@ -134,6 +135,7 @@ function RoleTable({
   handleChanged: (key: string, oldValue: any, newValue: any) => void,
   override?: boolean,
   setOverride?: React.Dispatch<React.SetStateAction<boolean>>,
+  title?: string,
 }) {
   // provider
   const dialog = useDialog();
@@ -232,7 +234,7 @@ function RoleTable({
       columns={columns}
       rows={roles}
       rowKey={rowKey}
-      title={(!!setOverride && !override) ? "Task Roles" : "Shift Roles"}
+      title={title ? title : (!!setOverride && !override) ? "Task Roles" : "Shift Roles"}
       filterable={false}
       selectable={(!!setOverride && !override) ? false : true}
       embed={true}

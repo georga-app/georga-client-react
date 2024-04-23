@@ -73,7 +73,7 @@ const documents = {
     "\n  mutation PublishTask (\n    $id: ID!\n  ) {\n    publishTask (\n      input: {\n        id: $id\n      }\n    ) {\n      task {\n        id\n      }\n      errors {\n        field\n        messages\n      }\n    }\n  }\n": types.PublishTaskDocument,
     "\n  mutation ArchiveTask (\n    $id: ID!\n  ) {\n    archiveTask (\n      input: {\n        id: $id\n      }\n    ) {\n      task {\n        id\n      }\n      errors {\n        field\n        messages\n      }\n    }\n  }\n": types.ArchiveTaskDocument,
     "\n  mutation DeleteTask (\n    $id: ID!\n  ) {\n    deleteTask (\n      input: {\n        id: $id\n      }\n    ) {\n      task {\n        id\n      }\n      errors {\n        field\n        messages\n      }\n    }\n  }\n": types.DeleteTaskDocument,
-    "\n  query ListTaskFields (\n    $organization: ID\n  ) {\n    listTaskFields (\n      organization: $organization\n    ) {\n      edges {\n        node {\n          id\n          name\n          description\n        }\n      }\n    }\n  }\n": types.ListTaskFieldsDocument,
+    "\n  query ListTaskFields (\n    $organization: ID\n  ) {\n    listTaskFields (\n      organization: $organization\n    ) {\n      edges {\n        node {\n          id\n          name\n          description\n          createdAt\n          modifiedAt\n        }\n      }\n    }\n  }\n": types.ListTaskFieldsDocument,
 };
 
 /**
@@ -333,7 +333,7 @@ export function gql(source: "\n  mutation DeleteTask (\n    $id: ID!\n  ) {\n   
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query ListTaskFields (\n    $organization: ID\n  ) {\n    listTaskFields (\n      organization: $organization\n    ) {\n      edges {\n        node {\n          id\n          name\n          description\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query ListTaskFields (\n    $organization: ID\n  ) {\n    listTaskFields (\n      organization: $organization\n    ) {\n      edges {\n        node {\n          id\n          name\n          description\n        }\n      }\n    }\n  }\n"];
+export function gql(source: "\n  query ListTaskFields (\n    $organization: ID\n  ) {\n    listTaskFields (\n      organization: $organization\n    ) {\n      edges {\n        node {\n          id\n          name\n          description\n          createdAt\n          modifiedAt\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query ListTaskFields (\n    $organization: ID\n  ) {\n    listTaskFields (\n      organization: $organization\n    ) {\n      edges {\n        node {\n          id\n          name\n          description\n          createdAt\n          modifiedAt\n        }\n      }\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};
