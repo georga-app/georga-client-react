@@ -2,7 +2,7 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import { useContext } from "react";
+import { useContext, Suspense } from "react";
 import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
 
@@ -47,4 +47,12 @@ function PersonAuthFlow() {
   return <></>;
 }
 
-export default PersonAuthFlow;
+function PersonAuthFlowSuspense() {
+  return (
+    <Suspense>
+      <PersonAuthFlow />
+    </Suspense>
+  )
+}
+
+export default PersonAuthFlowSuspense;

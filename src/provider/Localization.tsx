@@ -6,7 +6,7 @@
 
 import dayjs from "dayjs";
 import isBetween from 'dayjs/plugin/isBetween';
-// import 'dayjs/locale/de'
+import 'dayjs/locale/de'
 dayjs.extend(isBetween)
 
 import { LocalizationProvider as MuiLocalizationProvider } from '@mui/x-date-pickers';
