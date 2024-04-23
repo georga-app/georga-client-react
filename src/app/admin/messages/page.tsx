@@ -19,8 +19,8 @@ function Messages() {
           currentLabel="Messages"
           backUrl="/"
           backLabel="Home"
-          forwardUrl="/admin/persons"
-          forwardLabel="Persons"
+          // forwardUrl="/admin/persons"
+          // forwardLabel="Persons"
         />
         <MessageTable />
       </>

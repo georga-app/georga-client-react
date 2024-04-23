@@ -17,10 +17,12 @@ function Fields() {
       right=<>
         <HeaderNav
           currentLabel="Fields"
-          backUrl="/admin/resources"
-          backLabel="Resources"
-          forwardUrl="/admin/qualifications"
-          forwardLabel="Qualifications"
+          backUrl="/"
+          backLabel="Home"
+          // backUrl="/admin/resources"
+          // backLabel="Resources"
+          // forwardUrl="/admin/qualifications"
+          // forwardLabel="Qualifications"
         />
         <TaskFieldTable />
       </>

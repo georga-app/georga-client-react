@@ -9,18 +9,18 @@ import PersonTable from '@/components/person/PersonTable';
 
 import TwoColumns from '@/theme/layouts/TwoColumns';
 
-function Persons() {
+function Staff() {
   return (
     <TwoColumns
       bg='admin'
       left=<></>
       right=<>
         <HeaderNav
-          currentLabel="Persons"
+          currentLabel="Staff"
           backUrl="/"
           backLabel="Home"
-          forwardUrl="/admin/messages"
-          forwardLabel="Messages"
+          // forwardUrl="/admin/messages"
+          // forwardLabel="Messages"
         />
         <PersonTable />
       </>
@@ -28,4 +28,4 @@ function Persons() {
   );
 }
 
-export default Persons;
+export default Staff;

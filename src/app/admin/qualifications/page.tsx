@@ -17,10 +17,12 @@ function Qualifications() {
       right=<>
         <HeaderNav
           currentLabel="Qualifications"
-          backUrl="/admin/fields"
-          backLabel="Fields"
-          forwardUrl="/admin/resources"
-          forwardLabel="Resources"
+          backUrl="/"
+          backLabel="Home"
+          // backUrl="/admin/fields"
+          // backLabel="Fields"
+          // forwardUrl="/admin/resources"
+          // forwardLabel="Resources"
         />
         <QualificationTable />
       </>

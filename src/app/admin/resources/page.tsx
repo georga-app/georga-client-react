@@ -17,10 +17,12 @@ function Resources() {
       right=<>
         <HeaderNav
           currentLabel="Resources"
-          backUrl="/admin/qualifications"
-          backLabel="Qualifications"
-          forwardUrl="/admin/fields"
-          forwardLabel="Fields"
+          backUrl="/"
+          backLabel="Home"
+          // backUrl="/admin/qualifications"
+          // backLabel="Qualifications"
+          // forwardUrl="/admin/fields"
+          // forwardLabel="Fields"
         />
         {/*<ResourceTable />*/}
       </>

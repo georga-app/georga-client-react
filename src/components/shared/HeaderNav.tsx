@@ -13,12 +13,14 @@ import { NavigationBackIcon, NavigationForwardIcon } from '@/theme/Icons';
 
 function HeaderNav({
   currentLabel,
+  currentAlign,
   backUrl,
   backLabel,
   forwardUrl,
   forwardLabel,
 }: {
   currentLabel?: string,
+  currentAlign?: 'left' | 'center' | 'right'
   backUrl?: LinkProps['href'],
   backLabel?: string,
   forwardUrl?: LinkProps['href'],
@@ -57,7 +59,7 @@ function HeaderNav({
           color="secondary"
           sx={{
             flexGrow: 1,
-            textAlign: backLabel ? "center" : "left",
+            textAlign: currentAlign || backLabel ? "center" : "left",
           }}
         >
           {currentLabel}
