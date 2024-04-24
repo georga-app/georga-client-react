@@ -3,24 +3,25 @@
  * Repository: https://github.com/georga-app/georga-client-react
  */
 import { useState } from 'react';
-import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/navigation';
+import { useQuery, useMutation } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 
-// import TaskFieldForm from '@/components/taskField/TaskFieldForm';
 import DataTable from '@/components/shared/DataTable';
 import { useFilter } from '@/provider/Filter';
+import { useSnackbar } from "@/provider/Snackbar";
 
 import {
-  ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
   ActionEditIcon,
-  ActionPublishIcon,
-  NavigationForwardIcon,
 } from '@/theme/Icons';
 
-import { LIST_TASK_FIELDS_QUERY } from '@/gql/taskField';
+import {
+  LIST_TASK_FIELDS_QUERY,
+  DELETE_TASK_FIELD_MUTATION,
+} from '@/gql/taskField';
 
 import { TaskFieldType } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
@@ -46,11 +47,15 @@ let columns: DataTableColumn<TaskFieldType>[] = [
 function TaskFieldTable() {
   // provider
   const filter = useFilter();
+  const router = useRouter();
+  const snackbar = useSnackbar();
 
   // get
   const { data, loading } = useQuery(
     LIST_TASK_FIELDS_QUERY, {
-      variables: {}
+      variables: {
+        organization: filter.organization,
+      }
     }
   );
   let rows: TaskFieldType[] = [];
@@ -58,6 +63,31 @@ function TaskFieldTable() {
     rows = data.listTaskFields.edges
       .map((edge) => edge?.node)
       .filter((node): node is TaskFieldType => node !== undefined);
+
+  // delete task field
+  const [ deleteTaskField, {
+    loading: deleteTaskFieldLoading,
+    reset: deleteTaskFieldReset
+  }] = useMutation(
+    DELETE_TASK_FIELD_MUTATION, {
+      onCompleted: data => {
+        const response = data.deleteTaskField;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          snackbar.showSnackbar("Field deleted", 'success');
+          deleteTaskFieldReset();
+        } else {
+          snackbar.showSnackbar("Field not deleted", 'error');
+          deleteTaskFieldReset();
+        }
+      },
+      onError: error => {console.log(error)},
+      refetchQueries: [
+        "ListTaskFields"
+      ]
+    }
+  );
 
   // actions
   const actions: DataTableActions<TaskFieldType> = [
@@ -67,6 +97,7 @@ function TaskFieldTable() {
       icon: <ActionCreateIcon />,
       priority: 10,
       action: (selected, setSelected, event) => {
+        router.push("/admin/fields/create");
       },
       available: (selected) => (selected.length == 0),
     },
@@ -75,6 +106,7 @@ function TaskFieldTable() {
       icon: <ActionEditIcon />,
       priority: 20,
       action: (selected, setSelected, event) => {
+        router.push("/admin/fields/" + selected[0].id + "/edit");
       },
       available: (selected) => (selected.length == 1),
       display: {
@@ -85,7 +117,14 @@ function TaskFieldTable() {
       name: 'Delete',
       icon: <ActionDeleteIcon />,
       priority: 30,
-      action: (selected, setSelected, event) => {},
+      action: (selected, setSelected, event) => {
+        selected.forEach(entry => {
+          deleteTaskField({
+            variables: { id: entry.id }
+          })
+        })
+        setSelected([]);
+      },
       available: (selected) => (selected.length > 0),
     },
   ];
