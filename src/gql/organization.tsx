@@ -48,6 +48,30 @@ const GET_PERSON_ORGANIZATIONS_QUERY = gql(`
   }
 `);
 
+const LIST_ADMIN_ORGANIZATIONS_QUERY = gql(`
+  query ListAdminOrganizations (
+    $name_Icontains: String
+    $state_In: [GeorgaOrganizationStateChoices]
+  ) {
+    getPersonProfile {
+      organizationsEmployed (
+        name_Icontains: $name_Icontains
+        state_In: $state_In
+      ) {
+        edges {
+          node {
+            id
+            state
+            name
+            icon
+            description
+          }
+        }
+      }
+    }
+  }
+`);
+
 const LIST_ORGANIZATIONS_QUERY = gql(`
   query ListOrganizations (
     $state_In: [GeorgaOrganizationStateChoices]
@@ -161,6 +185,7 @@ const ARCHIVE_ORGANIZATION_MUTATION = gql(`
 export {
   GET_ORGANIZATION_QUERY,
   GET_PERSON_ORGANIZATIONS_QUERY,
+  LIST_ADMIN_ORGANIZATIONS_QUERY,
   LIST_ORGANIZATIONS_QUERY,
   CREATE_ORGANIZATION_MUTATION,
   UPDATE_ORGANIZATION_MUTATION,

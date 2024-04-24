@@ -79,6 +79,7 @@ function TaskTable() {
         state_In: archive
           ? [GeorgaTaskStateChoices.Archived]
           : [GeorgaTaskStateChoices.Draft, GeorgaTaskStateChoices.Published],
+        organization: filter.getOrganization(),
         ... filterVariables.task(filter.object)
       }
     }

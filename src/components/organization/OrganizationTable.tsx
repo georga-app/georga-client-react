@@ -2,7 +2,7 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useQuery, useMutation } from '@apollo/client';
@@ -26,7 +26,7 @@ import {
 } from '@/theme/Icons';
 
 import {
-  LIST_ORGANIZATIONS_QUERY,
+  LIST_ADMIN_ORGANIZATIONS_QUERY,
   PUBLISH_ORGANIZATION_MUTATION,
   ARCHIVE_ORGANIZATION_MUTATION,
 } from '@/gql/organization'
@@ -84,7 +84,7 @@ function OrganizationTable() {
 
   // list organizations
   const { data, loading } = useQuery(
-    LIST_ORGANIZATIONS_QUERY, {
+    LIST_ADMIN_ORGANIZATIONS_QUERY, {
       variables: {
         state_In: archive
           ? [GeorgaOrganizationStateChoices.Archived]
@@ -93,8 +93,8 @@ function OrganizationTable() {
     }
   );
   let rows: OrganizationType[] = [];
-  if (!loading && data?.listOrganizations?.edges)
-    rows = data.listOrganizations.edges
+  if (!loading && data?.getPersonProfile?.organizationsEmployed.edges)
+    rows = data.getPersonProfile.organizationsEmployed.edges
       .map((edge) => edge?.node)
       .filter((node): node is OrganizationType => node !== undefined);
 
@@ -222,8 +222,9 @@ function OrganizationTable() {
       name: 'Projects',
       icon: <NavigationForwardIcon />,
       priority: 1000,
-      action: (selected, setSelected, event) => {
-        filter.setFilter(selected[0].id);
+      action: async (selected, setSelected, event) => {
+        await filter.setOrganization(selected[0].id);
+        await filter.setFilter(selected[0].id);
         router.push("/admin/projects");
       },
       available: (selected) => (selected.length == 1),

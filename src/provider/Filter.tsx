@@ -4,12 +4,12 @@
  */
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 
 import { GET_FILTER_OBJECT_FRAGMENTS, GET_FILTER_OBJECT_QUERY } from '@/gql/filter';
+import { GET_ORGANIZATION_QUERY } from '@/gql/organization';
 
-import { gql } from '@/types/__generated__/gql';
 import { FilterObjectType, FilterContextType } from '@/types/Filter';
 
 // see https://developer.school/snippets/react/localstorage-is-not-defined-nextjs
@@ -24,6 +24,11 @@ let localStorage: Storage = (typeof window !== "undefined") ? window.localStorag
 
 const FilterContext = createContext<FilterContextType>({
   object: undefined,
+  organization: '',
+  setOrganization: string => {},
+  getOrganization: () => "",
+  unsetOrganization: () => {},
+  hasOrganization: false,
   setFilter: string => {},
   unsetFilter: () => {},
   hasFilter: false,
@@ -34,11 +39,37 @@ function FilterProvider({
 }: {
   children: React.ReactNode
 }) {
+  const [organizationId, setOrganizationId] = useState("");
   const [filterObjectId, setFilterObjectId] = useState("");
   const [filterObject, setFilterObject] = useState<FilterObjectType>(undefined);
 
-  // getFilterObject
-  const { called, loading, data, error } = useQuery(
+  // get organization
+  const {
+    called: getOrganizationCalled,
+    loading: getOrganizationLoading,
+    data: getOrganizationData,
+    error: getOrganizationError
+  } = useQuery(
+    GET_ORGANIZATION_QUERY, {
+      skip: !localStorage.getItem("globalOrganization"),
+      variables: {
+        id: localStorage.getItem("globalOrganization") as string,
+      },
+      onCompleted: data => {
+        if (!data.listOrganizations?.edges) return;
+        const organization = data.listOrganizations?.edges.map((edge) => edge?.node)[1];
+        setOrganizationId(organization?.id || '');
+      },
+    },
+  );
+
+  // get filter object
+  const {
+    called: getFilterObjectCalled,
+    loading: getFilterObjectLoading,
+    data: getFilterObjectData,
+    error: getFilterObjectError
+  } = useQuery(
     GET_FILTER_OBJECT_QUERY, {
       skip: !localStorage.getItem("globalFilter"),
       variables: {
@@ -62,9 +93,36 @@ function FilterProvider({
   const hasFilter = () => {
     return Boolean(filterObject);
   }
+  const setOrganization = (organizationId: string) => {
+    if (organizationId === getOrganization())
+      return;
+    setOrganizationId(organizationId);
+    unsetFilter();
+    localStorage.setItem("globalOrganization", organizationId || "")
+  }
+  const getOrganization = () => {
+    return organizationId;
+  }
+  const unsetOrganization = () => {
+    localStorage.removeItem("globalOrganization");
+    setOrganization('');
+  }
+  const hasOrganization = () => {
+    return Boolean(organizationId);
+  }
+
+  useEffect(() => {
+    if (!organizationId)
+      setOrganizationId(localStorage.getItem("globalOrganization") || "");
+  }, [organizationId, setOrganizationId])
 
   let filter = {
     object: filterObject,
+    organization: organizationId,
+    setOrganization: (organizationId: string) => setOrganization(organizationId),
+    getOrganization: () => getOrganization(),
+    unsetOrganization: () => unsetOrganization(),
+    hasOrganization: hasOrganization(),
     setFilter: (objectId: string) => setFilter(objectId),
     unsetFilter: () => unsetFilter(),
     hasFilter: hasFilter(),

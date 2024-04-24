@@ -2,7 +2,7 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from '@apollo/client';
 
 import Autocomplete from '@mui/material/Autocomplete';
@@ -23,6 +23,7 @@ import {
 } from '@/gql/person';
 
 import {
+  PersonPropertyType,
   PersonPropertyGroupType,
   UpdatePersonProfilePropertiesMutation,
   UpdatePersonProfilePropertiesMutationVariables,
@@ -47,10 +48,19 @@ function PersonPropertyGroupField({
   changed: PersonPropertyGroupDataType,
   setChanged: React.Dispatch<React.SetStateAction<PersonPropertyGroupDataType>>
 }) {
-  const type = group.selectionType;
-  const options = group.personpropertySet.edges
-    .map(edge => edge?.node)
-    .filter(onlyType)
+
+  // states
+  const [type, setType] = useState<PersonPropertyGroupType['selectionType']>();
+  const [options, setOptions] = useState<PersonPropertyType[]>([]);
+
+  // effects
+  useEffect(() => {
+    const newOptions = group.personpropertySet.edges
+      .map(edge => edge?.node)
+      .filter(onlyType)
+    setOptions(newOptions);
+    setType(group.selectionType);
+  }, [group.personpropertySet.edges, group.selectionType])
 
   // change
   const arrayEqual = (a: string[], b: string[]) =>

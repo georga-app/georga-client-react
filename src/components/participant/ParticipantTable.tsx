@@ -111,6 +111,7 @@ function ParticipantTable() {
   const { data, loading } = useQuery(
     LIST_PARTICIPANTS_QUERY, {
       variables: {
+        organization: filter.getOrganization(),
         ... filterVariables.participant(filter.object)
       }
     }

@@ -43,6 +43,7 @@ import LoginIcon from "@mui/icons-material/Lock";
 import MenuAdminIcon from '@mui/icons-material/BuildCircle';
 import MenuNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import MenuMobileIcon from '@mui/icons-material/Menu';
+import MenuOrganizationIcon from '@mui/icons-material/SupervisedUserCircle';
 import MenuUserIcon from '@mui/icons-material/AccountCircle';
 
 // Navigation
@@ -97,6 +98,7 @@ export {
   MenuAdminIcon,
   MenuNotificationsIcon,
   MenuMobileIcon,
+  MenuOrganizationIcon,
   MenuUserIcon,
 
   NavigationBackIcon,

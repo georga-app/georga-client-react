@@ -117,6 +117,7 @@ const TOKEN_AUTH_MUTATION = gql(`
       token
       refreshExpiresIn
       adminLevel
+      defaultOrganization
     }
   }
 `);

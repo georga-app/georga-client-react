@@ -29,15 +29,15 @@ function Layout({
           <Localization>
             <GraphQLClient>
               <User>
-                <Theme>
-                  <Filter>
+                <Filter>
+                  <Theme>
                     <Snackbar>
                       <Dialog>
                         {children}
                       </Dialog>
                     </Snackbar>
-                  </Filter>
-                </Theme>
+                  </Theme>
+                </Filter>
               </User>
             </GraphQLClient>
           </Localization>

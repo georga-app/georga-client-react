@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 
 import AdminMenu from './AdminMenu';
 import Notifications from './Notifications';
+import OrganizationMenu from './OrganizationMenu';
 import UserMenu from './UserMenu';
 
 import UserContext from '@/provider/User';
@@ -24,6 +25,7 @@ function IconMenus({
     <Box sx={{ flexGrow: 0, flexWrap: 0 }}>
       <AdminMenu />
       <Notifications toggleNotifications={toggleNotifications} />
+      <OrganizationMenu />
       <UserMenu />
     </Box>
   );

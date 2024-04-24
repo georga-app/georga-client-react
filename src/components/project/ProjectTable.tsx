@@ -71,6 +71,7 @@ function ProjectTable() {
         state_In: archive
           ? [GeorgaProjectStateChoices.Archived]
           : [GeorgaProjectStateChoices.Draft, GeorgaProjectStateChoices.Published],
+        organization: filter.getOrganization(),
         ... filterVariables.project(filter.object)
       }
     }

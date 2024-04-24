@@ -24,6 +24,11 @@ type FilterObjectType =   (OrganizationType & OrganizationPartsFragment)
 
 type FilterContextType = {
   object: FilterObjectType
+  organization: string,
+  setOrganization: (organizationId: string) => void,
+  getOrganization: () => string,
+  unsetOrganization: () => void,
+  hasOrganization: boolean,
   setFilter: (objectId: string) => void,
   unsetFilter: () => void,
   hasFilter: boolean,

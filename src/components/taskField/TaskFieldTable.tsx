@@ -50,8 +50,7 @@ function TaskFieldTable() {
   // get
   const { data, loading } = useQuery(
     LIST_TASK_FIELDS_QUERY, {
-      variables: {
-      }
+      variables: {}
     }
   );
   let rows: TaskFieldType[] = [];

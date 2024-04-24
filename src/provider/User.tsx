@@ -37,6 +37,8 @@ function UserContextProvider({
     localStorage.setItem("userId", data?.id || "");
     localStorage.setItem("userToken", data?.token || "");
     localStorage.setItem("userAdminLevel", data?.adminLevel || "");
+    if (!localStorage.getItem("globalOrganization"))
+      localStorage.setItem("globalOrganization", data?.defaultOrganization || "");
     setLoggedIn(true);
   }
   const logout = () => {

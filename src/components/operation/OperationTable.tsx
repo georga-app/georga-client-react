@@ -72,6 +72,7 @@ function OperationTable() {
         state_In: archive
           ? [GeorgaOperationStateChoices.Archived]
           : [GeorgaOperationStateChoices.Draft, GeorgaOperationStateChoices.Published],
+        organization: filter.getOrganization(),
         ... filterVariables.operation(filter.object)
       }
     }

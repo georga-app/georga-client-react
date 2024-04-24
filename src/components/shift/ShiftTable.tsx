@@ -117,6 +117,7 @@ function ShiftTable() {
               GeorgaShiftStateChoices.Finished,
               GeorgaShiftStateChoices.Canceled,
             ],
+        organization: filter.getOrganization(),
         ... filterVariables.shift(filter.object)
       }
     }

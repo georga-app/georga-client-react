@@ -13,6 +13,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from '@mui/material/Select';
 import Typography from "@mui/material/Typography";
 
+import { useFilter } from '@/provider/Filter';
+
 import { GET_PERSON_ORGANIZATIONS_QUERY } from "@/gql/organization"
 
 import { OrganizationType } from '@/types/__generated__/graphql';
@@ -24,9 +26,13 @@ function OrganizationSubscribedSelect({
   organizationId: string,
   setOrganizationId: React.Dispatch<React.SetStateAction<string>>,
 }) {
+  // provider
+  const filter = useFilter();
+
+  // states
   const [organizations, setOrganizations] = useState<OrganizationType[]>([]);
 
-  // get
+  // get person organizations
   const { data, loading } = useQuery(GET_PERSON_ORGANIZATIONS_QUERY, {
     'onCompleted': data => {
       if (!data?.getPersonProfile?.organizationsSubscribed.edges) return;
@@ -35,7 +41,11 @@ function OrganizationSubscribedSelect({
         .filter((node): node is OrganizationType => node !== undefined)
       if (!orgs) return;
       setOrganizations(orgs);
-      setOrganizationId(orgs[0].id);
+      if (!organizationId && filter.hasOrganization) {
+        setOrganizationId(filter.getOrganization());
+      } else {
+        setOrganizationId(orgs[0].id);
+      }
     }
   });
 

@@ -35,14 +35,14 @@ function Header({
           </Grid>
 
           {/* Middle */}
-          <Grid xs={4} sm={6} md={6}>
+          <Grid xs={2} sm={6} md={6}>
             <ClientOnly>
               <DesktopMenu notifications={notifications} />
             </ClientOnly>
           </Grid>
 
           {/* Right */}
-          <Grid xs={4} sm={3} md={3}>
+          <Grid xs={6} sm={3} md={3}>
             <ClientOnly>
               <IconMenus toggleNotifications={toggleNotifications} />
             </ClientOnly>
