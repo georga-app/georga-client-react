@@ -21,7 +21,7 @@ import {
   NavigationForwardIcon,
 } from '@/theme/Icons';
 
-import { LIST_QUALIFICATIONS_QUERY } from '@/gql/qualification';
+import { LIST_PERSON_PROPERTY_GROUPS_QUERY } from '@/gql/personPropertyGroup';
 
 import {
   PersonPropertyType,
@@ -47,14 +47,13 @@ let columns: DataTableColumn<PersonPropertyGroupType>[] = [
     sortable: true,
     filterable: true,
   },
-  {
-    id: 'necessity',
-    label: 'Necessity',
-    display: 'sm',
-    sortable: true,
-    filterable: true,
-  },
-  // TODO
+  // {
+  //   id: 'necessity',
+  //   label: 'Necessity',
+  //   display: 'sm',
+  //   sortable: true,
+  //   filterable: true,
+  // },
 ]
 
 
@@ -65,8 +64,10 @@ function QualificationTable() {
 
   // get
   const { data, loading } = useQuery(
-    LIST_QUALIFICATIONS_QUERY, {
-      variables: {}
+    LIST_PERSON_PROPERTY_GROUPS_QUERY, {
+      variables: {
+        organization: filter.organization
+      }
     }
   );
   let rows: PersonPropertyGroupType[] = [];
