@@ -6,8 +6,10 @@ import { useState } from 'react';
 import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import Typography from '@mui/material/Typography';
 
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
@@ -69,42 +71,66 @@ let columns: DataTableColumn<PersonType>[] = [
         && ace.instance.project.organization.id == filter.organization
       );
       return <>
-        {!!acesOrganizations?.length &&
-          <Box sx={{ fontSize: 10 }}>
-            <b>Organization Admin</b>
-            <List sx={{ fontSize: 10 }}>
-              {acesOrganizations.map(ace =>
-                <ListItem key={"ace-" + ace.id} sx={{ paddingY: 0 }}>
+        {!!acesOrganizations?.length && <>
+          <Typography sx={{ fontSize: 12, color: '#666', display: 'block' }}>
+            Organizations
+          </Typography>
+          <List sx={{ padding: 0, margin: 0 }}>
+            {acesOrganizations.map(ace =>
+              <ListItem key={"ace-" + ace.id} sx={{ padding: '2px' }}>
+                <Chip
+                  size="small"
+                  label={ace.permission.toLowerCase()}
+                  color="success"
+                  sx={{ fontSize: 12, marginRight: 1 }}
+                />
+                <Typography sx={{ fontSize: 12 }}>
                   {ace.instance.name}
-                </ListItem>
-              )}
-            </List>
-          </Box>
-        }
-        {!!acesProjects?.length &&
-          <Box sx={{ fontSize: 10 }}>
-            <b>Project Admin</b>
-            <List sx={{ fontSize: 10 }}>
-              {acesProjects.map(ace =>
-                <ListItem key={"ace-" + ace.id} sx={{ paddingY: 0 }}>
+                </Typography>
+              </ListItem>
+            )}
+          </List>
+        </>}
+        {!!acesProjects?.length && <>
+          <Typography sx={{ fontSize: 12, color: '#666', display: 'block' }}>
+            Projects
+          </Typography>
+          <List sx={{ padding: 0, margin: 0 }}>
+            {acesProjects.map(ace =>
+              <ListItem key={"ace-" + ace.id} sx={{ padding: '2px' }}>
+                <Chip
+                  size="small"
+                  label={ace.permission.toLowerCase()}
+                  color="success"
+                  sx={{ fontSize: 12, marginRight: 1 }}
+                />
+                <Typography sx={{ fontSize: 12 }}>
                   {ace.instance.name}
-                </ListItem>
-              )}
-            </List>
-          </Box>
-        }
-        {!!acesOperations?.length &&
-          <Box sx={{ fontSize: 10 }}>
-            <b>Operation Admin</b>
-            <List sx={{ fontSize: 10 }}>
-              {acesOperations.map(ace =>
-                <ListItem key={"ace-" + ace.id} sx={{ paddingY: 0 }}>
+                </Typography>
+              </ListItem>
+            )}
+          </List>
+        </>}
+        {!!acesOperations?.length && <>
+          <Typography sx={{ fontSize: 12, color: '#666', display: 'block' }}>
+            Operations
+          </Typography>
+          <List sx={{ padding: 0, margin: 0 }}>
+            {acesOperations.map(ace =>
+              <ListItem key={"ace-" + ace.id} sx={{ padding: '2px' }}>
+                <Chip
+                  size="small"
+                  label={ace.permission.toLowerCase()}
+                  color="success"
+                  sx={{ fontSize: 12, marginRight: 1 }}
+                />
+                <Typography sx={{ fontSize: 12 }}>
                   {ace.instance.name}
-                </ListItem>
-              )}
-            </List>
-          </Box>
-        }
+                </Typography>
+              </ListItem>
+            )}
+          </List>
+        </>}
       </>
     }
   },
