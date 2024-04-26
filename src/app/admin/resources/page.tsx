@@ -19,10 +19,6 @@ function Resources() {
           currentLabel="Resources"
           backUrl="/"
           backLabel="Home"
-          // backUrl="/admin/qualifications"
-          // backLabel="Qualifications"
-          // forwardUrl="/admin/fields"
-          // forwardLabel="Fields"
         />
         {/*<ResourceTable />*/}
       </>

@@ -8,8 +8,10 @@ import dayjs from "dayjs";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
 import MuiAutocomplete from '@mui/material/Autocomplete';
 import MuiInput from "@mui/material/Input";
+import MuiSelect from '@mui/material/Select';
 import MuiSwitch from '@mui/material/Switch';
 import MuiTextField from "@mui/material/TextField";
 
@@ -115,6 +117,66 @@ function Switch({
           />
         }
       />
+      {errors &&
+        <FormFieldError error={errors}/>
+      }
+    </FormControl>
+  )
+}
+
+function EnumSelect<T>({
+  id,
+  label,
+  options,
+  value,
+  setValue,
+  errors,
+  required,
+  getOptionLabel = option => option,
+  handleChanged,
+}: {
+  id: string,
+  label: string,
+  options: T & {},
+  value: string,
+  setValue: React.Dispatch<React.SetStateAction<any>>,
+  errors: FormFieldErrorType | undefined,
+  required?: boolean,
+  getOptionLabel?: (option: string) => string,
+  handleChanged?: (id: string, oldValue: typeof value, newValue: typeof value) => void,
+}) {
+  let optionItems: JSX.Element[] = [];
+  Object.entries(options).forEach(
+    ([key, value]) => optionItems.push(
+        <MenuItem
+        key={"item-" + key.toLowerCase()}
+        value={value ? value.toString() : ''}
+      >
+        {getOptionLabel(key)}
+      </MenuItem>
+    )
+  )
+  return (
+    <FormControl
+      margin="normal"
+      variant="standard"
+      error={Boolean(errors)}
+      fullWidth
+      required={required}
+    >
+      <InputLabel id="{id}-label">{label}</InputLabel>
+      <MuiSelect
+        id={id}
+        value={value ? value : ""}
+        label={label}
+        onChange={(event) => {
+          if( handleChanged )
+            handleChanged(id, value, event.target.value);
+          setValue(event.target.value);
+        }}
+      >
+        {optionItems}
+      </MuiSelect>
       {errors &&
         <FormFieldError error={errors}/>
       }
@@ -232,6 +294,7 @@ function DateTimePicker({
   )
 }
 export {
+  EnumSelect,
   Input,
   Switch,
   Autocomplete,

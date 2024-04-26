@@ -2,7 +2,7 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Image from "next/image";
 import { useQuery } from '@apollo/client';
 
@@ -82,6 +82,17 @@ function OrganizationMenu() {
       setOrganizations(orgs);
     }
   });
+
+  // effects
+  useEffect(() => {
+    if (!organizations.length || filter.organization)
+      return;
+    if (!!localStorage.getItem("globalOrganization")) {
+      filter.setOrganization(localStorage.getItem("globalOrganization") || "")
+    } else {
+      filter.setOrganization(organizations[0].id)
+    }
+  }, [organizations, filter])
 
   // handlers
   const handleOpenOrganizationMenu = (event: React.MouseEvent<HTMLElement>) => {

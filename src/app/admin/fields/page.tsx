@@ -19,10 +19,6 @@ function Fields() {
           currentLabel="Fields"
           backUrl="/"
           backLabel="Home"
-          // backUrl="/admin/resources"
-          // backLabel="Resources"
-          // forwardUrl="/admin/qualifications"
-          // forwardLabel="Qualifications"
         />
         <TaskFieldTable />
       </>

@@ -65,7 +65,7 @@ let columns: DataTableColumn<RoleType>[] = [
     id: 'rolespecificationSet',
     label: 'Qualifications',
     display: 'sm',
-    sortable: true,
+    sortable: false,
     filterable: false,
     content: (data: RoleType['rolespecificationSet'], row) => <>
       {!!row.mandatory?.length &&

@@ -5,7 +5,7 @@
 'use client';
 
 import HeaderNav from '@/components/shared/HeaderNav';
-import QualificationTable from '@/components/qualification/QualificationTable';
+import PersonPropertyGroupTable from '@/components/personPropertyGroup/PersonPropertyGroupTable';
 
 import TwoColumns from '@/theme/layouts/TwoColumns';
 
@@ -19,12 +19,8 @@ function Qualifications() {
           currentLabel="Qualifications"
           backUrl="/"
           backLabel="Home"
-          // backUrl="/admin/fields"
-          // backLabel="Fields"
-          // forwardUrl="/admin/resources"
-          // forwardLabel="Resources"
         />
-        <QualificationTable />
+        <PersonPropertyGroupTable />
       </>
     />
   );
