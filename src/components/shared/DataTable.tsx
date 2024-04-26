@@ -10,6 +10,8 @@ import { useMemo } from "react";
 import { MouseEvent } from "react";
 import { ChangeEvent } from "react";
 
+import { useFilter } from '@/provider/Filter';
+
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
@@ -497,6 +499,9 @@ function DataTable<T extends {}>({
     mouseY: number;
   } | null>(null);
 
+  // global filter
+  const globalFilter = useFilter();
+
   // embed
   if (embed)
     elevation = 0;
@@ -681,7 +686,9 @@ function DataTable<T extends {}>({
                         {/* columns */}
                         {columns.map((column, colIndex) => {
                           const data = row[column.id as keyof T];
-                          const content = column.content ? column.content(data, row) : String(data);
+                          const content = column.content
+                            ? column.content(data, row, globalFilter)
+                            : String(data);
                           let sx: SxProps<Theme> = {
                             width: 'auto',
                             display: {},

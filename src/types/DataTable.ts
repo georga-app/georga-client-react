@@ -2,6 +2,8 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
+import { FilterContextType } from '@/types/Filter';
+
 type Order = 'asc' | 'desc';
 
 interface DataTableColumn<T> {
@@ -14,7 +16,7 @@ interface DataTableColumn<T> {
   display?: "xs" | "sm" | "md" | "lg",
   sortable?: boolean,
   filterable?: boolean,
-  content?: (data: T[keyof T], row: T) => React.ReactNode,
+  content?: (data: T[keyof T], row: T, filter: FilterContextType) => React.ReactNode,
 }
 
 type DataTableAction<T> = {
