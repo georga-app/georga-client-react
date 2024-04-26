@@ -6,13 +6,15 @@ import { useState } from 'react';
 import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 
 import DataTable from '@/components/shared/DataTable';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
 // import { personState } from '@/app/states';
 
-import {  // TODO
+import {
   ActionArchiveIcon,
   ActionCreateIcon,
   ActionDeleteIcon,
@@ -23,32 +25,89 @@ import {  // TODO
 
 import { LIST_PERSONS_QUERY } from '@/gql/person';
 
-import { PersonType } from '@/types/__generated__/graphql'
+import {
+  AceType,
+  AceTypeConnection,
+  PersonType,
+} from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
+import { onlyType } from "@/types/Util";
 
 // columns
 const rowKey = 'id';
 let columns: DataTableColumn<PersonType>[] = [
   {
     id: 'firstName',
-    label: 'First Name',
+    label: 'Name',
+    sortable: true,
+    filterable: true,
+    content: (data, row) => row.firstName + " " + row.lastName
+  },
+  {
+    id: 'email',
+    label: 'Email',
     sortable: true,
     filterable: true,
   },
   {
-    id: 'lastName',
-    label: 'Last Name',
-    sortable: true,
+    id: 'aceSet',
+    label: 'Permission',
+    sortable: false,
     filterable: true,
+    content: (data: AceTypeConnection, row, filter) => {
+      const aces = data.edges.map(edge => edge?.node).filter(onlyType);
+      const acesOrganizations = aces.filter(ace =>
+        ace.instance.__typename === 'OrganizationType'
+        && ace.instance.id == filter.organization
+      );
+      const acesProjects = aces.filter(ace =>
+        ace.instance.__typename === 'ProjectType'
+        && ace.instance.organization.id == filter.organization
+      );
+      const acesOperations = aces.filter(ace =>
+        ace.instance.__typename === 'OperationType'
+        && ace.instance.project.organization.id == filter.organization
+      );
+      return <>
+        {!!acesOrganizations?.length &&
+          <Box sx={{ fontSize: 10 }}>
+            <b>Organization Admin</b>
+            <List sx={{ fontSize: 10 }}>
+              {acesOrganizations.map(ace =>
+                <ListItem key={"ace-" + ace.id} sx={{ paddingY: 0 }}>
+                  {ace.instance.name}
+                </ListItem>
+              )}
+            </List>
+          </Box>
+        }
+        {!!acesProjects?.length &&
+          <Box sx={{ fontSize: 10 }}>
+            <b>Project Admin</b>
+            <List sx={{ fontSize: 10 }}>
+              {acesProjects.map(ace =>
+                <ListItem key={"ace-" + ace.id} sx={{ paddingY: 0 }}>
+                  {ace.instance.name}
+                </ListItem>
+              )}
+            </List>
+          </Box>
+        }
+        {!!acesOperations?.length &&
+          <Box sx={{ fontSize: 10 }}>
+            <b>Operation Admin</b>
+            <List sx={{ fontSize: 10 }}>
+              {acesOperations.map(ace =>
+                <ListItem key={"ace-" + ace.id} sx={{ paddingY: 0 }}>
+                  {ace.instance.name}
+                </ListItem>
+              )}
+            </List>
+          </Box>
+        }
+      </>
+    }
   },
-  {
-    id: 'dateJoined',
-    label: 'Joined',
-    display: 'sm',
-    sortable: true,
-    filterable: true,
-  },
-  // TODO
 ]
 
 
@@ -60,14 +119,14 @@ function PersonTable() {
   // get
   const { data, loading } = useQuery(
     LIST_PERSONS_QUERY, {
-      variables: {}
+      variables: {
+        organizationsEmployed: filter.organization,
+      }
     }
   );
   let rows: PersonType[] = [];
   if (!loading && data?.listPersons?.edges)
-    rows = data.listPersons.edges
-      .map((edge) => edge?.node)
-      .filter((node): node is PersonType => node !== undefined);
+    rows = data.listPersons.edges.map((edge) => edge?.node as PersonType)
 
   // actions
   const actions: DataTableActions<PersonType> = [

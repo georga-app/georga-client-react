@@ -41,8 +41,14 @@ const GET_PERSON_PROFILE_PROPERTIES_QUERY = gql(`
 `);
 
 const LIST_PERSONS_QUERY = gql(`
-  query ListPersons {
-    listPersons {
+  query ListPersons (
+    $organizationsSubscribed: ID
+    $organizationsEmployed: ID
+  ) {
+    listPersons (
+      organizationsSubscribed: $organizationsSubscribed
+      organizationsEmployed: $organizationsEmployed
+    ) {
       edges {
         node {
           id
@@ -55,6 +61,51 @@ const LIST_PERSONS_QUERY = gql(`
               node {
                 id
                 name
+              }
+            }
+          }
+          organizationsEmployed {
+            edges {
+              node {
+                id
+                name
+              }
+            }
+          }
+          aceSet {
+            edges {
+              node {
+                id
+                permission
+                instance {
+                  __typename
+                  ... on OrganizationType {
+                    id
+                    name
+                  }
+                  ... on ProjectType {
+                    id
+                    name
+                    organization {
+                      id
+                      name
+                    }
+                  }
+                  ... on OperationType {
+                    id
+                    name
+                    project {
+                      id
+                      name
+                      organization {
+                        id
+                        name
+                      }
+                    }
+                  }
+                }
+                createdAt
+                modifiedAt
               }
             }
           }
