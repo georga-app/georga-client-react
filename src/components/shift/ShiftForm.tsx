@@ -113,7 +113,6 @@ function ShiftForm({
           setErrors({});
           setChanged({});
           snackbar.showSnackbar("Shift created", 'success');
-          onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
           response.errors.forEach(error => {
@@ -261,7 +260,6 @@ function ShiftForm({
           setErrors({});
           setChanged({});
           snackbar.showSnackbar("Shift updated", 'success');
-          onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
           response.errors.forEach(error => {
@@ -389,6 +387,7 @@ function ShiftForm({
         });
       });
     }
+    onSuccess({});
     // refetch
     // await client.refetchQueries({
     //   include: [GET_SHIFT_QUERY],

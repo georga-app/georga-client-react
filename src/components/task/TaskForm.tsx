@@ -118,7 +118,6 @@ function TaskForm({
           setErrors({});
           setChanged({});
           snackbar.showSnackbar("Task created", 'success');
-          onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
           response.errors.forEach(error => {
@@ -275,7 +274,6 @@ function TaskForm({
           setErrors({});
           setChanged({});
           snackbar.showSnackbar("Task updated", 'success');
-          onSuccess(data);
         } else {
           var fieldErrors: {[fieldId: string]: string[]} = {};
           response.errors.forEach(error => {
@@ -392,6 +390,7 @@ function TaskForm({
         }
       })
     });
+    onSuccess({});
     // refetch
     // await client.refetchQueries({
     //   include: [GET_TASK_QUERY],
