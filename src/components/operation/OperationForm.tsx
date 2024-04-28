@@ -213,7 +213,7 @@ function OperationForm({
       createOperation({
         variables: {
           publish: publish,
-          project: project? project.id : "",
+          project: project ? project.id : "",
           name: name,
           description: description,
         }

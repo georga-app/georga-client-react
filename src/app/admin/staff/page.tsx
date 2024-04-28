@@ -5,7 +5,7 @@
 'use client';
 
 import HeaderNav from '@/components/shared/HeaderNav';
-import PersonTable from '@/components/person/PersonTable';
+import PersonStaffTable from '@/components/person/PersonStaffTable';
 
 import TwoColumns from '@/theme/layouts/TwoColumns';
 
@@ -19,10 +19,8 @@ function Staff() {
           currentLabel="Staff"
           backUrl="/"
           backLabel="Home"
-          // forwardUrl="/admin/messages"
-          // forwardLabel="Messages"
         />
-        <PersonTable />
+        <PersonStaffTable />
       </>
     />
   );

@@ -40,13 +40,13 @@ const GET_PERSON_PROFILE_PROPERTIES_QUERY = gql(`
   }
 `);
 
-const LIST_PERSONS_QUERY = gql(`
-  query ListPersons (
-    $organizationsSubscribed: ID
+const GET_STAFF_PERSON_QUERY = gql(`
+  query GetStaffPerson (
+    $id: ID
     $organizationsEmployed: ID
   ) {
     listPersons (
-      organizationsSubscribed: $organizationsSubscribed
+      id: $id
       organizationsEmployed: $organizationsEmployed
     ) {
       edges {
@@ -56,23 +56,9 @@ const LIST_PERSONS_QUERY = gql(`
           firstName
           lastName
           dateJoined
-          organizationsSubscribed {
-            edges {
-              node {
-                id
-                name
-              }
-            }
-          }
-          organizationsEmployed {
-            edges {
-              node {
-                id
-                name
-              }
-            }
-          }
-          aceSet {
+          aceSet (
+            organization: $organizationsEmployed
+          ) {
             edges {
               node {
                 id
@@ -106,6 +92,110 @@ const LIST_PERSONS_QUERY = gql(`
                 }
                 createdAt
                 modifiedAt
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
+const LIST_STAFF_PERSONS_QUERY = gql(`
+  query ListStaffPersons (
+    $organizationsEmployed: ID
+  ) {
+    listPersons (
+      organizationsEmployed: $organizationsEmployed
+    ) {
+      edges {
+        node {
+          id
+          email
+          firstName
+          lastName
+          dateJoined
+          organizationsEmployed {
+            edges {
+              node {
+                id
+                name
+              }
+            }
+          }
+          aceSet (
+            organization: $organizationsEmployed
+          ) {
+            edges {
+              node {
+                id
+                permission
+                instance {
+                  __typename
+                  ... on OrganizationType {
+                    id
+                    name
+                  }
+                  ... on ProjectType {
+                    id
+                    name
+                    organization {
+                      id
+                      name
+                    }
+                  }
+                  ... on OperationType {
+                    id
+                    name
+                    project {
+                      id
+                      name
+                      organization {
+                        id
+                        name
+                      }
+                    }
+                  }
+                }
+                createdAt
+                modifiedAt
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
+const LIST_SUBSCRIBER_PERSONS_QUERY = gql(`
+  query ListSubscriberPersons (
+    $organizationsSubscribed: ID
+    $organizationsEmployed_Not: ID
+  ) {
+    listPersons (
+      organizationsSubscribed: $organizationsSubscribed
+      organizationsEmployed_Not: $organizationsEmployed_Not
+    ) {
+      edges {
+        node {
+          id
+          firstName
+          lastName
+          email
+          occupation
+          street
+          number
+          postalCode
+          city
+          privatePhone
+          mobilePhone
+          onlyJobRelatedTopics
+          organizationsSubscribed {
+            edges {
+              node {
+                id
+                name
               }
             }
           }
@@ -234,7 +324,9 @@ const UPDATE_PERSON_PROFILE_PROPERTIES_MUTATION = gql(`
 export {
   GET_PERSON_PROFILE_QUERY,
   GET_PERSON_PROFILE_PROPERTIES_QUERY,
-  LIST_PERSONS_QUERY,
+  GET_STAFF_PERSON_QUERY,
+  LIST_STAFF_PERSONS_QUERY,
+  LIST_SUBSCRIBER_PERSONS_QUERY,
   REGISTER_PERSON_MUTATION,
   ACTIVATE_PERSON_MUTATION,
   TOKEN_AUTH_MUTATION,

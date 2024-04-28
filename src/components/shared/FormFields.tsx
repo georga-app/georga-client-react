@@ -140,7 +140,7 @@ function EnumSelect<T>({
   options: T & {},
   value: string,
   setValue: React.Dispatch<React.SetStateAction<any>>,
-  errors: FormFieldErrorType | undefined,
+  errors?: FormFieldErrorType | undefined,
   required?: boolean,
   getOptionLabel?: (option: string) => string,
   handleChanged?: (id: string, oldValue: typeof value, newValue: typeof value) => void,
