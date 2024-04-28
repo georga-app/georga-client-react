@@ -618,8 +618,8 @@ function DataTable<T extends {}>({
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper elevation={elevation} sx={{ width: '100%', mb: 2 }}>
+    <Box sx={{ width: '100%', marginTop: embed ? 2 : 0 }}>
+      <Paper elevation={embed ? 1 : elevation} sx={{ width: '100%', mb: 2 }}>
         <CatchContextMenu>
 
           {/* toolbar */}
