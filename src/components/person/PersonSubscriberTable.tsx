@@ -4,31 +4,17 @@
  */
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery } from '@apollo/client';
-
-// import Box from '@mui/material/Box';
-// import Chip from '@mui/material/Chip';
-// import List from '@mui/material/List';
-// import ListItem from '@mui/material/ListItem';
-// import Typography from '@mui/material/Typography';
+import { useQuery, useMutation } from '@apollo/client';
 
 import DataTable from '@/components/shared/DataTable';
 import { useFilter } from '@/provider/Filter';
+import { useSnackbar } from "@/provider/Snackbar";
 
-import {
-  // ActionArchiveIcon,
-  // ActionCreateIcon,
-  // ActionDeleteIcon,
-  // ActionEditIcon,
-  // ActionPublishIcon,
-  // NavigationForwardIcon,
-} from '@/theme/Icons';
+import { ActionEmploymentAddIcon, ActionViewIcon } from '@/theme/Icons';
 
-import { LIST_SUBSCRIBER_PERSONS_QUERY } from '@/gql/person';
+import { LIST_SUBSCRIBER_PERSONS_QUERY, EMPLOY_PERSON_MUTATION } from '@/gql/person';
 
-import {
-  PersonType,
-} from '@/types/__generated__/graphql'
+import { PersonType } from '@/types/__generated__/graphql'
 import { DataTableColumn, DataTableActions } from '@/types/DataTable'
 import { onlyType } from "@/types/Util";
 
@@ -56,8 +42,9 @@ function PersonSubscribedTable() {
   // provider
   const router = useRouter();
   const filter = useFilter();
+  const snackbar = useSnackbar();
 
-  // get
+  // list subscriber persons
   const { data, loading } = useQuery(
     LIST_SUBSCRIBER_PERSONS_QUERY, {
       variables: {
@@ -67,39 +54,66 @@ function PersonSubscribedTable() {
     }
   );
   let rows: PersonType[] = [];
-
-  // effect
   if (!loading && data?.listPersons?.edges)
     rows = data.listPersons.edges.map((edge) => edge?.node as PersonType)
 
+  // employ person
+  const [ employPerson, {
+    loading: employPersonLoading,
+    reset: employPersonReset
+  }] = useMutation(
+    EMPLOY_PERSON_MUTATION, {
+      onCompleted: data => {
+        const response = data.employPerson;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          snackbar.showSnackbar("Person added to Staff", 'success');
+          employPersonReset();
+        } else {
+          snackbar.showSnackbar("Person not added to Staff", 'error');
+          employPersonReset();
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListSubscriberPersons"
+      ]
+    }
+  );
+
   // actions
   const actions: DataTableActions<PersonType> = [
-    // {
-    //   name: 'Edit',
-    //   icon: <ActionEditIcon />,
-    //   priority: 30,
-    //   action: (selected, setSelected, event) => {
-    //     router.push("/admin/staff/" + selected[0].id + "/edit");
-    //   },
-    //   available: (selected) => (selected.length == 1),
-    //   display: {
-    //     row: true,
-    //   }
-    // },
-    // {
-    //   name: 'Remove',
-    //   icon: <ActionDeleteIcon />,
-    //   priority: 100,
-    //   action: (selected, setSelected, event) => {
-    //     selected.forEach(entry => {
-    //       // deleteTask({
-    //       //   variables: { id: entry.id }
-    //       // })
-    //     })
-    //     setSelected([]);
-    //   },
-    //   available: (selected) => (selected.length > 0),
-    // },
+    {
+      name: 'Details',
+      icon: <ActionViewIcon />,
+      priority: 30,
+      action: (selected, setSelected, event) => {
+        router.push("/admin/subscribers/" + selected[0].id);
+      },
+      available: (selected) => (selected.length == 1),
+      display: {
+        row: true
+      },
+    },
+    {
+      name: 'Add to Staff',
+      icon: <ActionEmploymentAddIcon />,
+      priority: 100,
+      action: (selected, setSelected, event) => {
+        selected.forEach(entry => {
+          employPerson({
+            variables: {
+              id: entry.id,
+              organization: filter.organization,
+              employed: true,
+            }
+          })
+        })
+        setSelected([]);
+      },
+      available: (selected) => !!selected.length,
+    },
   ];
 
   return (

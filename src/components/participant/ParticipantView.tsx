@@ -89,7 +89,7 @@ function ParticipantView({
           return;
         setParticipant(participant as ParticipantType);
       },
-      onError: error => {console.log(error)},
+      onError: error => {},
     },
   );
 

@@ -4,7 +4,7 @@
  */
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -14,17 +14,11 @@ import Typography from '@mui/material/Typography';
 
 import DataTable from '@/components/shared/DataTable';
 import { useFilter } from '@/provider/Filter';
+import { useSnackbar } from "@/provider/Snackbar";
 
-import {
-  ActionArchiveIcon,
-  ActionCreateIcon,
-  ActionDeleteIcon,
-  ActionEditIcon,
-  ActionPublishIcon,
-  NavigationForwardIcon,
-} from '@/theme/Icons';
+import { ActionEditIcon, ActionEmploymentRemoveIcon } from '@/theme/Icons';
 
-import { LIST_STAFF_PERSONS_QUERY } from '@/gql/person';
+import { LIST_STAFF_PERSONS_QUERY, EMPLOY_PERSON_MUTATION } from '@/gql/person';
 
 import {
   AceType,
@@ -133,8 +127,9 @@ function PersonStaffTable() {
   // provider
   const router = useRouter();
   const filter = useFilter();
+  const snackbar = useSnackbar();
 
-  // get
+  // list staff persons
   const { data, loading } = useQuery(
     LIST_STAFF_PERSONS_QUERY, {
       variables: {
@@ -143,10 +138,33 @@ function PersonStaffTable() {
     }
   );
   let rows: PersonType[] = [];
-
-  // effect
   if (!loading && data?.listPersons?.edges)
     rows = data.listPersons.edges.map((edge) => edge?.node as PersonType)
+
+  // employ person
+  const [ employPerson, {
+    loading: employPersonLoading,
+    reset: employPersonReset
+  }] = useMutation(
+    EMPLOY_PERSON_MUTATION, {
+      onCompleted: data => {
+        const response = data.employPerson;
+        if (!response)
+          return;
+        if(response.errors.length === 0) {
+          snackbar.showSnackbar("Person removed from Staff", 'success');
+          employPersonReset();
+        } else {
+          snackbar.showSnackbar("Person not removed from Staff", 'error');
+          employPersonReset();
+        }
+      },
+      onError: error => {},
+      refetchQueries: [
+        "ListStaffPersons"
+      ]
+    }
+  );
 
   // actions
   const actions: DataTableActions<PersonType> = [
@@ -163,18 +181,22 @@ function PersonStaffTable() {
       }
     },
     {
-      name: 'Remove',
-      icon: <ActionDeleteIcon />,
+      name: 'Remove from Staff',
+      icon: <ActionEmploymentRemoveIcon />,
       priority: 100,
       action: (selected, setSelected, event) => {
         selected.forEach(entry => {
-          // deleteTask({
-          //   variables: { id: entry.id }
-          // })
+          employPerson({
+            variables: {
+              id: entry.id,
+              organization: filter.organization,
+              employed: false,
+            }
+          })
         })
         setSelected([]);
       },
-      available: (selected) => (selected.length > 0),
+      available: (selected) => !!selected.length,
     },
   ];
 

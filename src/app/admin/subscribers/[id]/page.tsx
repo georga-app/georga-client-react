@@ -9,11 +9,11 @@ import { useRouter } from 'next/navigation';
 import Paper from '@mui/material/Paper';
 
 import HeaderNav from '@/components/shared/HeaderNav';
-import ParticipantView from '@/components/participant/ParticipantView';
+import PersonSubscriberView from '@/components/person/PersonSubscriberView';
 
 import TwoColumns from '@/theme/layouts/TwoColumns';
 
-function ViewParticipant({
+function ViewSubscriber({
   params
 }: {
   params: { id: string }
@@ -24,8 +24,8 @@ function ViewParticipant({
       bg='admin'
       right=<>
         <HeaderNav
-          currentLabel="View Participant"
-          backUrl="/admin/participants"
+          currentLabel="View Subscriber"
+          backUrl="/admin/subscribers"
           backLabel="List"
         />
         <Paper
@@ -38,11 +38,11 @@ function ViewParticipant({
             },
           }}
         >
-          <ParticipantView id={params.id} />
+          <PersonSubscriberView id={params.id} />
         </Paper>
       </>
     />
   );
 }
 
-export default ViewParticipant;
+export default ViewSubscriber;

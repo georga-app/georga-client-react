@@ -168,6 +168,48 @@ const LIST_STAFF_PERSONS_QUERY = gql(`
   }
 `);
 
+const GET_SUBSCRIBER_PERSON_QUERY = gql(`
+  query GetSubscriberPerson (
+    $organization: ID
+    $id: ID
+  ) {
+    listPersons (
+      id: $id
+    ) {
+      edges {
+        node {
+          id
+          firstName
+          lastName
+          email
+          occupation
+          street
+          number
+          postalCode
+          city
+          privatePhone
+          mobilePhone
+          onlyJobRelatedTopics
+          properties (
+            group_Organization: $organization
+          ) {
+            edges {
+              node {
+                id
+                name
+                group {
+                  id
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
 const LIST_SUBSCRIBER_PERSONS_QUERY = gql(`
   query ListSubscriberPersons (
     $organizationsSubscribed: ID
@@ -321,15 +363,41 @@ const UPDATE_PERSON_PROFILE_PROPERTIES_MUTATION = gql(`
   }
 `);
 
+const EMPLOY_PERSON_MUTATION = gql(`
+  mutation EmployPerson (
+    $id: ID!
+    $organization: ID!
+    $employed: Boolean
+  ) {
+    employPerson (
+      input: {
+        id: $id
+        organization: $organization
+        employed: $employed
+      }
+    ) {
+      person {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`);
+
 export {
   GET_PERSON_PROFILE_QUERY,
   GET_PERSON_PROFILE_PROPERTIES_QUERY,
   GET_STAFF_PERSON_QUERY,
   LIST_STAFF_PERSONS_QUERY,
+  GET_SUBSCRIBER_PERSON_QUERY,
   LIST_SUBSCRIBER_PERSONS_QUERY,
   REGISTER_PERSON_MUTATION,
   ACTIVATE_PERSON_MUTATION,
   TOKEN_AUTH_MUTATION,
   UPDATE_PERSON_PROFILE_MUTATION,
   UPDATE_PERSON_PROFILE_PROPERTIES_MUTATION,
+  EMPLOY_PERSON_MUTATION,
 }

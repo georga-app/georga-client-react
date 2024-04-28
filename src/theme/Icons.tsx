@@ -20,6 +20,8 @@ import ActionDeclineIcon from '@mui/icons-material/Cancel';
 import ActionDeleteIcon from '@mui/icons-material/Delete';
 import ActionDeselectIcon from '@mui/icons-material/Deselect';
 import ActionEditIcon from '@mui/icons-material/Edit';
+import ActionEmploymentAddIcon from '@mui/icons-material/Key';
+import ActionEmploymentRemoveIcon from '@mui/icons-material/KeyOff';
 import ActionFilterIcon from '@mui/icons-material/FilterList';
 import ActionMoreIcon from '@mui/icons-material/MoreHoriz';
 import ActionNotifyIcon from '@mui/icons-material/Notifications';
@@ -78,6 +80,8 @@ export {
   ActionDeleteIcon,
   ActionDeselectIcon,
   ActionEditIcon,
+  ActionEmploymentAddIcon,
+  ActionEmploymentRemoveIcon,
   ActionFilterIcon,
   ActionMoreIcon,
   ActionNotifyIcon,
