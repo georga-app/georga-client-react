@@ -10,11 +10,15 @@ const LIST_MESSAGES_QUERY = gql(`
     listMessages {
       edges {
         node {
+          id
           title
           priority
           category
           state
           delivery
+          emailDelivery
+          pushDelivery
+          smsDelivery
         }
       }
     }

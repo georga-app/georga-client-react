@@ -7,6 +7,9 @@ import { useRouter } from 'next/navigation';
 import { useQuery } from '@apollo/client';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Icon from '@mui/material/Icon';
+import Tooltip from '@mui/material/Tooltip';
 
 // import PersonForm from '@/components/person/PersonForm';
 import DataTable from '@/components/shared/DataTable';
@@ -25,7 +28,9 @@ import {
   ActionDeleteIcon,
   ActionEditIcon,
   ActionPublishIcon,
-  NavigationForwardIcon,
+  MessageActivityIcon,
+  MessageAlertIcon,
+  MessageNewsIcon,
 } from '@/theme/Icons';
 
 import { LIST_MESSAGES_QUERY } from '@/gql/message';
@@ -38,16 +43,35 @@ const rowKey = 'id';
 let columns: DataTableColumn<MessageType>[] = [
   {
     id: 'category',
-    label: 'Category',
+    label: '',
     sortable: true,
     filterable: true,
-  },
-  {
-    id: 'priority',
-    label: 'Priority',
-    display: 'sm',
-    sortable: true,
-    filterable: true,
+    shrink: true,
+    content: (data, row) => {
+      let Icon = MessageActivityIcon;
+      switch (data) {
+        case "ACTIVITY":  Icon = MessageActivityIcon; break;
+        case "NEWS":      Icon = MessageNewsIcon; break;
+        case "ALERT":     Icon = MessageAlertIcon; break;
+      }
+      let color = "#777";
+      switch (row.priority) {
+        case "LOW":       color = "#aaa"; break;
+        case "NORMAL":    color = "success.main"; break;
+        case "IMPORTANT": color = "warning.main"; break;
+        case "URGENT":    color = "error.main"; break;
+      }
+      return (
+        <Tooltip
+          title=<>
+            <Box>Category: {data.toLowerCase()}</Box>
+            <Box>Priority: {row.priority.toLowerCase()}</Box>
+          </>
+        >
+          <Icon sx={{ color: color, fontSize: 40 }} />
+        </Tooltip>
+      )
+    }
   },
   {
     id: 'title',
@@ -61,15 +85,33 @@ let columns: DataTableColumn<MessageType>[] = [
     display: 'sm',
     sortable: true,
     filterable: true,
+    content: (data, row) => {
+      let color = "warning";
+      let label = "";
+      switch (data) {
+        case "NONE":      color = "default"; break;
+        case "SCHEDULED": color = "warning"; break;
+        case "SENT":      color = "warning"; break;
+        case "SUCCEEDED": color = "success"; break;
+        case "FAILED":    color = "error"; break;
+      }
+      return (
+        <Tooltip
+          title=<>
+            <Box>Email: {row.emailDelivery.toLowerCase()}</Box>
+            <Box>Push: {row.pushDelivery.toLowerCase()}</Box>
+            <Box>SMS: {row.smsDelivery.toLowerCase()}</Box>
+          </>
+        >
+          <Chip
+            size="small"
+            label={data.toLowerCase()}
+            color={color as "default" | "success" | "error" | "warning"}
+          />
+        </Tooltip>
+      )
+    }
   },
-  {
-    id: 'state',
-    label: 'State',
-    display: 'sm',
-    sortable: true,
-    filterable: true,
-  },
-  // TODO
 ]
 
 

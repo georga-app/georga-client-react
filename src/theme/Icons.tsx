@@ -48,6 +48,11 @@ import MenuMobileIcon from '@mui/icons-material/Menu';
 import MenuOrganizationIcon from '@mui/icons-material/SupervisedUserCircle';
 import MenuUserIcon from '@mui/icons-material/AccountCircle';
 
+// Message
+import MessageActivityIcon from '@mui/icons-material/TripOrigin';
+import MessageAlertIcon from '@mui/icons-material/Warning';
+import MessageNewsIcon from '@mui/icons-material/Info';
+
 // Navigation
 import NavigationBackIcon from '@mui/icons-material/ArrowBackIosNew';
 import NavigationForwardIcon from '@mui/icons-material/ArrowForwardIos';
@@ -104,6 +109,10 @@ export {
   MenuMobileIcon,
   MenuOrganizationIcon,
   MenuUserIcon,
+
+  MessageActivityIcon,
+  MessageAlertIcon,
+  MessageNewsIcon,
 
   NavigationBackIcon,
   NavigationForwardIcon,
