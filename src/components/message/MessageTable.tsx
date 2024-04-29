@@ -60,8 +60,8 @@ let columns: DataTableColumn<MessageType>[] = [
       }
       let color = "#777";
       switch (row.priority) {
-        case "LOW":       color = "#aaa"; break;
-        case "NORMAL":    color = "success.main"; break;
+        case "LOW":       color = "#bbb"; break;
+        case "NORMAL":    color = "primary.light"; break;
         case "IMPORTANT": color = "warning.main"; break;
         case "URGENT":    color = "error.main"; break;
       }
