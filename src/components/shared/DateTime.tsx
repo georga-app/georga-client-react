@@ -30,4 +30,17 @@ function DateRange({
   </Box>
 }
 
-export { DateRange };
+function DateTime({
+  datetime,
+  sx = [],
+}: {
+  datetime: string,
+  sx?: SxProps<Theme>,
+}) {
+  const content = dayjs(datetime);
+  return <Box sx={[ ...(Array.isArray(sx) ? sx : [sx]) ]}>
+    <Box>{content.format("dd, DD.MM.YY HH:mm")}</Box>
+  </Box>
+}
+
+export { DateRange, DateTime };

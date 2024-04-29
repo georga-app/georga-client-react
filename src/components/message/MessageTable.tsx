@@ -2,6 +2,8 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
+import dayjs from "dayjs";
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@apollo/client';
@@ -10,9 +12,11 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Icon from '@mui/material/Icon';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 
 // import PersonForm from '@/components/person/PersonForm';
 import DataTable from '@/components/shared/DataTable';
+import { DateTime } from '@/components/shared/DateTime';
 import { useDialog } from '@/provider/Dialog';
 import { useFilter } from '@/provider/Filter';
 import {
@@ -80,6 +84,48 @@ let columns: DataTableColumn<MessageType>[] = [
     filterable: true,
   },
   {
+    id: 'scope',
+    label: 'Scope',
+    display: 'sm',
+    sortable: true,
+    filterable: true,
+    content: (data, row) => {
+      switch (data.__typename) {
+        case "OrganizationType":
+          return <>
+            <Typography sx={{ color: "#888", fontSize: 12 }}>Organization</Typography>
+            <Typography sx={{ fontSize: 12 }}>{data.name}</Typography>
+          </>
+        case "ProjectType":
+          return <>
+            <Typography sx={{ color: "#888", fontSize: 12 }}>Project</Typography>
+            <Typography sx={{ fontSize: 12 }}>{data.name}</Typography>
+          </>
+        case "OperationType":
+          return <>
+            <Typography sx={{ color: "#888", fontSize: 12 }}>Operation</Typography>
+            <Typography sx={{ fontSize: 12 }}>{data.name}</Typography>
+          </>
+        case "TaskType":
+          return <>
+            <Typography sx={{ color: "#888", fontSize: 12 }}>Task</Typography>
+            <Typography sx={{ fontSize: 12 }}>{data.operation.name}</Typography>
+            <Typography sx={{ fontSize: 12 }}>{data.name}</Typography>
+          </>
+        case "ShiftType":
+          return <>
+            <Typography sx={{ color: "#888", fontSize: 12 }}>Shift</Typography>
+            <Typography sx={{ fontSize: 12 }}>{data.task.operation.name}</Typography>
+            <Typography sx={{ fontSize: 12 }}>{data.task.name}</Typography>
+            <Typography sx={{ fontSize: 12 }}>
+              <DateTime datetime={data.startTime} />
+            </Typography>
+          </>
+      }
+      return "";
+    },
+  },
+  {
     id: 'delivery',
     label: 'Delivery',
     display: 'sm',
@@ -105,6 +151,7 @@ let columns: DataTableColumn<MessageType>[] = [
         >
           <Chip
             size="small"
+            // variant="outlined"
             label={data.toLowerCase()}
             color={color as "default" | "success" | "error" | "warning"}
           />
@@ -129,9 +176,7 @@ function MessageTable() {
   );
   let rows: MessageType[] = [];
   if (!loading && data?.listMessages?.edges)
-    rows = data.listMessages.edges
-      .map((edge) => edge?.node)
-      .filter((node): node is MessageType => node !== undefined);
+    rows = data.listMessages.edges.map((edge) => edge?.node as MessageType)
 
   // actions
   const actions: DataTableActions<MessageType> = [

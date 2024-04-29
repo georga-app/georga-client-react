@@ -19,6 +19,42 @@ const LIST_MESSAGES_QUERY = gql(`
           emailDelivery
           pushDelivery
           smsDelivery
+          scope {
+            __typename
+            ... on OrganizationType {
+              id
+              name
+            }
+            ... on ProjectType {
+              id
+              name
+            }
+            ... on OperationType {
+              id
+              name
+            }
+            ... on TaskType {
+              id
+              name
+              operation {
+                id
+                name
+              }
+            }
+            ... on ShiftType {
+              id
+              startTime
+              endTime
+              task {
+                id
+                name
+                operation {
+                  id
+                  name
+                }
+              }
+            }
+          }
         }
       }
     }
