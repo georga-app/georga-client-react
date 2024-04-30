@@ -21,6 +21,16 @@ import { setContext } from '@apollo/client/link/context';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 
+// see https://developer.school/snippets/react/localstorage-is-not-defined-nextjs
+let localStorage: Storage = (typeof window !== "undefined") ? window.localStorage : {
+  length: 0,
+  key: () => null,
+  clear: () => undefined,
+  getItem: () => null,
+  setItem: () => null,
+  removeItem: () => null,
+};
+
 function makeClient() {
   const cache = new NextSSRInMemoryCache();
   const httpUri = !!parseInt(localStorage.getItem("emulator") || "")
