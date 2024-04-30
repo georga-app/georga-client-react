@@ -23,8 +23,11 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 function makeClient() {
   const cache = new NextSSRInMemoryCache();
+  const httpUri = !!parseInt(localStorage.getItem("emulator") || "")
+    ? "http://10.0.2.2/graphql"
+    : process.env.NEXT_PUBLIC_GRAPHQL_HTTP_ENDPOINT;
   const httpLink: ApolloLink = new HttpLink({
-    uri: process.env.NEXT_PUBLIC_GRAPHQL_HTTP_ENDPOINT,
+    uri: httpUri,
   });
 
   // RSC
@@ -35,8 +38,11 @@ function makeClient() {
     });
 
   // RCC
+  const wsUri = !!parseInt(localStorage.getItem("emulator") || "")
+    ? "ws://10.0.2.2/graphql"
+    : String(process.env.NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT);
   const wsLink = new WebSocketLink(
-    new SubscriptionClient(String(process.env.NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT))
+    new SubscriptionClient(wsUri)
   );
   const authLink = setContext((_, { headers }) => {
     const token = localStorage.getItem('userToken');

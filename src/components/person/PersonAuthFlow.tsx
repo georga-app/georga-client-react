@@ -23,6 +23,8 @@ function PersonAuthFlow() {
   const token = searchParams.get('token') || '';
   const adminLevel = searchParams.get('adminLevel') || '';
   const redirect = searchParams.get('redirect') || '/';
+  const embed = !!parseInt(searchParams.get('embed') || "");
+  const emulator = !!parseInt(searchParams.get('emulator') || "");
 
   // sanity checks
   if (!id || !token || !adminLevel
@@ -32,6 +34,10 @@ function PersonAuthFlow() {
     router.push('/login')
     return <></>;
   }
+
+  // embed
+  localStorage.setItem("embed", embed ? "1" : "0");
+  localStorage.setItem("emulator", emulator ? "1" : "0");
 
   // auth
   user.login({
