@@ -14,7 +14,6 @@ import PropTypes from 'prop-types';
 
 import OneColumn from '@/theme/layouts/OneColumn';
 
-import DataTableDemo from './DataTableDemo';
 import LeafletDemo from './LeafletDemo';
 import SubscriptionDemo from './SubscriptionDemo';
 
@@ -70,11 +69,6 @@ function Dashboard() {
             <Tab label="Subscriptions" {...a11yProps(2)} />
           </Tabs>
         </Box>
-
-        {/* Datatable */}
-        <TabPanel value={tabValue} index={0}>
-          <DataTableDemo />
-        </TabPanel>
 
         {/* Leaflet */}
         <TabPanel value={tabValue} index={1}>
