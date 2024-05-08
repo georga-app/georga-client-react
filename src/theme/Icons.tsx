@@ -28,6 +28,7 @@ import ActionNotifyIcon from '@mui/icons-material/Notifications';
 import ActionPublishIcon from '@mui/icons-material/Visibility';
 import ActionSearchIcon from '@mui/icons-material/Search';
 import ActionSelectIcon from '@mui/icons-material/SelectAll';
+import ActionSendIcon from '@mui/icons-material/Send';
 import ActionSubscribeIcon from '@mui/icons-material/PersonAdd';
 import ActionToggleArchiveIcon from '@mui/icons-material/Unarchive';
 import ActionToggleOffIcon from '@mui/icons-material/ToggleOff';
@@ -93,6 +94,7 @@ export {
   ActionPublishIcon,
   ActionSearchIcon,
   ActionSelectIcon,
+  ActionSendIcon,
   ActionSubscribeIcon,
   ActionToggleArchiveIcon,
   ActionToggleOffIcon,

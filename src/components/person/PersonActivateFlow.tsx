@@ -25,7 +25,6 @@ function PersonActivateFlow({
         router.push('/login?' + email)
       },
       onError: error => {
-        console.log(error)
         router.push('/');
       }
     }

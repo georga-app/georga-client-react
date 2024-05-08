@@ -135,7 +135,6 @@ function ShiftTable() {
   }] = useMutation(
     PUBLISH_SHIFT_MUTATION, {
       onCompleted: data => {
-        console.log(data)
         const response = data.publishShift;
         if (!response)
           return;

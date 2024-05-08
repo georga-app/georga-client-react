@@ -82,7 +82,7 @@ function TaskFieldTable() {
           deleteTaskFieldReset();
         }
       },
-      onError: error => {console.log(error)},
+      onError: error => {},
       refetchQueries: [
         "ListTaskFields"
       ]
