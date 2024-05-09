@@ -2,8 +2,6 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import dayjs from "dayjs";
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation } from '@apollo/client';
@@ -34,6 +32,7 @@ import {
   ActionPublishIcon,
   ActionSendIcon,
   ActionToggleArchiveIcon,
+  ActionViewIcon,
   MessageActivityIcon,
   MessageAlertIcon,
   MessageNewsIcon,
@@ -337,24 +336,9 @@ function MessageTable() {
       available: (selected) => (selected.length == 0),
     },
     {
-      name: 'Edit',
-      icon: <ActionEditIcon />,
-      priority: 30,
-      action: (selected, setSelected, event) => {
-        router.push("/admin/messages/" + selected[0].id + "/edit");
-      },
-      available: (selected) => (
-        selected.length == 1
-        && selected[0].state == "DRAFT"
-      ),
-      display: {
-        row: true,
-      }
-    },
-    {
       name: 'Publish',
       icon: <ActionPublishIcon />,
-      priority: 40,
+      priority: 30,
       action: (selected, setSelected, event) => {
         selected.forEach(entry => {
           publishMessage({
@@ -370,12 +354,30 @@ function MessageTable() {
       state: {
         transitions: messageState,
         target: 'PUBLISHED'
+      },
+      display: {
+        row: true,
+      }
+    },
+    {
+      name: 'Edit',
+      icon: <ActionEditIcon />,
+      priority: 40,
+      action: (selected, setSelected, event) => {
+        router.push("/admin/messages/" + selected[0].id + "/edit");
+      },
+      available: (selected) => (
+        selected.length == 1
+        && selected[0].state == "DRAFT"
+      ),
+      display: {
+        row: true,
       }
     },
     {
       name: 'Send',
       icon: <ActionSendIcon />,
-      priority: 45,
+      priority: 50,
       action: (selected, setSelected, event) => {
         selected.forEach(entry => {
           sendMessage({
@@ -396,9 +398,24 @@ function MessageTable() {
       }
     },
     {
+      name: 'Details',
+      icon: <ActionViewIcon />,
+      priority: 60,
+      action: (selected, setSelected, event) => {
+        router.push("/admin/messages/" + selected[0].id);
+      },
+      available: (selected) => (
+        selected.length == 1
+        && selected[0].state != "DRAFT"
+      ),
+      display: {
+        row: true,
+      }
+    },
+    {
       name: 'Archive',
       icon: <ActionArchiveIcon />,
-      priority: 50,
+      priority: 70,
       action: (selected, setSelected, event) => {
         selected.forEach(entry => {
           archiveMessage({

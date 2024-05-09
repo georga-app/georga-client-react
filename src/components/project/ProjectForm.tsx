@@ -88,7 +88,7 @@ function ProjectForm({
     }
   }, [organization, filter.hasFilter, filter.object]);
 
-  // create
+  // create project
   const [ createProject, {
     loading: createProjectLoading,
     reset: createProjectReset
@@ -126,7 +126,7 @@ function ProjectForm({
     }
   );
 
-  // get
+  // get project
   const {
     called: getProjectCalled,
     loading: getProjectLoading,
@@ -165,7 +165,7 @@ function ProjectForm({
     }
   );
 
-  // update
+  // update project
   const [ updateProject, {
     loading: updateProjectLoading,
     reset: updateProjectReset

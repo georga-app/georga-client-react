@@ -2,9 +2,11 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
+import { useState } from "react";
+import { useQuery } from '@apollo/client';
+import { useFilter } from '@/provider/Filter';
 
-import dayjs from "dayjs";
-
+import Chip from "@mui/material/Chip";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InputLabel from "@mui/material/InputLabel";
@@ -14,11 +16,26 @@ import MuiInput from "@mui/material/Input";
 import MuiSelect from '@mui/material/Select';
 import MuiSwitch from '@mui/material/Switch';
 import MuiTextField from "@mui/material/TextField";
-
 import { DateTimePicker as MuiDateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 import FormFieldError from "@/components/shared/FormFieldError";
+import { formatDateTime } from "@/app/utils";
 
+import { GET_ORGANIZATION_QUERY } from '@/gql/organization';
+import { LIST_PROJECTS_QUERY } from '@/gql/project';
+import { LIST_OPERATIONS_QUERY } from '@/gql/operation';
+import { LIST_TASKS_QUERY } from '@/gql/task';
+import { LIST_SHIFTS_QUERY } from '@/gql/shift';
+
+import {
+  AceType,
+  OrganizationType,
+  ProjectType,
+  OperationType,
+  TaskType,
+  ShiftType,
+  GeorgaAcePermissionChoices,
+} from '@/types/__generated__/graphql';
 import { FormFieldError as FormFieldErrorType } from '@/types/FormErrors';
 
 function Input({
@@ -132,6 +149,7 @@ function EnumSelect<T>({
   setValue,
   errors,
   required,
+  disabled = false,
   getOptionLabel = option => option,
   handleChanged,
 }: {
@@ -142,6 +160,7 @@ function EnumSelect<T>({
   setValue: React.Dispatch<React.SetStateAction<any>>,
   errors?: FormFieldErrorType | undefined,
   required?: boolean,
+  disabled?: boolean,
   getOptionLabel?: (option: string) => string,
   handleChanged?: (id: string, oldValue: typeof value, newValue: typeof value) => void,
 }) {
@@ -169,6 +188,7 @@ function EnumSelect<T>({
         id={id}
         value={value ? value : ""}
         label={label}
+        disabled={disabled}
         onChange={(event) => {
           if( handleChanged )
             handleChanged(id, value, event.target.value);
@@ -247,6 +267,217 @@ function Autocomplete<T extends { id: string, name?: string } | undefined>({
   )
 }
 
+function getObjectAutocompleteOptionLabel(option: any) {
+  switch (option.__typename) {
+    case "OrganizationType":
+    case "ProjectType":
+    case "OperationType":
+    case "TaskType":
+      return option.name;
+    case "ShiftType":
+      return formatDateTime(option.startTime) + " | " + option.task.name
+    default:
+      return '';
+  }
+}
+
+function ObjectAutocomplete<T extends {__typename?: string, id: string, name?: string}>({
+  id,
+  label,
+  value,
+  setValue,
+  errors,
+  required = false,
+  handleChanged,
+  getOptionDisabled = () => false,
+  disabled = false,
+  organizations = false,
+  projects = false,
+  operations = false,
+  tasks = false,
+  shifts = false,
+}: {
+  id: string,
+  label: string,
+  value: T | "",
+  setValue: React.Dispatch<React.SetStateAction<T | "">>,
+  errors: FormFieldErrorType | undefined,
+  required?: boolean,
+  handleChanged?: (id: string, oldValue: typeof value, newValue: typeof value) => void,
+  getOptionDisabled?: (option: T) => boolean
+  disabled?: boolean,
+  organizations?: boolean,
+  projects?: boolean,
+  operations?: boolean,
+  tasks?: boolean,
+  shifts?: boolean,
+}) {
+  // provider
+  const filter = useFilter();
+
+  // options
+  const [organizationOptions, setOrganizationOptions] = useState<OrganizationType[]>([]);
+  const [operationOptions, setOperationOptions] = useState<OperationType[]>([]);
+  const [projectOptions, setProjectOptions] = useState<ProjectType[]>([]);
+  const [taskOptions, setTaskOptions] = useState<TaskType[]>([]);
+  const [shiftOptions, setShiftOptions] = useState<ShiftType[]>([]);
+
+  // get organization
+  const {
+    data: getOrganizationData,
+    loading: getOrganizationLoading,
+  } = useQuery(
+    GET_ORGANIZATION_QUERY, {
+      skip: disabled || !organizations,
+      variables: {
+        id: filter.organization
+      },
+      onCompleted: data => {
+        const organizations = data.listOrganizations?.edges.map((edge) => edge?.node)
+          .filter((node): node is OrganizationType => node !== undefined);
+        if (!organizations?.length)
+          return;
+        setOrganizationOptions(organizations);
+      }
+    }
+  );
+
+  // list projects
+  const {
+    data: listProjectsData,
+    loading: listProjectsLoading,
+  } = useQuery(
+    LIST_PROJECTS_QUERY, {
+      skip: disabled || !projects,
+      variables: {
+        organization: filter.organization
+      },
+      onCompleted: data => {
+        const projects = data.listProjects?.edges.map((edge) => edge?.node)
+          .filter((node): node is ProjectType => node !== undefined);
+        if (!projects?.length)
+          return;
+        setProjectOptions(projects);
+      }
+    }
+  );
+
+  // list operations
+  const {
+    data: listOperationsData,
+    loading: listOperationsLoading,
+  } = useQuery(
+    LIST_OPERATIONS_QUERY, {
+      skip: disabled || !operations,
+      variables: {
+        organization: filter.organization
+      },
+      onCompleted: data => {
+        const operations = data.listOperations?.edges.map((edge) => edge?.node)
+          .filter((node): node is OperationType => node !== undefined);
+        if (!operations?.length)
+          return;
+        setOperationOptions(operations);
+      }
+    }
+  );
+
+  // list tasks
+  const {
+    data: listTasksData,
+    loading: listTasksLoading,
+  } = useQuery(
+    LIST_TASKS_QUERY, {
+      skip: disabled || !tasks,
+      variables: {
+        organization: filter.organization
+      },
+      onCompleted: data => {
+        const tasks = data.listTasks?.edges.map((edge) => edge?.node)
+          .filter((node): node is TaskType => node !== undefined);
+        if (!tasks?.length)
+          return;
+        setTaskOptions(tasks);
+      }
+    }
+  );
+
+  // list shifts
+  const {
+    data: listShiftsData,
+    loading: listShiftsLoading,
+  } = useQuery(
+    LIST_SHIFTS_QUERY, {
+      skip: disabled || !shifts,
+      variables: {
+        organization: filter.organization
+      },
+      onCompleted: data => {
+        const shifts = data.listShifts?.edges.map((edge) => edge?.node)
+          .filter((node): node is ShiftType => node !== undefined);
+        if (!shifts?.length)
+          return;
+        setShiftOptions(shifts);
+      }
+    }
+  );
+
+  const options: any = [
+    ... organizationOptions,
+    ... projectOptions,
+    ... operationOptions,
+    ... taskOptions,
+    ... shiftOptions,
+  ];
+
+  return (
+    <FormControl
+      margin="normal"
+      fullWidth
+      sx={{ minWidth: { 'sm': '500px' } }}
+      required={required}
+    >
+      <MuiAutocomplete
+        id={id}
+        size="small"
+        disabled={disabled}
+        options={options}
+        getOptionLabel={option => getObjectAutocompleteOptionLabel(option)}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        getOptionDisabled={getOptionDisabled}
+        groupBy={option => {
+          switch (option.__typename) {
+            case "OrganizationType": return "Organization";
+            case "ProjectType": return "Project";
+            case "OperationType": return "Operation";
+            case "TaskType": return "Task";
+            case "ShiftType": return "Shift";
+            default: return '';
+          }
+        }}
+        value={value as T || ""}
+        onChange={(event: any, newValue: any) => {
+          if( handleChanged )
+            handleChanged(id, value, newValue || "");
+          setValue(newValue);
+        }}
+        renderInput={params => (
+          <MuiTextField
+            {...params}
+            label={label + (required ? " *" : "")}
+            variant="standard"
+          />
+        )}
+        renderOption={(props, option) => (
+          <li {...props} key={option.id}>
+            {getObjectAutocompleteOptionLabel(option)}
+          </li>
+        )}
+      />
+    </FormControl>
+  )
+}
+
 function DateTimePicker({
   id,
   value,
@@ -293,12 +524,12 @@ function DateTimePicker({
     </FormControl>
   )
 }
+
 export {
   EnumSelect,
   Input,
   Switch,
   Autocomplete,
+  ObjectAutocomplete,
   DateTimePicker,
 };
-
-

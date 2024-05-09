@@ -4,9 +4,10 @@
  */
 import dayjs from "dayjs";
 
+import Box from "@mui/material/Box";
 import { SxProps, Theme } from '@mui/material/styles';
 
-import Box from "@mui/material/Box";
+import { formatDateTime, formatDate, formatTime } from "@/app/utils";
 
 function DateRange({
   start,
@@ -17,16 +18,14 @@ function DateRange({
   end: string,
   sx?: SxProps<Theme>,
 }) {
-  const from = dayjs(start);
-  const to = dayjs(end);
-  if ( from.date() == to.date() )
+  if ( dayjs(start).date() == dayjs(end).date() )
     return <Box sx={[ ...(Array.isArray(sx) ? sx : [sx]) ]}>
-      <Box>{from.format("dd, DD.MM.YY")}</Box>
-      <Box>{from.format("HH:mm")} - {to.format("HH:mm")}</Box>
+      <Box>{formatDate(start)}</Box>
+      <Box>{formatTime(start)} - {formatTime(end)}</Box>
     </Box>
   return <Box sx={[ ...(Array.isArray(sx) ? sx : [sx]) ]}>
-    <Box>{from.format("dd, DD.MM.YY HH:mm")}</Box>
-    <Box>{to.format("dd, DD.MM.YY HH:mm")}</Box>
+    <Box>{formatDateTime(start)}</Box>
+    <Box>{formatDateTime(end)}</Box>
   </Box>
 }
 
@@ -37,9 +36,8 @@ function DateTime({
   datetime: string,
   sx?: SxProps<Theme>,
 }) {
-  const content = dayjs(datetime);
   return <Box sx={[ ...(Array.isArray(sx) ? sx : [sx]) ]}>
-    <Box>{content.format("dd, DD.MM.YY HH:mm")}</Box>
+    <Box>{formatDateTime(datetime)}</Box>
   </Box>
 }
 

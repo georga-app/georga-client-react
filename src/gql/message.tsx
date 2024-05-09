@@ -16,6 +16,7 @@ const GET_MESSAGE_QUERY = gql(`
         node {
           id
           title
+          contents
           priority
           category
           state
@@ -23,6 +24,8 @@ const GET_MESSAGE_QUERY = gql(`
           emailDelivery
           pushDelivery
           smsDelivery
+          createdAt
+          modifiedAt
           scope {
             __typename
             ... on OrganizationType {
@@ -132,6 +135,7 @@ const CREATE_MESSAGE_MUTATION = gql(`
     $publish: Boolean
     $title: String!
     $contents: String!
+    $category: String!
     $priority: String!
     $scope: ID!
   ) {
@@ -140,6 +144,7 @@ const CREATE_MESSAGE_MUTATION = gql(`
         publish: $publish
         title: $title
         contents: $contents
+        category: $category
         priority: $priority
         scope: $scope
       }
@@ -160,6 +165,7 @@ const UPDATE_MESSAGE_MUTATION = gql(`
     $id: ID!
     $title: String
     $contents: String
+    $category: String
     $priority: String
     $scope: ID
   ) {
@@ -168,6 +174,7 @@ const UPDATE_MESSAGE_MUTATION = gql(`
         id: $id
         title: $title
         contents: $contents
+        category: $category
         priority: $priority
         scope: $scope
       }
