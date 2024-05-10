@@ -30,10 +30,8 @@ const menus: Menus = {
   },
   backend: {
     main: [
-      { path: '/schedule',
-          type: 'link', name: 'Schedule' },
-      { path: '/mission',
-          type: 'link', name: 'Mission' },
+      { path: '/missions',
+          type: 'link', name: 'Missions' },
       { path: '/messages',
           type: 'link', name: 'Messages' },
     ],

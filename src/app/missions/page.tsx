@@ -2,15 +2,19 @@
  * For copyright and license terms, see COPYRIGHT.md (top level of repository)
  * Repository: https://github.com/georga-app/georga-client-react
  */
-import OneColumn from '@/theme/layouts/OneColumn';
+'use client';
+
+import TwoColumns from '@/theme/layouts/TwoColumns';
 import UnderConstruction from '@/components/shared/UnderConstruction';
 
-function Mission() {
+import MissionList from '@/components/mission/MissionList';
+
+function Missions() {
   return (
-    <OneColumn>
-      <UnderConstruction label="Mission" />
-    </OneColumn>
+    <TwoColumns
+      right=<MissionList />
+    />
   );
 }
 
-export default Mission;
+export default Missions;
