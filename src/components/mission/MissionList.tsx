@@ -178,8 +178,6 @@ function MissionList() {
                     {/* Time */}
                     <Grid xs={2}>
                       <Box sx={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
                         alignContent: 'center',
                         minHeight: '100%',
                         backgroundColor: '#f8f8f8',
@@ -188,7 +186,7 @@ function MissionList() {
                         <Tooltip
                           title={"Deadline: " + formatDateTime(shift.deadline)}
                         >
-                          <Box sx={{ display: 'flex' }}>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignContent: 'center' }}>
                             <Box>
                               {formatTime(shift.start)}
                             </Box>
